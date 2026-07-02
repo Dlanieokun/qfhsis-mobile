@@ -1,0 +1,1205 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F0F4F8"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="12dp">
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="#1565C0"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:text="TARGET CLIENT LIST"
+                    android:textColor="#FFFFFF"
+                    android:textSize="17sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tvFormTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center"
+                    android:paddingTop="2dp"
+                    android:text="CHILD NUTRITION"
+                    android:textColor="#BBDEFB"
+                    android:textSize="13sp"
+                    android:textStyle="bold" />
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:layout_marginBottom="8dp"
+                    android:layout_marginTop="10dp"
+                    android:background="#3D7ED6" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="TCL — Sheet: TCL_Child_Nutri | Cols 1–48"
+                    android:textColor="#BBDEFB"
+                    android:textSize="11sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="14dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#1565C0" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="BASIC INFORMATION"
+                        android:textColor="#1565C0" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDateRegistration"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Date of Registration (mm/dd/yy)"
+                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#1565C0">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDateRegistration"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilFamilySerialNumber"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp" android:hint="Family Serial Number">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etFamilySerialNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilChildName"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Name of Child (LastName, FirstName, MI)">
+                    <AutoCompleteTextView
+                        android:id="@+id/etChildName"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"
+                        android:completionThreshold="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDateOfBirth"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Date of Birth (mm/dd/yy)"
+                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#1565C0">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDateOfBirth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilAge"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="10dp"
+                        android:hint="Age (months)">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etAge"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:orientation="vertical">
+                        <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Sex *" android:textColor="#616161" android:textSize="12sp"
+                            android:paddingBottom="4dp"/>
+                        <RadioGroup android:id="@+id/rgSex"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbMale"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="M" android:textSize="14sp" android:buttonTint="#1565C0"/>
+                            <RadioButton android:id="@+id/rbFemale"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="F" android:textSize="14sp"
+                                android:layout_marginStart="12dp" android:buttonTint="#1565C0"/>
+                        </RadioGroup>
+                        <TextView android:id="@+id/tvSexError"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:text="Required" android:textColor="#B00020"
+                            android:textSize="11sp" android:visibility="gone"/>
+                    </LinearLayout>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilMotherName"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Complete Name of Mother (LastName, FirstName, MI)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etMotherName"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textPersonName|textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilAddress"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Complete Address">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAddress"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:gravity="top" android:inputType="textMultiLine|textCapSentences"
+                        android:maxLines="4" android:minLines="2"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#00695C" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="NEWBORN ASSESSMENT  (0–28 days old)"
+                        android:textColor="#00695C" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="#E0E0E0" android:layout_marginBottom="14dp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilLengthAtBirth"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="Length at Birth (cm)">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLengthAtBirth"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilWeightAtBirth"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="Weight at Birth (kg)">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etWeightAtBirth"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:inputType="numberDecimal"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Status of Birth Weight:"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="6dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilBirthWeightStatus"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Select status">
+                    <AutoCompleteTextView
+                        android:id="@+id/actBirthWeightStatus"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:focusable="false" android:inputType="none"
+                        android:completionThreshold="0"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilBreastfeedingDate"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Breastfeeding initiated within 1 hr after birth (mm/dd/yy)"
+                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#00695C">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etBreastfeedingDate"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="4 time-bound interventions: immediate drying · skin-to-skin contact · properly timed cord clamping · non-separation from mother"
+                    android:textColor="#757575" android:textSize="11sp"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilPlaceOfDelivery"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Place of Delivery for Initiated Breastfeeding">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPlaceOfDelivery"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapWords"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#5D4037" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="LOW BIRTH WEIGHT — IRON SUPPLEMENTATION"
+                        android:textColor="#5D4037" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Date given (mm/dd/yy) per month of supplementation"
+                    android:textColor="#757575" android:textSize="11sp"
+                    android:layout_marginBottom="14dp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="12dp">
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilIron1Month"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="6dp"
+                        android:hint="1 Month"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIron1Month"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilIron2Months"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="6dp"
+                        android:hint="2 Months"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIron2Months"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilIron3Months"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:hint="3 Months"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIron3Months"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                    android:text="Completed Iron Supplementation?"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+
+                <RadioGroup android:id="@+id/rgIronCompleted"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <RadioButton android:id="@+id/rbIronYes"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="1 – Yes" android:textSize="14sp" android:buttonTint="#5D4037"/>
+                    <RadioButton android:id="@+id/rbIronNo"
+                        android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="0 – No" android:textSize="14sp"
+                        android:layout_marginStart="16dp" android:buttonTint="#5D4037"/>
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilIronCompletedDate"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Date Completed (mm/dd/yy)"
+                    android:visibility="gone"
+                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etIronCompletedDate"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#2E7D32" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="VITAMIN A SUPPLEMENTATION  (6-month interval)"
+                        android:textColor="#2E7D32" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="#E0E0E0" android:layout_marginBottom="14dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="6–11 months  •  100,000 IU"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilVitaA6to11"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp" android:hint="Date Given (mm/dd/yy)"
+                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etVitaA6to11"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="12–59 months  •  200,000 IU  —  YEAR 1"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="16dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y1D1"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="1st Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y1D1"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y1D2"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y1D2"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="12–59 months  •  200,000 IU  —  YEAR 2"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="16dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y2D1"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="1st Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y2D1"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y2D2"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y2D2"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="12–59 months  •  200,000 IU  —  YEAR 3"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="16dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y3D1"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="1st Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y3D1"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y3D2"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y3D2"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="12–59 months  •  200,000 IU  —  YEAR 4"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y4D1"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="1st Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y4D1"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilVitaA200Y4D2"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etVitaA200Y4D2"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#6A1B9A" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="MNP — MICRONUTRIENT POWDER"
+                        android:textColor="#6A1B9A" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="#E0E0E0" android:layout_marginBottom="14dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="6–11 months  •  90 sachets over 6 months"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilMnp6to11Provided"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="Date Provided"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMnp6to11Provided"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilMnp6to11Completed"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="Date Completed"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMnp6to11Completed"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilMnp6to11Remarks"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp" android:hint="Remarks (6–11 months)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etMnp6to11Remarks"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="12–23 months  •  90 sachets every 6 months (180 total/year)"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilMnp12to23Provided"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="Date Provided"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMnp12to23Provided"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilMnp12to23Completed"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="Date Completed"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etMnp12to23Completed"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilMnp12to23Remarks"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Remarks (12–23 months)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etMnp12to23Remarks"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#283593" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="LNS-SQ — LIPID-BASED NUTRIENT SUPPLEMENT"
+                        android:textColor="#283593" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="#E0E0E0" android:layout_marginBottom="14dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="6–11 months  •  1 sachet/day for 120 days"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilLns6to11Provided"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="Date Provided"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLns6to11Provided"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilLns6to11Completed"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="Date Completed"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLns6to11Completed"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilLns6to11Remarks"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp" android:hint="Remarks (6–11 months)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLns6to11Remarks"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="12–23 months  •  1 sachet/day for 120 days"
+                    android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
+                    android:paddingBottom="8dp"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilLns12to23Provided"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:layout_marginEnd="8dp"
+                        android:hint="Date Provided"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLns12to23Provided"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:id="@+id/tilLns12to23Completed"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                        android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:hint="Date Completed"
+                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etLns12to23Completed"
+                            android:layout_width="match_parent" android:layout_height="wrap_content"
+                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                </LinearLayout>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilLns12to23Remarks"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Remarks (12–23 months)">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etLns12to23Remarks"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:inputType="textCapSentences"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#E65100" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="MAM — SUPPLEMENTARY FEEDING PROGRAM (SFP)"
+                        android:textColor="#E65100" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Moderate Acute Malnutrition — Col 36–41"
+                    android:textColor="#757575" android:textSize="11sp"
+                    android:layout_marginBottom="14dp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp"
+                        android:layout_marginBottom="2dp"
+                        android:background="?attr/selectableItemBackground">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:text="Identified"
+                            android:textSize="14sp" android:textColor="#212121"/>
+                        <RadioGroup android:id="@+id/rgMamIdentified"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbMamIdentifiedYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#E65100"/>
+                            <RadioButton android:id="@+id/rbMamIdentifiedNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#E65100"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:text="Enrolled to SFP"
+                            android:textSize="14sp" android:textColor="#212121"/>
+                        <RadioGroup android:id="@+id/rgMamEnrolled"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbMamEnrolledYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#E65100"/>
+                            <RadioButton android:id="@+id/rbMamEnrolledNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#E65100"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:text="Cured"
+                            android:textSize="14sp" android:textColor="#212121"/>
+                        <RadioGroup android:id="@+id/rgMamCured"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbMamCuredYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#E65100"/>
+                            <RadioButton android:id="@+id/rbMamCuredNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#E65100"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Non-cured" android:textSize="14sp" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Did not reach discharge after 4 months"
+                                android:textSize="10sp" android:textColor="#9E9E9E"/>
+                        </LinearLayout>
+                        <RadioGroup android:id="@+id/rgMamNonCured"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbMamNonCuredYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#E65100"/>
+                            <RadioButton android:id="@+id/rbMamNonCuredNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#E65100"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Defaulted" android:textSize="14sp" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Absent 3 consecutive visits"
+                                android:textSize="10sp" android:textColor="#9E9E9E"/>
+                        </LinearLayout>
+                        <RadioGroup android:id="@+id/rgMamDefaulted"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbMamDefaultedYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#E65100"/>
+                            <RadioButton android:id="@+id/rbMamDefaultedNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#E65100"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:text="Died"
+                            android:textSize="14sp" android:textColor="#212121"/>
+                        <RadioGroup android:id="@+id/rgMamDied"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbMamDiedYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#E65100"/>
+                            <RadioButton android:id="@+id/rbMamDiedNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#E65100"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="6dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#B71C1C" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="SAM — OUTPATIENT THERAPEUTIC CARE (OTC)"
+                        android:textColor="#B71C1C" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:text="Severe Acute Malnutrition — Col 42–47"
+                    android:textColor="#757575" android:textSize="11sp"
+                    android:layout_marginBottom="14dp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="vertical">
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:text="Identified"
+                            android:textSize="14sp" android:textColor="#212121"/>
+                        <RadioGroup android:id="@+id/rgSamIdentified"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbSamIdentifiedYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#B71C1C"/>
+                            <RadioButton android:id="@+id/rbSamIdentifiedNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#B71C1C"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Admitted to OTC" android:textSize="14sp" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Without complication"
+                                android:textSize="10sp" android:textColor="#9E9E9E"/>
+                        </LinearLayout>
+                        <RadioGroup android:id="@+id/rgSamAdmitted"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbSamAdmittedYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#B71C1C"/>
+                            <RadioButton android:id="@+id/rbSamAdmittedNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#B71C1C"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:text="Cured"
+                            android:textSize="14sp" android:textColor="#212121"/>
+                        <RadioGroup android:id="@+id/rgSamCured"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbSamCuredYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#B71C1C"/>
+                            <RadioButton android:id="@+id/rbSamCuredNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#B71C1C"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Non-cured" android:textSize="14sp" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Did not reach discharge after 4 months"
+                                android:textSize="10sp" android:textColor="#9E9E9E"/>
+                        </LinearLayout>
+                        <RadioGroup android:id="@+id/rgSamNonCured"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbSamNonCuredYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#B71C1C"/>
+                            <RadioButton android:id="@+id/rbSamNonCuredNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#B71C1C"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp" android:layout_marginBottom="2dp">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Defaulted" android:textSize="14sp" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Absent 3 consecutive visits"
+                                android:textSize="10sp" android:textColor="#9E9E9E"/>
+                        </LinearLayout>
+                        <RadioGroup android:id="@+id/rgSamDefaulted"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbSamDefaultedYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#B71C1C"/>
+                            <RadioButton android:id="@+id/rbSamDefaultedNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="0-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#B71C1C"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                    <View android:layout_width="match_parent" android:layout_height="0.5dp" android:background="#E0E0E0"/>
+
+                    <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:orientation="horizontal" android:gravity="center_vertical"
+                        android:paddingTop="6dp" android:paddingBottom="6dp">
+                        <LinearLayout android:layout_width="0dp" android:layout_height="wrap_content"
+                            android:layout_weight="1" android:orientation="vertical">
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="Died" android:textSize="14sp" android:textColor="#212121"/>
+                            <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="(1-Yes / 2-No as per form)"
+                                android:textSize="10sp" android:textColor="#9E9E9E"/>
+                        </LinearLayout>
+                        <RadioGroup android:id="@+id/rgSamDied"
+                            android:layout_width="wrap_content" android:layout_height="wrap_content"
+                            android:orientation="horizontal">
+                            <RadioButton android:id="@+id/rbSamDiedYes"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="1-Yes" android:textSize="13sp" android:buttonTint="#B71C1C"/>
+                            <RadioButton android:id="@+id/rbSamDiedNo"
+                                android:layout_width="wrap_content" android:layout_height="wrap_content"
+                                android:text="2-No" android:textSize="13sp"
+                                android:layout_marginStart="8dp" android:buttonTint="#B71C1C"/>
+                        </RadioGroup>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:gravity="center_vertical" android:layout_marginBottom="14dp"
+                    android:orientation="horizontal">
+                    <View android:layout_width="4dp" android:layout_height="20dp"
+                        android:background="#37474F" android:layout_marginEnd="8dp"/>
+                    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
+                        android:text="REMARKS / ACTIONS TAKEN"
+                        android:textColor="#37474F" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilRemarks"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:hint="Remarks / Actions Taken">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etRemarks"
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:gravity="top" android:inputType="textMultiLine|textCapSentences"
+                        android:maxLines="6" android:minLines="3"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClear"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp" android:layout_height="52dp"
+                android:layout_weight="1" android:layout_marginEnd="8dp"
+                android:text="CLEAR" android:textColor="#1565C0"
+                app:strokeColor="#1565C0"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="0dp" android:layout_height="52dp"
+                android:layout_weight="2" android:text="SAVE ENTRY"
+                android:textColor="#FFFFFF" app:backgroundTint="#1565C0"
+                app:icon="@drawable/ic_save" app:iconTint="#FFFFFF"
+                app:iconGravity="textStart"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

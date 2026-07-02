@@ -1,0 +1,660 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- ============================= -->
+        <!--  SECTION A: HOUSEHOLD INFO   -->
+        <!-- ============================= -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="A.  Household Information"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- No. -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:text="No.:"
+                android:textColor="#333333" />
+
+            <EditText
+                android:id="@+id/et_no"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Row number"
+                android:inputType="number"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <!-- Name of Household Head -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="10dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:text="Household Head\n(LastName, Full, MI):"
+                android:textColor="#333333" />
+
+            <EditText
+                android:id="@+id/et_name"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="e.g. Dela Cruz, Juan A."
+                android:inputType="textPersonName|textCapWords"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <!-- ======================================= -->
+        <!--  SECTION B: WATER SUPPLY               -->
+        <!-- ======================================= -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="B.  Masterlist for Access to Basic Safe Water Supply"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- B1: Type of Improved Water Source -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="B1. Type of Improved Water Source (check all that apply):"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <CheckBox
+            android:id="@+id/cb_ws_level1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Level I — Point Source"
+            android:textColor="#333333" />
+
+        <CheckBox
+            android:id="@+id/cb_ws_level2"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Level II — Communal Faucet System / Stand Posts"
+            android:textColor="#333333" />
+
+        <CheckBox
+            android:id="@+id/cb_ws_level3"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Level III — Waterworks System / Individual House Connection"
+            android:textColor="#333333" />
+
+        <CheckBox
+            android:id="@+id/cb_ws_others"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Others (unimproved/unprotected source):"
+            android:textColor="#333333" />
+
+        <EditText
+            android:id="@+id/et_ws_others_specify"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="32dp"
+            android:layout_marginBottom="10dp"
+            android:hint="Specify (e.g. open dug well, unimproved spring)"
+            android:enabled="false"
+            android:inputType="text"
+            android:singleLine="true" />
+
+        <!-- B2: Located inside dwelling -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="B2. Located inside the dwelling or within its premises (yard/land):"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginTop="6dp"
+            android:layout_marginBottom="4dp" />
+
+        <CheckBox
+            android:id="@+id/cb_located_inside"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Yes — located inside dwelling / premises"
+            android:textColor="#333333"
+            android:layout_marginBottom="10dp" />
+
+        <!-- B3: Available 12 hours -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="B3. Available at least 12 hours per day:"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp" />
+
+        <CheckBox
+            android:id="@+id/cb_available_12hrs"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Yes — available ≥ 12 hours/day"
+            android:textColor="#333333"
+            android:layout_marginBottom="10dp" />
+
+        <!-- ======================================= -->
+        <!--  SECTION C: VALIDATION / TESTING       -->
+        <!-- ======================================= -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="C.  Validation / Random Sampling / Testing"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- C1: Microbiological Testing -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="C1. Microbiological Testing:"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:text="Date Validation Done:"
+                android:textColor="#333333" />
+
+            <EditText
+                android:id="@+id/et_micro_test_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="mm/dd/yy"
+                android:inputType="text"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Results:"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_micro_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp">
+
+            <RadioButton
+                android:id="@+id/rb_micro_not_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not done / N/A"
+                android:checked="true"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_micro_ecoli_absent"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 — Absence of E. coli"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_micro_ecoli_present"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 — Presence of E. coli"
+                android:textColor="#333333" />
+        </RadioGroup>
+
+        <!-- C2: Physico-Chemical Test for Arsenic -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="C2. Physico-Chemical Test for Arsenic (optional):"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="6dp"
+            android:gravity="center_vertical">
+
+            <TextView
+                android:layout_width="130dp"
+                android:layout_height="wrap_content"
+                android:text="Date Testing Done:"
+                android:textColor="#333333" />
+
+            <EditText
+                android:id="@+id/et_arsenic_test_date"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="mm/dd/yy"
+                android:inputType="text"
+                android:singleLine="true" />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Results:"
+            android:textColor="#333333"
+            android:layout_marginBottom="4dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_arsenic_result"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp">
+
+            <RadioButton
+                android:id="@+id/rb_arsenic_not_done"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Not done / N/A"
+                android:checked="true"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_arsenic_within"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="1 — Within allowable PNSDW limit for Arsenic"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_arsenic_above"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="0 — Above allowable PNSDW limit for Arsenic"
+                android:textColor="#333333" />
+        </RadioGroup>
+
+        <!-- ======================================= -->
+        <!--  SECTION D: WATER STATUS (SMDWS)       -->
+        <!-- ======================================= -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="D.  Water Status"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="D1. Safely Managed Drinking-Water Service (SMDWS):\n(Applicable only if water source is Level I or III, located inside dwelling, available ≥12hrs/day, and free of fecal contamination)"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_smdws"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp">
+
+            <RadioButton
+                android:id="@+id/rb_smdws_na"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N/A"
+                android:checked="true"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_smdws_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="1 — Yes"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_smdws_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="0 — No"
+                android:textColor="#333333" />
+        </RadioGroup>
+
+        <!-- ============================================ -->
+        <!--  SECTION E: BASIC SANITATION FACILITY       -->
+        <!-- ============================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E.  Access to Basic Sanitation Facility"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <!-- E1: Sanitary Toilet Facility -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E1. Type of Sanitary Toilet Facility (check all that apply):"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <CheckBox
+            android:id="@+id/cb_sanitary_pour_flush_septic"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pour/flush type connected to septic tank"
+            android:textColor="#333333" />
+
+        <CheckBox
+            android:id="@+id/cb_sanitary_communal_sewer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Pour/flush toilet connected to community sewer or sewerage system"
+            android:textColor="#333333" />
+
+        <CheckBox
+            android:id="@+id/cb_sanitary_vip_latrine"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Ventilated Pit (VIP) Latrine or Composting Toilet"
+            android:textColor="#333333"
+            android:layout_marginBottom="10dp" />
+
+        <!-- E2: Unsanitary Toilet Type -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E2. Type of Unsanitary Toilet (if applicable):"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <Spinner
+            android:id="@+id/spinner_unsanitary_toilet"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp"
+            android:background="@drawable/spinner_border" />
+
+        <!-- E3: Toilet Shared -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E3. Toilet is shared with other households in a separate dwelling:\n(Applicable only if sanitary toilet facility is checked)"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginTop="4dp"
+            android:layout_marginBottom="6dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_toilet_shared"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp">
+
+            <RadioButton
+                android:id="@+id/rb_shared_na"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N/A"
+                android:checked="true"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_shared_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="1 — Yes"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_shared_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="0 — No"
+                android:textColor="#333333" />
+        </RadioGroup>
+
+        <!-- E4: Basic Sanitation Facility -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="E4. Basic Sanitation Facility:\n(If with any sanitary toilet facility and toilet is not shared)"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_basic_sanitation"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp">
+
+            <RadioButton
+                android:id="@+id/rb_bsf_na"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N/A"
+                android:checked="true"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_bsf_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="1 — Yes"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_bsf_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="0 — No"
+                android:textColor="#333333" />
+        </RadioGroup>
+
+        <!-- ============================================ -->
+        <!--  SECTION F: DISPOSAL / TREATMENT            -->
+        <!-- ============================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="F.  Disposal / Treatment of Excreta / Sewage"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="F1. Disposal/Treatment method (check all that apply):\n(Applicable only if sanitary toilet facility is checked)"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <CheckBox
+            android:id="@+id/cb_disposal_insitu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sewage/excreta stored in a containment tank and treated in situ; sanitation by-products applied for reuse/disposal"
+            android:textColor="#333333" />
+
+        <CheckBox
+            android:id="@+id/cb_disposal_desludged"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stored in a containment tank, desludged, transported, treated and disposed off-site; by-products applied for reuse/disposal"
+            android:textColor="#333333" />
+
+        <CheckBox
+            android:id="@+id/cb_disposal_sewer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Stored in a containment tank or conveyed through sewer/sewerage system; treated off-site; by-products applied for reuse/disposal"
+            android:textColor="#333333"
+            android:layout_marginBottom="10dp" />
+
+        <!-- ============================================ -->
+        <!--  SECTION G: SANITATION STATUS (SMSS)        -->
+        <!-- ============================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="G.  Sanitation Status"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="G1. Safely Managed Sanitation Service (SMSS):\n(Applicable only if YES in BSF and with any disposal/treatment)"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="6dp" />
+
+        <RadioGroup
+            android:id="@+id/rg_smss"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginStart="16dp"
+            android:layout_marginBottom="10dp">
+
+            <RadioButton
+                android:id="@+id/rb_smss_na"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="N/A"
+                android:checked="true"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_smss_yes"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="1 — Yes"
+                android:textColor="#333333" />
+
+            <RadioButton
+                android:id="@+id/rb_smss_no"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="12dp"
+                android:text="0 — No"
+                android:textColor="#333333" />
+        </RadioGroup>
+
+        <!-- ============================================ -->
+        <!--  SECTION H: REMARKS                         -->
+        <!-- ============================================ -->
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="H.  Remarks"
+            android:textStyle="bold"
+            android:textColor="#1565C0"
+            android:textSize="13sp"
+            android:background="#E3F2FD"
+            android:padding="8dp"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="10dp" />
+
+        <EditText
+            android:id="@+id/et_remarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Enter any remarks or additional notes here..."
+            android:inputType="textMultiLine"
+            android:minLines="3"
+            android:gravity="top"
+            android:layout_marginBottom="8dp" />
+
+    </LinearLayout>
+</ScrollView>

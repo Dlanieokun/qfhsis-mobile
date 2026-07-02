@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="utf-8"?>
+<com.google.android.material.card.MaterialCardView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginHorizontal="12dp"
+    android:layout_marginVertical="6dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="2dp"
+    app:strokeWidth="1dp"
+    app:strokeColor="#E0E0E0">
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:padding="16dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:layout_toStartOf="@id/btnItemEdit"
+            android:layout_alignParentStart="true">
+
+            <!-- Household Head Name -->
+            <TextView
+                android:id="@+id/tvItemHeadName"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Household Head Name"
+                android:textSize="16sp"
+                android:textStyle="bold"
+                android:textColor="#1A237E"
+                android:layout_marginBottom="4dp"/>
+
+            <!-- Water Source Category Label -->
+            <TextView
+                android:id="@+id/tvItemWaterType"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Water: Level III"
+                android:textSize="14sp"
+                android:textColor="#424242"
+                android:layout_marginBottom="2dp"/>
+
+            <!-- Sanitation Facility Category Label -->
+            <TextView
+                android:id="@+id/tvItemSanitationStatus"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Sanitation: Sanitary Toilet"
+                android:textSize="14sp"
+                android:textColor="#424242"
+                android:layout_marginBottom="2dp"/>
+
+            <!-- Remarks -->
+            <TextView
+                android:id="@+id/tvItemRemarks"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Remarks: None"
+                android:textSize="13sp"
+                android:textColor="#757575"
+                android:maxLines="1"
+                android:ellipsize="end"
+                android:layout_marginBottom="6dp"/>
+
+            <!-- Compliance Metric Status Badge -->
+            <TextView
+                android:id="@+id/tvItemStatusBadge"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="COMPLIANT"
+                android:textSize="12sp"
+                android:textStyle="bold"
+                android:background="#F5F5F5"
+                android:paddingHorizontal="8dp"
+                android:paddingVertical="2dp"/>
+
+        </LinearLayout>
+
+        <!-- Contextual Action Trigger Item Modify Button -->
+        <ImageButton
+            android:id="@+id/btnItemEdit"
+            android:layout_width="40dp"
+            android:layout_height="40dp"
+            android:layout_alignParentEnd="true"
+            android:layout_centerInParent="true"
+            android:background="?attr/selectableItemBackgroundBorderless"
+            android:src="@android:drawable/ic_menu_edit"
+            app:tint="#1A237E"
+            android:contentDescription="Edit Entry" />
+
+    </RelativeLayout>
+</com.google.android.material.card.MaterialCardView>

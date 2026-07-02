@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#F5F5F5">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Environmental Health &amp; Sanitation Form"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:textColor="#212121"
+            android:layout_marginBottom="16dp"/>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="General Information"
+                    android:textStyle="bold"
+                    android:textColor="#1565C0"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Household Head Name"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etHouseholdHeadName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Section 1 – Water Supply"
+                    android:textStyle="bold"
+                    android:textColor="#1565C0"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Water Source Type"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <RadioGroup
+                    android:id="@+id/rgWaterSourceType"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:layout_marginBottom="8dp">
+                    <RadioButton android:id="@+id/rbLevelI" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Level I (Point Source)"/>
+                    <RadioButton android:id="@+id/rbLevelII" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Level II (Communal Faucet System)"/>
+                    <RadioButton android:id="@+id/rbLevelIII" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Level III (Waterworks System)"/>
+                    <RadioButton android:id="@+id/rbWaterOthers" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Others"/>
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Specify Other Water Source"
+                    android:layout_marginBottom="12dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etWaterSourceOthers"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="text"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Water Source Located Inside Dwelling?" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgWaterLocatedInside" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbWaterInsideYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbWaterInsideNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+                </RadioGroup>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Water Available for at least 12 Hours?" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgWaterAvailable12Hours" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbWater12HoursYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbWater12HoursNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Microbiological Test Date"
+                    android:layout_marginBottom="12dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etMicrobiologicalTestDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:clickable="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Microbiological Test Result" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgMicrobiologicalResult" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbMicrobiologicalPos" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Positive" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbMicrobiologicalNeg" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Negative"/>
+                </RadioGroup>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Water Safety Plan Operational?" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgWaterSafetyPlan" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <RadioButton android:id="@+id/rbWaterSafetyPlanYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbWaterSafetyPlanNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+                </RadioGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Section 2 – Sanitation"
+                    android:textStyle="bold"
+                    android:textColor="#1565C0"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Sanitation Status" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgSanitationStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbSanitaryToilet" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Functional Sanitary Toilet Facility"/>
+                    <RadioButton android:id="@+id/rbUnsanitaryToilet" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unsanitary Toilet Facility"/>
+                    <RadioButton android:id="@+id/rbNoToilet" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No Toilet Facility (Open Defecation)"/>
+                </RadioGroup>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="If Unsanitary, Type Code" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgUnsanitaryToilet" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="vertical" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbUnsanitary0" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Code 0 - Open Pit"/>
+                    <RadioButton android:id="@+id/rbUnsanitary1" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Code 1 - Drop / Overhung"/>
+                    <RadioButton android:id="@+id/rbUnsanitary2" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Code 2 - Box on Water"/>
+                    <RadioButton android:id="@+id/rbUnsanitary3" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Code 3 - Others"/>
+                </RadioGroup>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Toilet Shared with Other Households?" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgToiletShared" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbToiletSharedYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbToiletSharedNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+                </RadioGroup>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Basic Sanitation Facility?" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgBasicSanitationFacility" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbBasicFacilityYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbBasicFacilityNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Excreta Disposal / Desludging Date"
+                    android:layout_marginBottom="12dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDisposalDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:clickable="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Excreta Safe Disposal Treatment" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+                <CheckBox android:id="@+id/cbDisposalInSitu" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Disposed In-Situ (On-site treatment)"/>
+                <CheckBox android:id="@+id/cbDisposalOffSiteDesludged" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Emptied and Treatment Off-Site (Desludged)"/>
+                <CheckBox android:id="@+id/cbDisposalOffSiteSewer" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Connected to Sewage Treatment Network Sewer" android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Safely Managed Sanitation Service?" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgSafelyManagedSanitation" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <RadioButton android:id="@+id/rbSafelyManagedSanitationYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbSafelyManagedSanitationNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+                </RadioGroup>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <com.google.android.material.card.MaterialCardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Global Indicators and Compliance"
+                    android:textStyle="bold"
+                    android:textColor="#1565C0"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Safely Managed Drinking Water Service?" android:textStyle="bold"/>
+                <RadioGroup android:id="@+id/rgSafelyManagedDrinkingWater" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    <RadioButton android:id="@+id/rbSafelyManagedDrinkingWaterYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:layout_marginEnd="16dp"/>
+                    <RadioButton android:id="@+id/rbSafelyManagedDrinkingWaterNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+                </RadioGroup>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Remarks / Notes"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etRemarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:minLines="2"/>
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:weightSum="2">
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnClear"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Clear"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:textColor="#E53935"
+                app:strokeColor="#E53935"
+                android:layout_marginEnd="8dp"/>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSave"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="Save Record"
+                android:backgroundTint="#1565C0"
+                android:textColor="#FFFFFF"
+                android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

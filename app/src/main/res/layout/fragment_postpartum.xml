@@ -1,0 +1,485 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#F8F9FA"
+    tools:context=".maternal_care_record.PostpartumFragment">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Postpartum Care Log"
+            android:textColor="#1F2937"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <TextView
+            android:id="@+id/tvPostpartumPatientHeader"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Patient Record"
+            android:textColor="#6B7280"
+            android:textSize="13sp"
+            android:layout_marginBottom="16dp"/>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Postpartum Visits Scheduling &amp; Clinical Indicators"
+                    android:textColor="#7C3AED"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="1. Visit within 24 Hours after Delivery *"
+                    android:textColor="#1F2937"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <EditText
+                    android:id="@+id/etPostpartumVisit24h"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:hint="Date of Visit (MM/DD/YY)"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="14sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+                    <EditText
+                        android:id="@+id/etPostpartumBpSys24h"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginEnd="4dp"
+                        android:background="@android:drawable/editbox_background"
+                        android:hint="Systolic (mmHg)"
+                        android:inputType="number"
+                        android:paddingHorizontal="12dp"
+                        android:textSize="13sp"/>
+                    <EditText
+                        android:id="@+id/etPostpartumBpDias24h"
+                        android:layout_width="0dp"
+                        android:layout_height="46dp"
+                        android:layout_weight="1"
+                        android:layout_marginStart="4dp"
+                        android:background="@android:drawable/editbox_background"
+                        android:hint="Diastolic (mmHg)"
+                        android:inputType="number"
+                        android:paddingHorizontal="12dp"
+                        android:textSize="13sp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="2. Visit within 1 Week after Delivery"
+                    android:textColor="#1F2937"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <EditText
+                    android:id="@+id/etPostpartumVisit1w"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:hint="Date of Visit (MM/DD/YY)"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="14sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+                    <EditText android:id="@+id/etPostpartumBpSys1w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="Systolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <EditText android:id="@+id/etPostpartumBpDias1w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="Diastolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="3. Visit within 2-4 Weeks after Delivery"
+                    android:textColor="#1F2937"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <EditText
+                    android:id="@+id/etPostpartumVisit2_4w"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:hint="Date of Visit (MM/DD/YY)"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="14sp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp">
+                    <EditText android:id="@+id/etPostpartumBpSys2_4w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="Systolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <EditText android:id="@+id/etPostpartumBpDias2_4w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="Diastolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                </LinearLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="4. Visit within 4-6 Weeks after Delivery"
+                    android:textColor="#1F2937"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+
+                <EditText
+                    android:id="@+id/etPostpartumVisit4_6w"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:hint="Date of Visit (MM/DD/YY)"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="14sp"/>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+                    <EditText android:id="@+id/etPostpartumBpSys4_6w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="Systolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <EditText android:id="@+id/etPostpartumBpDias4_6w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="Diastolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clinical Risks &amp; Referral Records"
+                    android:textColor="#7C3AED"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="5. *With High/Elevated BP?"
+                        android:textColor="#374151"
+                        android:textSize="13sp" />
+                    <RadioGroup
+                        android:id="@+id/rgHighBpGeneral"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbHighBpYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textSize="13sp" android:layout_marginEnd="8dp"/>
+                        <RadioButton android:id="@+id/rbHighBpNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" android:checked="true" android:textSize="13sp"/>
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="6. *With Danger Signs?"
+                        android:textColor="#374151"
+                        android:textSize="13sp" />
+                    <RadioGroup
+                        android:id="@+id/rgDangerSignsGeneral"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbDangerSignsYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textSize="13sp" android:layout_marginEnd="8dp"/>
+                        <RadioButton android:id="@+id/rbDangerSignsNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" android:checked="true" android:textSize="13sp"/>
+                    </RadioGroup>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/layoutDangerSignsChecklist"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical"
+                    android:paddingLeft="16dp"
+                    android:paddingVertical="6dp"
+                    android:background="#FFF5F5"
+                    android:visibility="gone"
+                    android:layout_marginBottom="12dp">
+                    <TextView
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Identify Danger Signs (Select at least 1):"
+                        android:textColor="#DC2626"
+                        android:textStyle="bold"
+                        android:textSize="12sp"
+                        android:layout_marginBottom="4dp"/>
+                    <CheckBox android:id="@+id/cbDsBleeding" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Severe Vaginal Bleeding" android:textSize="12sp"/>
+                    <CheckBox android:id="@+id/cbDsVision" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Severe Headache / Blurring of Vision" android:textSize="12sp"/>
+                    <CheckBox android:id="@+id/cbDsAbdominal" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Severe Abdominal Pain" android:textSize="12sp"/>
+                    <CheckBox android:id="@+id/cbDsFever" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="High Fever / Foul-smelling Discharge" android:textSize="12sp"/>
+                    <CheckBox android:id="@+id/cbDsBreathing" android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Difficult / Fast Breathing" android:textSize="12sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="7. Identified with High BP/ Danger Signs and referred?"
+                        android:textColor="#374151"
+                        android:textSize="13sp" />
+                    <RadioGroup
+                        android:id="@+id/rgReferredGeneral"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbReferredYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textSize="13sp" android:layout_marginEnd="8dp"/>
+                        <RadioButton android:id="@+id/rbReferredNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" android:checked="true" android:textSize="13sp"/>
+                    </RadioGroup>
+                </LinearLayout>
+
+                <EditText
+                    android:id="@+id/etReferralDateGeneral"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:hint="Referral Date d: (mm/dd/yy)"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:paddingHorizontal="12dp"
+                    android:visibility="gone"
+                    android:textSize="13sp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Patient Postpartum Status Classification"
+                    android:textColor="#374151"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+                <Spinner
+                    android:id="@+id/spinnerPostpartumClassification"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@android:drawable/btn_dropdown"
+                    android:spinnerMode="dropdown"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Classification Tracking / Action Date d:"
+                    android:textColor="#374151"
+                    android:textSize="12sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="4dp"/>
+                <EditText
+                    android:id="@+id/etClassificationDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="@android:drawable/editbox_background"
+                    android:hint="Select Date (MM/DD/YY)"
+                    android:focusable="false"
+                    android:clickable="true"
+                    android:paddingHorizontal="12dp"
+                    android:layout_marginBottom="6dp"
+                    android:textSize="13sp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="16dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Supplements &amp; Breastfeeding Records"
+                    android:textColor="#7C3AED"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Iron with Folic Acid Supplementation"
+                    android:textColor="#1F2937"
+                    android:textSize="13sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <EditText android:id="@+id/etIronTabs1st" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="1st Visit (#)" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <EditText android:id="@+id/etIronDate1st" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1.2" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="1st Visit Date d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="8dp">
+                    <EditText android:id="@+id/etIronTabs2nd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="2nd Visit (#)" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <EditText android:id="@+id/etIronDate2nd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1.2" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="2nd Visit Date d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="16dp">
+                    <EditText android:id="@+id/etIronTabs3rd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="3rd Visit (#)" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <EditText android:id="@+id/etIronDate3rd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1.2" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="3rd Visit Date d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Completed IFA supplementation?"
+                        android:textColor="#374151"
+                        android:textSize="13sp" />
+                    <RadioGroup
+                        android:id="@+id/rgCompletedIfa"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbIfaYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textSize="13sp" android:layout_marginEnd="8dp"/>
+                        <RadioButton android:id="@+id/rbIfaNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" android:checked="true" android:textSize="13sp"/>
+                    </RadioGroup>
+                </LinearLayout>
+
+                <EditText android:id="@+id/etIfaCompletionDate" android:layout_width="match_parent" android:layout_height="46dp" android:background="@android:drawable/editbox_background" android:hint="Date Completed d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:visibility="gone" android:layout_marginBottom="16dp" android:textSize="13sp"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="6dp">
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="Completed 200,000 I.U. Vitamin A?"
+                        android:textColor="#374151"
+                        android:textSize="13sp" />
+                    <RadioGroup
+                        android:id="@+id/rgCompletedVitA"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:orientation="horizontal">
+                        <RadioButton android:id="@+id/rbVitAYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes" android:textSize="13sp" android:layout_marginEnd="8dp"/>
+                        <RadioButton android:id="@+id/rbVitANo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" android:checked="true" android:textSize="13sp"/>
+                    </RadioGroup>
+                </LinearLayout>
+
+                <EditText android:id="@+id/etVitACompletionDate" android:layout_width="match_parent" android:layout_height="46dp" android:background="@android:drawable/editbox_background" android:hint="Date Completed d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:visibility="gone" android:layout_marginBottom="16dp" android:textSize="13sp"/>
+
+                <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Exclusive Breastfeeding" android:textColor="#374151" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+                <EditText android:id="@+id/etPostpartumBreastfeedingDate" android:layout_width="match_parent" android:layout_height="48dp" android:background="@android:drawable/editbox_background" android:hint="Date Initiated d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="14sp"/>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnSubmitPostpartum"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:backgroundTint="#7C3AED"
+            android:text="Save Postpartum Record"
+            android:textAllCaps="false"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            app:cornerRadius="8dp" />
+
+    </LinearLayout>
+</ScrollView>

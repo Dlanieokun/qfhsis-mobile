@@ -1,0 +1,295 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:background="#FAFAFA">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Patient Information"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="12dp"/>
+
+        <com.google.android.material.textfield.TextInputLayout
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="8dp"
+            android:hint="Full Name">
+            <AutoCompleteTextView
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName" />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="8dp">
+
+            <EditText
+                android:id="@+id/etAge"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:hint="Age"
+                android:inputType="number" />
+
+            <RadioGroup
+                android:id="@+id/rgSex"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="horizontal"
+                android:layout_gravity="center_vertical"
+                android:layout_marginStart="8dp">
+                <RadioButton android:id="@+id/rbMale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="M"/>
+                <RadioButton android:id="@+id/rbFemale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="F"/>
+            </RadioGroup>
+        </LinearLayout>
+
+        <Spinner
+            android:id="@+id/spinnerCivilStatus"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:minHeight="48dp"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Address"
+            android:inputType="textPostalAddress"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etBirthdate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Birthdate"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etBirthPlace"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Birthplace"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etContactNo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Contact Number"
+            android:inputType="phone"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etPhilhealthNo"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="PhilHealth No."
+            android:layout_marginBottom="8dp"/>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="16dp">
+            <EditText android:id="@+id/etWeight" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Weight (kg)" android:inputType="numberDecimal"/>
+            <EditText android:id="@+id/etBloodPressure" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="BP (mmHg)" android:layout_marginStart="8dp"/>
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="History of Exposure"
+            android:textSize="18sp"
+            android:textStyle="bold"
+            android:textColor="#333333"
+            android:layout_marginBottom="12dp"/>
+
+        <EditText
+            android:id="@+id/etDateOfBite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Date of Bite/Exposure"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etTimeOfBite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Time of Bite/Exposure"
+            android:focusable="false"
+            android:clickable="true"
+            android:layout_marginBottom="8dp"/>
+
+        <EditText
+            android:id="@+id/etPlaceOfBite"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Place of Bite (Barangay/City)"
+            android:layout_marginBottom="16dp"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Nature of Injury"
+            android:textStyle="bold"
+            android:layout_marginBottom="4dp"/>
+
+        <CheckBox android:id="@+id/cbInjuryScratch" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Scratch/Abrasion without blood"/>
+        <CheckBox android:id="@+id/cbInjuryAbrasion" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Abrasion with blood"/>
+        <CheckBox android:id="@+id/cbInjuryLaceration" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Laceration/Puncture"/>
+        <CheckBox android:id="@+id/cbInjuryPunctured" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Punctured Bite"/>
+        <CheckBox android:id="@+id/cbInjuryAvulsed" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Avulsed Bite"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp">
+            <CheckBox android:id="@+id/cbInjuryOthers" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Others:"/>
+            <EditText android:id="@+id/etInjuryOthersSpecify" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Specify nature of exposure"/>
+        </LinearLayout>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Wound Status Assessment" android:textStyle="bold"/>
+        <RadioGroup android:id="@+id/rgWoundStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+            <RadioButton android:id="@+id/rbWoundBleeding" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bleeding"/>
+            <RadioButton android:id="@+id/rbWoundNonBleeding" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Non-Bleeding"/>
+        </RadioGroup>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Wound Washing Treatment" android:textStyle="bold"/>
+        <RadioGroup android:id="@+id/rgWoundWashing" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+            <RadioButton android:id="@+id/rbWashingDone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Done"/>
+            <RadioButton android:id="@+id/rbWashingNotDone" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Not done"/>
+        </RadioGroup>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Biting Animal Classification" android:textStyle="bold"/>
+        <RadioGroup android:id="@+id/rgBitingAnimal" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbAnimalDog" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Dog"/>
+            <RadioButton android:id="@+id/rbAnimalCat" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Cat"/>
+            <RadioButton android:id="@+id/rbAnimalOthers" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Others"/>
+        </RadioGroup>
+        <EditText android:id="@+id/etBitingAnimalOthersSpecify" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Specify alternative animal profile" android:layout_marginBottom="8dp"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Animal Ownership Status" android:textStyle="bold"/>
+        <RadioGroup android:id="@+id/rgOwnershipStatus" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+            <RadioButton android:id="@+id/rbOwnerPet" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Owned/Pet"/>
+            <RadioButton android:id="@+id/rbOwnerStray" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Stray"/>
+        </RadioGroup>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Animal Status at Time of Bite" android:textStyle="bold"/>
+        <RadioGroup android:id="@+id/rgAnimalStatusAtBite" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+            <RadioButton android:id="@+id/rbStatusBiteAlive" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Alive"/>
+            <RadioButton android:id="@+id/rbStatusBiteWeak" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Weak"/>
+            <RadioButton android:id="@+id/rbStatusBiteLost" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Lost"/>
+        </RadioGroup>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Animal Status at Consult" android:textStyle="bold"/>
+        <RadioGroup android:id="@+id/rgAnimalStatusAtConsult" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbStatusConsultAlive" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Alive"/>
+            <RadioButton android:id="@+id/rbStatusConsultKilled" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Killed"/>
+            <RadioButton android:id="@+id/rbStatusConsultDied" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Died"/>
+        </RadioGroup>
+        <EditText android:id="@+id/etAnimalDiedDate" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="If Died, input targeted timeline date" android:focusable="false" android:clickable="true" android:layout_marginBottom="8dp"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Animal Anti-Rabies Vaccination History" android:textStyle="bold"/>
+        <RadioGroup android:id="@+id/rgAnimalVaccination" android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbVaccineYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Yes"/>
+            <RadioButton android:id="@+id/rbVaccineNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No"/>
+            <RadioButton android:id="@+id/rbVaccineUnknown" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Unknown"/>
+        </RadioGroup>
+        <EditText android:id="@+id/etAnimalVaccinationDate" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Vaccination target records date" android:focusable="false" android:clickable="true" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Patient Condition Factors Checklist" android:textSize="16sp" android:textStyle="bold" android:layout_marginBottom="8dp"/>
+        <CheckBox android:id="@+id/cbConditionEpilepsy" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Epilepsy History Profile"/>
+        <CheckBox android:id="@+id/cbConditionDm" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Diabetes Mellitus"/>
+        <CheckBox android:id="@+id/cbConditionHypertension" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Hypertension Management"/>
+        <CheckBox android:id="@+id/cbConditionAsthma" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Bronchial Asthma Attacks"/>
+        <CheckBox android:id="@+id/cbConditionAlcoholic" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Chronic Alcoholic Intake Status"/>
+        <CheckBox android:id="@+id/cbConditionEggAllergy" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Severe Allergy to Eggs/Protein" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Post-Exposure Prophylaxis: PVRV" android:textSize="18sp" android:textStyle="bold" android:textColor="#333333" android:layout_marginBottom="12dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPvrvDay0Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 0 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPvrvDay0Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 0 Batch/Lot #"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPvrvDay3Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 3 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPvrvDay3Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 3 Batch/Lot #"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPvrvDay7Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 7 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPvrvDay7Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 7 Batch/Lot #"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPvrvDay28Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 28 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPvrvDay28Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 28 Batch/Lot #"/>
+        </LinearLayout>
+        <EditText android:id="@+id/etPvrvOutcome" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Treatment Outcome Result Remarks" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Post-Exposure Prophylaxis: PCEV" android:textSize="18sp" android:textStyle="bold" android:textColor="#333333" android:layout_marginBottom="12dp"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPcevDay0Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 0 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPcevDay0Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 0 Batch/Lot #"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPcevDay3Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 3 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPcevDay3Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 3 Batch/Lot #"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPcevDay7Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 7 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPcevDay7Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 7 Batch/Lot #"/>
+        </LinearLayout>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
+            <EditText android:id="@+id/etPcevDay28Date" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 28 Date" android:focusable="false" android:clickable="true"/>
+            <EditText android:id="@+id/etPcevDay28Batch" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="Day 28 Batch/Lot #"/>
+        </LinearLayout>
+        <EditText android:id="@+id/etPcevOutcome" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Treatment Outcome Result Remarks" android:layout_marginBottom="16dp"/>
+
+        <TextView android:layout_width="match_parent" android:layout_height="wrap_content" android:text="Additional Medical / Passive Immunization" android:textStyle="bold" android:layout_marginBottom="4dp"/>
+        <EditText android:id="@+id/etErig" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="ERIG Dose &amp; Batch Lot Details"/>
+        <EditText android:id="@+id/etHrig" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="HRIG Dose &amp; Batch Lot Details"/>
+        <EditText android:id="@+id/etTetanusToxoidDate" android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Tetanus Toxoid Vaccine Date" android:focusable="false" android:clickable="true"/>
+        <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="8dp">
+            <EditText android:id="@+id/etAtsDose" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="ATS Dose Given"/>
+            <EditText android:id="@+id/etAtsDate" android:layout_width="0dp" android:layout_height="wrap_content" android:layout_weight="1" android:hint="ATS Date Administrated" android:focusable="false" android:clickable="true"/>
+        </LinearLayout>
+
+        <EditText
+            android:id="@+id/etImpression"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Clinical Impression Notes"
+            android:inputType="textLongMessage"
+            android:gravity="top|start"
+            android:minLines="3"
+            android:layout_marginBottom="24dp"/>
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="54dp"
+            android:backgroundTint="#2E7D32"
+            android:textColor="#FFFFFF"
+            android:textSize="16sp"
+            android:textStyle="bold"
+            android:text="Save Record" />
+
+    </LinearLayout>
+</ScrollView>

@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.cardview.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:layout_marginBottom="8dp"
+    app:cardCornerRadius="8dp"
+    app:cardElevation="1dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:padding="10dp"
+        android:gravity="center_vertical">
+
+        <!-- Month Label -->
+        <TextView
+            android:id="@+id/tvMonthLabel"
+            android:layout_width="65dp"
+            android:layout_height="wrap_content"
+            android:text="Jan"
+            android:textColor="#1F2937"
+            android:textSize="15sp"
+            android:textStyle="bold" />
+
+        <!-- Double Input Split Fields (Upper & Lower Space concept) -->
+        <LinearLayout
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:orientation="vertical">
+
+            <!-- Upper Space: Scheduled Next Visit -->
+            <EditText
+                android:id="@+id/etScheduledDate"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:hint="Scheduled Date"
+                android:focusable="false"
+                android:clickable="true"
+                android:textSize="12sp"
+                android:background="@android:drawable/editbox_background_normal"
+                android:paddingHorizontal="8dp"
+                android:layout_marginBottom="4dp"/>
+
+            <!-- Lower Space: Actual Date of Visit -->
+            <EditText
+                android:id="@+id/etActualDate"
+                android:layout_width="match_parent"
+                android:layout_height="38dp"
+                android:hint="Actual Date of Visit"
+                android:focusable="false"
+                android:clickable="true"
+                android:textSize="12sp"
+                android:background="@android:drawable/editbox_background_normal"
+                android:paddingHorizontal="8dp"/>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.cardview.widget.CardView>

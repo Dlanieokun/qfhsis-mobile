@@ -1,0 +1,366 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:fillViewport="true"
+    android:padding="16dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:id="@+id/tvFormTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Leprosy Registry Form"
+            android:textSize="20sp"
+            android:textStyle="bold"
+            android:gravity="center"
+            android:layout_marginBottom="16dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Registration (mm/dd/yy)"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etDateOfRegistration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Date of Registration (Click to select)"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilName"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="20dp"
+            android:hint="Name (LastName, FirstName, MI)"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+            <AutoCompleteTextView
+                android:id="@+id/etName"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:inputType="textPersonName"
+                android:completionThreshold="1" />
+
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Complete Address"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etAddress"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:cursorVisible="false"
+            android:hint="Complete Address" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Birth (mm/dd/yy)"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etDateOfBirth"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Date of Birth (Click to select)"
+            android:focusable="false"
+            android:focusableInTouchMode="false"
+            android:clickable="false"
+            android:cursorVisible="false" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Age"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etAge"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Age"
+            android:inputType="number" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Age Group"
+            android:textStyle="bold" />
+        <Spinner
+            android:id="@+id/spinnerAgeGroup"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Sex"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgSex"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbMale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="Male" />
+            <RadioButton android:id="@+id/rbFemale" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Female" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Confirmed Case Status"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgConfirmedCase"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbConfirmedCaseYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="Yes" />
+            <RadioButton android:id="@+id/rbConfirmedCaseNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Diagnosis"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etDateOfDiagnosis"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Date of Diagnosis"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Case History"
+            android:textStyle="bold" />
+        <Spinner
+            android:id="@+id/spinnerCaseHistory"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Previous Facility (If Transfer-In)"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etPreviousFacility"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Previous Facility" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Clinical Classification"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgClinicalClassification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbClassificationPb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="PB" />
+            <RadioButton android:id="@+id/rbClassificationMb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MB" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Treatment Start Date"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etTreatmentStartDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Treatment Start Date"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Months Treated Prior"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etMonthsTreatedPrior"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Months Treated Prior"
+            android:inputType="number" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Reclassified"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgReclassified"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbReclassifiedYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="Yes" />
+            <RadioButton android:id="@+id/rbReclassifiedNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date of Reclassification"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etDateOfReclassification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Date of Reclassification"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Updated Classification"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgUpdatedClassification"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbUpdatedClassificationPb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="PB" />
+            <RadioButton android:id="@+id/rbUpdatedClassificationMb" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="MB" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Treatment Outcome / Status"
+            android:textStyle="bold" />
+        <Spinner
+            android:id="@+id/spinnerTreatmentOutcome"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Completed Fixed MDT"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgCompletedFixedMdt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbCompletedFixedMdtYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="Yes" />
+            <RadioButton android:id="@+id/rbCompletedFixedMdtNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date Completed Fixed MDT"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etFixedMdtCompletedDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Date Completed Fixed MDT"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Beyond Fixed MDT Treatment?"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgBeyondFixedMdt"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbBeyondFixedMdtYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="Yes" />
+            <RadioButton android:id="@+id/rbBeyondFixedMdtNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Date Completed Beyond MDT"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etBeyondFixedMdtCompletedDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:hint="Date Completed Beyond MDT"
+            android:focusable="false"
+            android:clickable="true" />
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="With Grade 2 Disability?"
+            android:textStyle="bold" />
+        <RadioGroup
+            android:id="@+id/rgGrade2Disability"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            android:orientation="horizontal">
+            <RadioButton android:id="@+id/rbGrade2DisabilityYes" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginEnd="24dp" android:text="Yes" />
+            <RadioButton android:id="@+id/rbGrade2DisabilityNo" android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="No" />
+        </RadioGroup>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Remarks"
+            android:textStyle="bold" />
+        <EditText
+            android:id="@+id/etRemarks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="24dp"
+            android:hint="Remarks" />
+
+        <Button
+            android:id="@+id/btnSave"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Record" />
+
+    </LinearLayout>
+</ScrollView>
