@@ -34,4 +34,16 @@ public interface SoilTransmittedHelminthiasisDao {
 
     @Query("SELECT * FROM sth_registry_records WHERE name LIKE :searchQuery OR familySerialNumber LIKE :searchQuery ORDER BY id DESC")
     List<SoilTransmittedHelminthiasisRegistryRecord> searchRecords(String searchQuery);
+
+    @Query("SELECT * FROM sth_registry_records WHERE isSynced = 0")
+    List<SoilTransmittedHelminthiasisRegistryRecord> getUnsyncedRecords();
+
+    @Query("UPDATE sth_registry_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
+    @Query("SELECT * FROM sth_registry_records WHERE newInsert = 1")
+    List<SoilTransmittedHelminthiasisRegistryRecord> getNewInsertRecords();
+
+    @Query("UPDATE sth_registry_records SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Integer> ids);
 }

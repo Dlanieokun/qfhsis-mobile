@@ -13,6 +13,9 @@ public class MaternalCareRecord {
     @SerializedName("profileId")
     public int profileId;
 
+    @SerializedName("userId")
+    public long userId;
+
     @SerializedName("registrationDate")
     public String registrationDate;
 
@@ -55,6 +58,16 @@ public class MaternalCareRecord {
 
     @SerializedName("bmiStatus")
     public String bmiStatus;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    public long updatedAt = System.currentTimeMillis();
 
     public MaternalCareRecord() {}
 }

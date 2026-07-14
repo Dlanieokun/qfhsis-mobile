@@ -38,4 +38,10 @@ public interface ChildImmunizationDao {
     // Search query example to find records matching a child's name
     @Query("SELECT * FROM child_immunization_records WHERE childName LIKE :searchName")
     List<ChildImmunizationRecord> findRecordsByChildName(String searchName);
+
+    @Query("SELECT * FROM child_immunization_records WHERE isSynced = 0")
+    List<ChildImmunizationRecord> getUnsyncedRecords();
+
+    @Query("UPDATE child_immunization_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Long> ids);
 }

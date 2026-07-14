@@ -1,6 +1,8 @@
 package com.android.hfsis.idpcs.schistosomiasis;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -42,6 +44,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
     private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     private long currentRecordId = 0;
+    private String currentProfileId = null;
 
     // TextInputLayout containers for handling startIcon clicks
     private TextInputLayout tilDateOfRegistration, tilDateOfBirth, tilDateScreened,
@@ -127,8 +130,8 @@ public class SchistosomiasisRegistryFragment extends Fragment {
         if (getArguments() != null && getArguments().containsKey("EDIT_RECORD_ID")) {
             long recordId = getArguments().getLong("EDIT_RECORD_ID");
             loadRecordForEditing(recordId);
-        }else {
-            // Automatically set the current date for a new maternal record
+        } else {
+            // Automatically set the current date for a new record
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             etDateOfRegistration.setText(sdf.format(new Date()));
         }
@@ -235,6 +238,10 @@ public class SchistosomiasisRegistryFragment extends Fragment {
             HouseholdProfile profile = dbHelper.householdProfileDao().getProfileByCalculatedName(fullCalculatedName);
             if (profile != null && isAdded()) {
                 requireActivity().runOnUiThread(() -> {
+
+                    // Assign Profile ID here
+                    currentProfileId = String.valueOf(profile.id);
+
                     StringBuilder fullAddress = new StringBuilder();
                     if (profile.sitio != null && !profile.sitio.trim().isEmpty()) {
                         fullAddress.append(profile.sitio.trim());
@@ -400,6 +407,10 @@ public class SchistosomiasisRegistryFragment extends Fragment {
         btnSave.setOnClickListener(v -> {
             if (validateForm()) {
                 SchistosomiasisRegistryRecord record = buildRecordFromForm();
+                String PREFS_NAME = "AppPrefs";
+                SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                int userId = prefs.getInt("user_id", -1);
+                record.setUserId(userId);
                 saveToDatabase(record);
             }
         });
@@ -490,6 +501,10 @@ public class SchistosomiasisRegistryFragment extends Fragment {
     private SchistosomiasisRegistryRecord buildRecordFromForm() {
         SchistosomiasisRegistryRecord record = new SchistosomiasisRegistryRecord();
         record.setId(currentRecordId);
+
+        // Saving the profile ID here
+        record.setProfileId(currentProfileId);
+
         record.setDateOfRegistration(etDateOfRegistration.getText().toString().trim());
         record.setFamilySerialNumber(etFamilySerialNumber.getText().toString().trim());
         record.setName(etName.getText().toString().trim());
@@ -590,6 +605,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
     public void populateFormForEditing(SchistosomiasisRegistryRecord record) {
         if (record == null) return;
         this.currentRecordId = record.getId();
+        this.currentProfileId = record.getProfileId(); // Set the ID here
 
         etDateOfRegistration.setText(record.getDateOfRegistration());
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
@@ -707,6 +723,8 @@ public class SchistosomiasisRegistryFragment extends Fragment {
 
     private void resetForm() {
         currentRecordId = 0;
+        currentProfileId = null; // Clear ID here
+
         etDateOfRegistration.setText("");
         etFamilySerialNumber.setText("");
         etName.setText("");

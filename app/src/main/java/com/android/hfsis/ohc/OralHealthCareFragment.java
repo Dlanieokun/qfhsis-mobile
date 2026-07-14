@@ -1,6 +1,8 @@
 package com.android.hfsis.ohc;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -501,6 +503,11 @@ public class OralHealthCareFragment extends Fragment {
         if (entryId != -1) {
             entry.id = entryId;
         }
+
+        String PREFS_NAME = "AppPrefs";
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int userId = prefs.getInt("user_id", -1);
+        entry.userId = userId;
 
         entry.profileId = selectedProfileId; // Save tracking profile ID to entry
         entry.dateOfVisit  = getText(etDateOfVisit);

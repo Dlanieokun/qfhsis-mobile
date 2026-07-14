@@ -1,6 +1,8 @@
 package com.android.hfsis.idpcs.sthpc;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -37,7 +39,7 @@ import java.util.concurrent.Executors;
 public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
 
     private static final String ARG_RECORD_ID = "record_id";
-    private static final String DATE_PATTERN = "MM/dd/yy";
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
 
     private EditText etDateOfRegistration, etFamilySerialNumber, etAddress, etDateOfBirth, etAge, etDateOfScreening, etDateOfResult, etTreatmentDateGiven, etJanuaryMdaDate, etJulyMdaDate, etRemarks;
     private TextInputLayout tilDateOfRegistration, tilDateOfBirth, tilDateOfScreening, tilDateOfResult, tilTreatmentDateGiven, tilJanuaryMdaDate, tilJulyMdaDate;
@@ -95,10 +97,9 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
 
         if (recordId != -1) {
             loadRecordData(recordId);
-        }else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            etDateOfRegistration.setText(sdf.format(new Date()));
+        } else {
+            // Automatically set the current date for a new registry record
+            etDateOfRegistration.setText(dateFormat.format(new Date()));
         }
     }
 
@@ -179,7 +180,7 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
             HouseholdProfile profile = dbHelper.householdProfileDao().getProfileByCalculatedName(fullCalculatedName);
             if (profile != null && isAdded()) {
                 requireActivity().runOnUiThread(() -> {
-                    selectedProfileId = profile.id;
+                    selectedProfileId = profile.id; // Profile ID saved
 
                     StringBuilder fullAddress = new StringBuilder();
                     if (profile.sitio != null && !profile.sitio.trim().isEmpty()) {
@@ -211,12 +212,12 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
 
                     if (!TextUtils.isEmpty(profile.dob)) {
                         try {
-                            String[] dobParts = profile.dob.split("/");
+                            // Parse YYYY-MM-DD
+                            String[] dobParts = profile.dob.split("-");
                             if (dobParts.length == 3) {
-                                int month = Integer.parseInt(dobParts[0]) - 1;
-                                int day = Integer.parseInt(dobParts[1]);
-                                int year = Integer.parseInt(dobParts[2]);
-                                if (year < 100) year += 2000;
+                                int year = Integer.parseInt(dobParts[0]);
+                                int month = Integer.parseInt(dobParts[1]) - 1; // Calendar month is 0-indexed
+                                int day = Integer.parseInt(dobParts[2]);
 
                                 Calendar dobCal = Calendar.getInstance();
                                 dobCal.set(year, month, day);
@@ -384,6 +385,12 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
         btnSave.setOnClickListener(v -> {
             if (validateForm()) {
                 SoilTransmittedHelminthiasisRegistryRecord record = (existingRecord != null) ? existingRecord : new SoilTransmittedHelminthiasisRegistryRecord();
+
+                String PREFS_NAME = "AppPrefs";
+                SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                int userId = prefs.getInt("user_id", -1);
+                record.setUserId(userId);
+
                 populateRecordFromForm(record);
                 saveRecordToDatabase(record);
             }
@@ -391,13 +398,14 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
     }
 
     private boolean isValidDateFormat(String date) {
-        return date.matches("(0[1-9]|1[0-2])/(0[1-9]|[12][0-9]|3[01])/\\d{2}");
+        // Enforce YYYY-MM-DD
+        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
     }
 
     private boolean validateForm() {
         String regDate = etDateOfRegistration.getText().toString().trim();
         if (TextUtils.isEmpty(regDate)) return toastError("Please select the date of registration");
-        if (!isValidDateFormat(regDate)) { etDateOfRegistration.setError("Required format is MM/dd/yy"); etDateOfRegistration.requestFocus(); return false; }
+        if (!isValidDateFormat(regDate)) { etDateOfRegistration.setError("Required format is YYYY-MM-DD"); etDateOfRegistration.requestFocus(); return false; }
 
         if (TextUtils.isEmpty(etFamilySerialNumber.getText())) { etFamilySerialNumber.setError("Required"); return false; }
         if (TextUtils.isEmpty(etName.getText())) { etName.setError("Required"); return false; }
@@ -406,26 +414,26 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
 
         String dobDate = etDateOfBirth.getText().toString().trim();
         if (TextUtils.isEmpty(dobDate)) return toastError("Please select date of birth");
-        if (!isValidDateFormat(dobDate)) { etDateOfBirth.setError("Required format is MM/dd/yy"); etDateOfBirth.requestFocus(); return false; }
+        if (!isValidDateFormat(dobDate)) { etDateOfBirth.setError("Required format is YYYY-MM-DD"); etDateOfBirth.requestFocus(); return false; }
 
         if (TextUtils.isEmpty(etAge.getText())) { etAge.setError("Required"); return false; }
         if (rgSex.getCheckedRadioButtonId() == -1) return toastError("Please select sex");
         if (rgScreened.getCheckedRadioButtonId() == -1) return toastError("Please indicate screening confirmation status");
 
         String screeningDate = etDateOfScreening.getText().toString().trim();
-        if (!screeningDate.isEmpty() && !isValidDateFormat(screeningDate)) { etDateOfScreening.setError("Invalid format (MM/dd/yy)"); etDateOfScreening.requestFocus(); return false; }
+        if (!screeningDate.isEmpty() && !isValidDateFormat(screeningDate)) { etDateOfScreening.setError("Invalid format (YYYY-MM-DD)"); etDateOfScreening.requestFocus(); return false; }
 
         String resultDate = etDateOfResult.getText().toString().trim();
-        if (!resultDate.isEmpty() && !isValidDateFormat(resultDate)) { etDateOfResult.setError("Invalid format (MM/dd/yy)"); etDateOfResult.requestFocus(); return false; }
+        if (!resultDate.isEmpty() && !isValidDateFormat(resultDate)) { etDateOfResult.setError("Invalid format (YYYY-MM-DD)"); etDateOfResult.requestFocus(); return false; }
 
         String treatmentDate = etTreatmentDateGiven.getText().toString().trim();
-        if (!treatmentDate.isEmpty() && !isValidDateFormat(treatmentDate)) { etTreatmentDateGiven.setError("Invalid format (MM/dd/yy)"); etTreatmentDateGiven.requestFocus(); return false; }
+        if (!treatmentDate.isEmpty() && !isValidDateFormat(treatmentDate)) { etTreatmentDateGiven.setError("Invalid format (YYYY-MM-DD)"); etTreatmentDateGiven.requestFocus(); return false; }
 
         String janMdaDate = etJanuaryMdaDate.getText().toString().trim();
-        if (!janMdaDate.isEmpty() && !isValidDateFormat(janMdaDate)) { etJanuaryMdaDate.setError("Invalid format (MM/dd/yy)"); etJanuaryMdaDate.requestFocus(); return false; }
+        if (!janMdaDate.isEmpty() && !isValidDateFormat(janMdaDate)) { etJanuaryMdaDate.setError("Invalid format (YYYY-MM-DD)"); etJanuaryMdaDate.requestFocus(); return false; }
 
         String julMdaDate = etJulyMdaDate.getText().toString().trim();
-        if (!julMdaDate.isEmpty() && !isValidDateFormat(julMdaDate)) { etJulyMdaDate.setError("Invalid format (MM/dd/yy)"); etJulyMdaDate.requestFocus(); return false; }
+        if (!julMdaDate.isEmpty() && !isValidDateFormat(julMdaDate)) { etJulyMdaDate.setError("Invalid format (YYYY-MM-DD)"); etJulyMdaDate.requestFocus(); return false; }
 
         return true;
     }
@@ -436,6 +444,8 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
     }
 
     private void populateRecordFromForm(SoilTransmittedHelminthiasisRegistryRecord record) {
+        // Ensure profile ID is mapped
+        record.setProfileId(selectedProfileId);
         record.setDateOfRegistration(etDateOfRegistration.getText().toString());
         record.setFamilySerialNumber(etFamilySerialNumber.getText().toString().trim());
         record.setName(etName.getText().toString().trim());
@@ -503,6 +513,9 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
     }
 
     private void setupUIWithRecord(SoilTransmittedHelminthiasisRegistryRecord record) {
+        // Load Profile ID from record
+        selectedProfileId = record.getProfileId();
+
         etDateOfRegistration.setText(record.getDateOfRegistration());
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
         etName.setText(record.getName(), false);
@@ -597,7 +610,8 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 3 || s.length() == 6) {
+                // Remove intuitive hyphens when backspacing
+                if (s.length() == 5 || s.length() == 8) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -607,12 +621,13 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
             StringBuilder formatted = new StringBuilder();
 
             int len = digits.length();
-            if (len > 6) len = 6;
+            if (len > 8) len = 8; // YYYYMMDD is 8 digits
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
-                    formatted.append("/");
+                // Add hyphens after the 4th (YYYY) and 6th (YYYY-MM) digits
+                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                    formatted.append("-");
                 }
             }
 

@@ -9,7 +9,13 @@ public class SoilTransmittedHelminthiasisRegistryRecord {
 
     @PrimaryKey(autoGenerate = true)
     @SerializedName("id")
-    private int id = 0; // 0 represents a new record in Room
+    private int id = 0;
+
+    @SerializedName("userId")
+    private int userId = 0;
+
+    @SerializedName("profile_id")
+    private int profileId = 0;
 
     @SerializedName("date_of_registration")
     private String dateOfRegistration;
@@ -75,6 +81,16 @@ public class SoilTransmittedHelminthiasisRegistryRecord {
     @SerializedName("remarks")
     private String remarks;
 
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     public SoilTransmittedHelminthiasisRegistryRecord() {
     }
 
@@ -85,6 +101,22 @@ public class SoilTransmittedHelminthiasisRegistryRecord {
 
     public void setId(int id) {
         this.id = id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
+    }
+
+    public int getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
     }
 
     public String getDateOfRegistration() {
@@ -247,10 +279,36 @@ public class SoilTransmittedHelminthiasisRegistryRecord {
         this.remarks = remarks;
     }
 
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.isSynced = synced;
+    }
+
+    public boolean isNewInsert() {
+        return newInsert;
+    }
+
+    public void setNewInsert(boolean newInsert) {
+        this.newInsert = newInsert;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         return "SoilTransmittedHelminthiasisRegistryRecord{" +
                 "id=" + id +
+                ", userId=" + userId +
+                ", profileId=" + profileId +
                 ", dateOfRegistration='" + dateOfRegistration + '\'' +
                 ", familySerialNumber='" + familySerialNumber + '\'' +
                 ", name='" + name + '\'' +

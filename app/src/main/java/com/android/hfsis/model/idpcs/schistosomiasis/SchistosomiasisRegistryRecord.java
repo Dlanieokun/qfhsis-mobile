@@ -11,9 +11,16 @@ import java.util.List;
 
 @Entity(tableName = "schistosomiasis_registry")
 @TypeConverters({SchistosomiasisTypeConverters.class})
-public class SchistosomiasisRegistryRecord {@PrimaryKey(autoGenerate = true)
-@SerializedName("id")
-private long id;
+public class SchistosomiasisRegistryRecord {
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
+    private long id;
+
+    @SerializedName("userId")
+    private long userId;
+
+    @SerializedName("profile_id")
+    private String profileId;
 
     @SerializedName("date_of_registration")
     private String dateOfRegistration;
@@ -123,6 +130,16 @@ private long id;
     @SerializedName("remarks")
     private String remarks;
 
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     public SchistosomiasisRegistryRecord() {
     }
 
@@ -132,6 +149,22 @@ private long id;
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    public String getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(String profileId) {
+        this.profileId = profileId;
     }
 
     public String getDateOfRegistration() {
@@ -422,10 +455,36 @@ private long id;
         this.remarks = remarks;
     }
 
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.isSynced = synced;
+    }
+
+    public boolean isNewInsert() {
+        return newInsert;
+    }
+
+    public void setNewInsert(boolean newInsert) {
+        this.newInsert = newInsert;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         return "SchistosomiasisRegistryRecord{" +
                 "id=" + id +
+                ", userId=" + userId +
+                ", profileId='" + profileId + '\'' +
                 ", dateOfRegistration='" + dateOfRegistration + '\'' +
                 ", familySerialNumber='" + familySerialNumber + '\'' +
                 ", name='" + name + '\'' +

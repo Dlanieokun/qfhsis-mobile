@@ -69,4 +69,14 @@ public class Prenatal8AncEntity {
     public String classificationStatus;
     @SerializedName("classificationDate")
     public String classificationDate;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    public long updatedAt = System.currentTimeMillis();
 }

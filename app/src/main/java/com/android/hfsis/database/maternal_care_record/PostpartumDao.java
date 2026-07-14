@@ -25,4 +25,16 @@ public interface PostpartumDao {
 
     @Query("SELECT * FROM postpartum_records WHERE maternalRecordId = :maternalId LIMIT 1")
     PostpartumEntity getByMaternalId(int maternalId);
+
+    @Query("SELECT * FROM postpartum_records WHERE isSynced = 0")
+    List<PostpartumEntity> getUnsyncedRecords();
+
+    @Query("UPDATE postpartum_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
+    @Query("SELECT * FROM postpartum_records WHERE newInsert = 1")
+    List<PostpartumEntity> getNewInsertRecords();
+
+    @Query("UPDATE postpartum_records SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Integer> ids);
 }

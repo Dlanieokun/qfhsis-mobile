@@ -25,4 +25,16 @@ public interface Prenatal8AncDao {
     // Queries a single record entry row based on the parent Maternal Care Log ID matching
     @Query("SELECT * FROM prenatal_8anc_records WHERE maternalRecordId = :maternalId LIMIT 1")
     Prenatal8AncEntity getRecordByMaternalId(int maternalId);
+
+    @Query("SELECT * FROM prenatal_8anc_records WHERE isSynced = 0")
+    List<Prenatal8AncEntity> getUnsyncedRecords();
+
+    @Query("UPDATE prenatal_8anc_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
+    @Query("SELECT * FROM prenatal_8anc_records WHERE newInsert = 1")
+    List<Prenatal8AncEntity> getNewInsertRecords();
+
+    @Query("UPDATE prenatal_8anc_records SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Integer> ids);
 }

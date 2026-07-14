@@ -1,6 +1,8 @@
 package com.android.hfsis.geriatric;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -43,6 +45,7 @@ public class GeriatricScreeningFragment extends Fragment {
     private static final String DATE_PATTERN = "yyyy-MM-dd"; // Updated from MM/dd/yyyy to ISO YYYY-MM-DD
 
     private long existingRecordId = -1;
+    private int selectedProfileId = 0; // ---> ADDED VARIABLE TO TRACK PROFILE ID
     private DatabaseHelper database;
 
     // Client/Admin Information Views
@@ -97,7 +100,7 @@ public class GeriatricScreeningFragment extends Fragment {
 
         if (existingRecordId != -1) {
             loadExistingRecord();
-        }else {
+        } else {
             // Automatically set the current date for a new maternal record
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             etDateOfScreening.setText(sdf.format(new Date()));
@@ -158,6 +161,18 @@ public class GeriatricScreeningFragment extends Fragment {
             String selectedName = (String) parent.getItemAtPosition(position);
             autoPopulateFromProfile(selectedName);
         });
+
+        // ---> Wipes profile matching reference link constraint if user clears input manually
+        etName.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    selectedProfileId = 0;
+                }
+            }
+        });
     }
 
     private void autoPopulateFromProfile(String fullCalculatedName) {
@@ -165,6 +180,9 @@ public class GeriatricScreeningFragment extends Fragment {
             HouseholdProfile profile = database.householdProfileDao().getProfileByCalculatedName(fullCalculatedName);
             if (profile != null && isAdded()) {
                 requireActivity().runOnUiThread(() -> {
+
+                    // ---> CAPTURE PROFILE ID <---
+                    selectedProfileId = profile.id;
 
                     StringBuilder fullAddress = new StringBuilder();
                     if (profile.sitio != null && !profile.sitio.trim().isEmpty()) {
@@ -289,6 +307,9 @@ public class GeriatricScreeningFragment extends Fragment {
     }
 
     private void populateForm(GeriatricScreeningRecord record) {
+        // ---> LOAD PROFILE ID <---
+        selectedProfileId = record.getProfileId();
+
         etDateOfScreening.setText(record.getDateOfScreening());
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
         etName.setText(record.getName(), false);
@@ -339,6 +360,15 @@ public class GeriatricScreeningFragment extends Fragment {
             }
 
             if (record != null) {
+                String PREFS_NAME = "AppPrefs";
+                SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                int userId = prefs.getInt("user_id", -1);
+
+                record.setUserId(userId);
+
+                // ---> SET PROFILE ID ON RECORD <---
+                record.setProfileId(selectedProfileId);
+
                 record.setDateOfScreening(etDateOfScreening.getText().toString().trim());
                 record.setFamilySerialNumber(etFamilySerialNumber.getText().toString().trim());
                 record.setName(etName.getText().toString().trim());

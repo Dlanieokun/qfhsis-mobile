@@ -31,4 +31,16 @@ public interface EnvironmentalHealthDao {
 
     @Query("SELECT * FROM environmental_health_records ORDER BY householdHeadName ASC")
     List<EnvironmentalHealthModel> getAll();
+
+    @Query("SELECT * FROM environmental_health_records WHERE isSynced = 0")
+    List<EnvironmentalHealthModel> getUnsyncedRecords();
+
+    @Query("UPDATE environmental_health_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Long> ids);
+
+    @Query("SELECT * FROM environmental_health_records WHERE newInsert = 1")
+    List<EnvironmentalHealthModel> getNewInsertRecords();
+
+    @Query("UPDATE environmental_health_records SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Long> ids);
 }

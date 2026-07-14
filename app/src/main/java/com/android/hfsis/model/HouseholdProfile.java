@@ -44,6 +44,12 @@ public class HouseholdProfile {
     public String education;
     public String religion;
 
+    // --- Sync Tracking ---
+    public boolean isSynced = false;
+
+    public boolean newInsert = true;
+    public long updatedAt = System.currentTimeMillis();
+
     // Public empty constructor required by Room
     public HouseholdProfile() {}
 }

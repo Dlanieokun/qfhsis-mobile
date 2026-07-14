@@ -1,6 +1,8 @@
 package com.android.hfsis.child;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -466,6 +468,11 @@ public class ChildNutritionFragment extends Fragment {
             if (isEditMode) {
                 record.setId(editingRecordId);
             }
+
+            String PREFS_NAME = "AppPrefs";
+            SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            int userId = prefs.getInt("user_id", -1);
+            record.userId = userId;
             record.setProfileId(selectedProfileId);
             record.setDateRegistration(getText(etDateRegistration));
             record.setFamilySerialNumber(getText(etFamilySerialNumber));

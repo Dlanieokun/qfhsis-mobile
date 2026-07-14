@@ -10,6 +10,7 @@ public class ChildNutritionRecord implements Serializable {
     @PrimaryKey(autoGenerate = true)
     private long id;
     private long profileId;
+    public long userId;
 
     // ---------- Section 1: Client Identification ----------
     private String dateRegistration;
@@ -60,6 +61,12 @@ public class ChildNutritionRecord implements Serializable {
 
     // ---------- Section 9: Remarks ----------
     private String remarks;
+
+    // --- Sync Tracking ---
+    private boolean isSynced = false;
+
+    private boolean newInsert = true;
+    private long updatedAt = System.currentTimeMillis();
 
     // Required Constructor
     public ChildNutritionRecord() {}
@@ -227,4 +234,13 @@ public class ChildNutritionRecord implements Serializable {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public boolean isSynced() { return isSynced; }
+    public void setSynced(boolean synced) { this.isSynced = synced; }
+
+    public boolean isNewInsert() { return newInsert; }
+    public void setNewInsert(boolean newInsert) { this.newInsert = newInsert; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

@@ -30,4 +30,14 @@ public class PrenatalImmunizationEntity {
 
     @SerializedName("td5Date")
     public String td5Date;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    public long updatedAt = System.currentTimeMillis();
 }

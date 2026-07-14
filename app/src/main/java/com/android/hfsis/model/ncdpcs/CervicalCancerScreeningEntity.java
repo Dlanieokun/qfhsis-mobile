@@ -16,6 +16,10 @@ public class CervicalCancerScreeningEntity {
     @SerializedName("profile_id")
     private int profileId;
 
+    @ColumnInfo(name = "userId")
+    @SerializedName("userId")
+    private int userId;
+
     @ColumnInfo(name = "date_assessment")
     @SerializedName("date_assessment")
     private String dateAssessment;
@@ -76,9 +80,25 @@ public class CervicalCancerScreeningEntity {
     @SerializedName("remarks")
     private String remarks;
 
+    // --- Sync Tracking ---
+    @ColumnInfo(name = "isSynced")
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @ColumnInfo(name = "newInsert")
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @ColumnInfo(name = "updated_at")
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     // Getters and Setters...
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
+
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
 
     public int getProfileId() { return profileId; }
     public void setProfileId(int profileId) { this.profileId = profileId; }
@@ -127,4 +147,13 @@ public class CervicalCancerScreeningEntity {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public boolean isSynced() { return isSynced; }
+    public void setSynced(boolean synced) { this.isSynced = synced; }
+
+    public boolean isNewInsert() { return newInsert; }
+    public void setNewInsert(boolean newInsert) { this.newInsert = newInsert; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

@@ -1,6 +1,8 @@
 package com.android.hfsis;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -383,6 +385,12 @@ public class MaternalCareAndServicesFragment extends Fragment {
             if (isEditMode) {
                 record.id = editRecordId;
             }
+
+
+            String PREFS_NAME = "AppPrefs";
+            SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            int userId = prefs.getInt("user_id", -1);
+            record.userId = userId;
 
             int ageValue = 0;
             try { ageValue = Integer.parseInt(etMaternalAge.getText().toString().trim()); } catch (Exception ignored) {}

@@ -11,10 +11,13 @@ public class OralHealthCareEntity {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
-    // Add the foreign key reference field here
     @SerializedName("profile_id")
     @ColumnInfo(name = "profile_id")
     public int profileId;
+
+    @SerializedName("userId")
+    @ColumnInfo(name = "userId")
+    public int userId;
 
     @SerializedName("date_of_visit")
     @ColumnInfo(name = "date_of_visit")
@@ -130,4 +133,17 @@ public class OralHealthCareEntity {
     public String serviceLocation2nd;
 
     public String remarks;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    @ColumnInfo(name = "isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    @ColumnInfo(name = "newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    @ColumnInfo(name = "updated_at")
+    public long updatedAt = System.currentTimeMillis();
 }

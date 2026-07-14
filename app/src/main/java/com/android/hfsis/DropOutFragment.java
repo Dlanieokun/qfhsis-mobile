@@ -184,7 +184,6 @@ public class DropOutFragment extends Fragment {
             entryModel.reasonCode = selectedReasonCodeToken;
             entryModel.remarks = remarksText;
 
-            // FIX: Use the correct method named in your DropOutDao interface
             db.dropOutDao().insertDropOut(entryModel);
 
             if (getActivity() != null) {

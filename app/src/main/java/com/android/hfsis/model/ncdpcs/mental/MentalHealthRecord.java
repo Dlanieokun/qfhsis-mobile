@@ -15,6 +15,12 @@ public class MentalHealthRecord {
     @SerializedName("recordNo")
     private int recordNo;
 
+    @SerializedName("userId")
+    private int userId;
+
+    @SerializedName("profile_id")
+    private int profileId;
+
     @SerializedName("dateOfAssessment")
     private String dateOfAssessment;
 
@@ -42,6 +48,16 @@ public class MentalHealthRecord {
     @SerializedName("screenedMhgap")
     private boolean screenedMhgap;
 
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     public MentalHealthRecord() {
     }
 
@@ -66,6 +82,14 @@ public class MentalHealthRecord {
 
     public void setRecordNo(int recordNo) {
         this.recordNo = recordNo;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getDateOfAssessment() {
@@ -138,6 +162,38 @@ public class MentalHealthRecord {
 
     public void setScreenedMhgap(boolean screenedMhgap) {
         this.screenedMhgap = screenedMhgap;
+    }
+
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.isSynced = synced;
+    }
+
+    public boolean isNewInsert() {
+        return newInsert;
+    }
+
+    public void setNewInsert(boolean newInsert) {
+        this.newInsert = newInsert;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
+    public int getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
     }
 
     @Override

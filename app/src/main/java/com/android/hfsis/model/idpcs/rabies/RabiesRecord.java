@@ -46,9 +46,16 @@ import com.google.gson.annotations.SerializedName;
  * erig, hrig, tetanusToxoidDate, atsDose, atsDate, impression
  */
 @Entity(tableName = "rabies_records")
-public class RabiesRecord {@PrimaryKey(autoGenerate = true)
-@SerializedName("id")
-private long id;
+public class RabiesRecord {
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
+    private long id;
+
+    @SerializedName("userId")
+    private long userId;
+
+    @SerializedName("profile_id")
+    private long profileId;
 
     @SerializedName("name")
     private String name;
@@ -233,6 +240,16 @@ private long id;
     @SerializedName("impression")
     private String impression;
 
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     public RabiesRecord() {
     }
 
@@ -242,6 +259,23 @@ private long id;
 
     public void setId(long id) {
         this.id = id;
+    }
+
+    public long getUserId() {
+        return userId;
+    }
+
+    public void setUserId(long userId) {
+        this.userId = userId;
+    }
+
+    // ---> ADDED GETTER AND SETTER FOR PROFILE ID <---
+    public long getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(long profileId) {
+        this.profileId = profileId;
     }
 
     public String getName() {
@@ -732,10 +766,35 @@ private long id;
         this.impression = impression;
     }
 
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.isSynced = synced;
+    }
+
+    public boolean isNewInsert() {
+        return newInsert;
+    }
+
+    public void setNewInsert(boolean newInsert) {
+        this.newInsert = newInsert;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
+    }
+
     @Override
     public String toString() {
         return "RabiesRecord{" +
                 "id=" + id +
+                ", profileId=" + profileId +
                 ", name='" + name + '\'' +
                 ", age=" + age +
                 ", sex='" + sex + '\'' +

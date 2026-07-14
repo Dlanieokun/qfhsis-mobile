@@ -236,6 +236,22 @@
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
+                    android:text="Method Used"
+                    android:textColor="#4B5563"
+                    android:textStyle="bold"
+                    android:textSize="12sp" />
+
+                <Spinner
+                    android:id="@+id/spinnerClientMethodUsed"
+                    android:layout_width="match_parent"
+                    android:layout_height="48dp"
+                    android:layout_marginTop="4dp"
+                    android:background="@drawable/bg_input_field"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
                     android:text="Commodity Source"
                     android:textColor="#4B5563"
                     android:textStyle="bold"

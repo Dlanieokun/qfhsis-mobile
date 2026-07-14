@@ -16,8 +16,14 @@ public class GeriatricScreeningRecord {
     @SerializedName("record_no")
     private int recordNo;
 
+    @SerializedName("profile_id")
+    private int profileId;
+
     @SerializedName("date_of_screening")
     private String dateOfScreening;
+
+    @SerializedName("userId")
+    private int userId;
 
     @SerializedName("family_serial_number")
     private String familySerialNumber;
@@ -55,6 +61,16 @@ public class GeriatricScreeningRecord {
     @SerializedName("remarks")
     private String remarks;
 
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     // Getters and Setters
     public int getRecordNo() {
         return recordNo;
@@ -62,6 +78,23 @@ public class GeriatricScreeningRecord {
 
     public void setRecordNo(int recordNo) {
         this.recordNo = recordNo;
+    }
+
+    // ---> ADDED GETTER AND SETTER FOR PROFILE ID <---
+    public int getProfileId() {
+        return profileId;
+    }
+
+    public void setProfileId(int profileId) {
+        this.profileId = profileId;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public String getDateOfScreening() {
@@ -166,5 +199,29 @@ public class GeriatricScreeningRecord {
 
     public void setRemarks(String remarks) {
         this.remarks = remarks;
+    }
+
+    public boolean isSynced() {
+        return isSynced;
+    }
+
+    public void setSynced(boolean synced) {
+        this.isSynced = synced;
+    }
+
+    public boolean isNewInsert() {
+        return newInsert;
+    }
+
+    public void setNewInsert(boolean newInsert) {
+        this.newInsert = newInsert;
+    }
+
+    public long getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public void setUpdatedAt(long updatedAt) {
+        this.updatedAt = updatedAt;
     }
 }

@@ -2,8 +2,12 @@ package com.android.hfsis.idpcs.rabies;
 
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
 import android.text.TextUtils;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -121,6 +125,7 @@ public class RabiesFragment extends Fragment {
     private final SimpleDateFormat timeFormat = new SimpleDateFormat(TIME_PATTERN, Locale.US);
 
     private long currentRecordId = 0;
+    private long selectedProfileId = -1; // ---> ADDED VARIABLE TO TRACK PROFILE ID
     private DatabaseHelper database;
 
     public RabiesFragment() {
@@ -254,6 +259,18 @@ public class RabiesFragment extends Fragment {
             String selectedName = (String) parent.getItemAtPosition(position);
             autoPopulateFromProfile(selectedName);
         });
+
+        // Wipes profile matching reference link constraint if the user clears input manually
+        etName.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 0) {
+                    selectedProfileId = -1;
+                }
+            }
+        });
     }
 
     private void autoPopulateFromProfile(String fullCalculatedName) {
@@ -261,6 +278,10 @@ public class RabiesFragment extends Fragment {
             HouseholdProfile profile = database.householdProfileDao().getProfileByCalculatedName(fullCalculatedName);
             if (profile != null && isAdded()) {
                 requireActivity().runOnUiThread(() -> {
+
+                    // ---> CAPTURE PROFILE ID <---
+                    selectedProfileId = profile.id;
+
                     StringBuilder fullAddress = new StringBuilder();
                     if (profile.sitio != null && !profile.sitio.trim().isEmpty()) {
                         fullAddress.append(profile.sitio.trim());
@@ -373,6 +394,10 @@ public class RabiesFragment extends Fragment {
                 return;
             }
             RabiesRecord record = compileRecord();
+            String PREFS_NAME = "AppPrefs";
+            SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            int userId = prefs.getInt("user_id", -1);
+            record.setUserId(userId);
             onRecordSaved(record);
         });
     }
@@ -383,6 +408,9 @@ public class RabiesFragment extends Fragment {
         if (currentRecordId > 0) {
             record.setId(currentRecordId); // Retain ID for DB update mapping
         }
+
+        // ---> SET PROFILE ID ON RECORD <---
+        record.setProfileId(selectedProfileId);
 
         record.setName(etName.getText().toString().trim());
 
@@ -511,6 +539,9 @@ public class RabiesFragment extends Fragment {
     }
 
     private void populateUiFromRecord(RabiesRecord record) {
+        // ---> LOAD PROFILE ID <---
+        selectedProfileId = record.getProfileId();
+
         etName.setText(record.getName(), false);
         etAge.setText(String.valueOf(record.getAge())); // Converted int to String correctly
 

@@ -1,6 +1,8 @@
 package com.android.hfsis.ncdpcs.mental;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -114,7 +116,7 @@ public class MentalHealthFragment extends Fragment {
         // If an ID was supplied, load data from the DB to populate fields for editing
         if (existingRecordId != -1) {
             loadExistingRecord(existingRecordId);
-        }else {
+        } else {
             // Automatically set the current date for a new maternal record
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             etDateOfAssessment.setText(sdf.format(new Date()));
@@ -345,6 +347,9 @@ public class MentalHealthFragment extends Fragment {
     }
 
     private void populateForm(MentalHealthRecord record) {
+        // ---> LOAD PROFILE ID <---
+        selectedProfileId = record.getProfileId();
+
         etDateOfAssessment.setText(record.getDateOfAssessment());
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
         etName.setText(record.getName(), false); // Dropdown format protection parameter insertion
@@ -373,6 +378,10 @@ public class MentalHealthFragment extends Fragment {
         btnSave.setOnClickListener(v -> {
             if (validateForm()) {
                 MentalHealthRecord record = buildRecordFromForm();
+                String PREFS_NAME = "AppPrefs";
+                SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                int userId = prefs.getInt("user_id", -1);
+                record.setUserId(userId);
                 saveRecordToDatabase(record);
             }
         });
@@ -417,6 +426,9 @@ public class MentalHealthFragment extends Fragment {
         if (existingRecordId != -1) {
             record.setRecordNo((int) existingRecordId);
         }
+
+        // ---> SET PROFILE ID ON THE RECORD <---
+        record.setProfileId(selectedProfileId);
 
         record.setDateOfAssessment(etDateOfAssessment.getText().toString());
         record.setFamilySerialNumber(etFamilySerialNumber.getText().toString().trim());
@@ -484,7 +496,7 @@ public class MentalHealthFragment extends Fragment {
         rgSex.clearCheck();
         switchMhgap.setChecked(false);
         existingRecordId = -1;
-        selectedProfileId = 0;
+        selectedProfileId = 0; // ---> Variable is correctly reset here
         btnSave.setText("Save Record");
     }
 

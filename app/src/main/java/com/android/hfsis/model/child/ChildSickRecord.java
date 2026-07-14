@@ -9,6 +9,9 @@ public class ChildSickRecord {
     @PrimaryKey(autoGenerate = true)
     private long id;
 
+    private int userId;
+    private long profileId;
+
     // Section 1 — Basic Information
     private String dateRegistration;
     private String familySerialNumber;
@@ -41,6 +44,12 @@ public class ChildSickRecord {
     // Section 4 — Remarks
     private String remarks;
 
+    // --- Sync Tracking ---
+    private boolean isSynced = false;
+
+    private boolean newInsert = true;
+    private long updatedAt = System.currentTimeMillis();
+
     // Public empty constructor required by Room
     public ChildSickRecord() {}
 
@@ -48,6 +57,13 @@ public class ChildSickRecord {
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
+
+    public int getUserId() { return userId; }
+    public void setUserId(int userId) { this.userId = userId; }
+
+    // ---> ADDED GETTER AND SETTER FOR PROFILE ID <---
+    public long getProfileId() { return profileId; }
+    public void setProfileId(long profileId) { this.profileId = profileId; }
 
     public String getDateRegistration() { return dateRegistration; }
     public void setDateRegistration(String dateRegistration) { this.dateRegistration = dateRegistration; }
@@ -117,4 +133,13 @@ public class ChildSickRecord {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public boolean isSynced() { return isSynced; }
+    public void setSynced(boolean synced) { this.isSynced = synced; }
+
+    public boolean isNewInsert() { return newInsert; }
+    public void setNewInsert(boolean newInsert) { this.newInsert = newInsert; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

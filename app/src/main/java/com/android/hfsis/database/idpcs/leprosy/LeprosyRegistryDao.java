@@ -31,4 +31,16 @@ public interface LeprosyRegistryDao {
 
     @Query("SELECT * FROM leprosy_registry ORDER BY id DESC")
     List<LeprosyRegistryRecord> getAll();
+
+    @Query("SELECT * FROM leprosy_registry WHERE isSynced = 0")
+    List<LeprosyRegistryRecord> getUnsyncedRecords();
+
+    @Query("UPDATE leprosy_registry SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Long> ids);
+
+    @Query("SELECT * FROM leprosy_registry WHERE newInsert = 1")
+    List<LeprosyRegistryRecord> getNewInsertRecords();
+
+    @Query("UPDATE leprosy_registry SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Long> ids);
 }

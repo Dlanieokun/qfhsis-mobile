@@ -1,6 +1,8 @@
 package com.android.hfsis.ncdpcs.phil;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -409,6 +411,10 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
         btnSubmit.setOnClickListener(v -> {
             if (validateForm()) {
                 PhilPENAssessmentEntity entity = collectFormData();
+                String PREFS_NAME = "AppPrefs";
+                SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                int userId = prefs.getInt("user_id", -1);
+                entity.userId = userId;
                 onAssessmentSubmitted(entity);
             }
         });

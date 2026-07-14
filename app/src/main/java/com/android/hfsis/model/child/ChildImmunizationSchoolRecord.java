@@ -12,6 +12,8 @@ public class ChildImmunizationSchoolRecord {
     // Link back to the original selected Household Profile
     private long profileId = -1;
 
+    public long userId;
+
     // Demographics Tracking
     private String registrationDate;
     private String familySerialNumber;
@@ -36,6 +38,12 @@ public class ChildImmunizationSchoolRecord {
     private String hpvCompletedDate;
 
     private String remarks;
+
+    // --- Sync Tracking ---
+    private boolean isSynced = false;
+
+    private boolean newInsert = true;
+    private long updatedAt = System.currentTimeMillis();
 
     // Public empty constructor required by Room
     public ChildImmunizationSchoolRecord() {}
@@ -94,4 +102,13 @@ public class ChildImmunizationSchoolRecord {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public boolean isSynced() { return isSynced; }
+    public void setSynced(boolean synced) { this.isSynced = synced; }
+
+    public boolean isNewInsert() { return newInsert; }
+    public void setNewInsert(boolean newInsert) { this.newInsert = newInsert; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

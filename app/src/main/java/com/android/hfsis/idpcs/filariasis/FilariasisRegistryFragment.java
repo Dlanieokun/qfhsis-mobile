@@ -1,6 +1,8 @@
 package com.android.hfsis.idpcs.filariasis;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -104,7 +106,7 @@ public class FilariasisRegistryFragment extends Fragment {
 
         if (currentRecordId != -1) {
             loadRecordData();
-        }else {
+        } else {
             // Automatically set the current date for a new maternal record
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             etDateOfRegistration.setText(sdf.format(new Date()));
@@ -405,6 +407,9 @@ public class FilariasisRegistryFragment extends Fragment {
 
     @SuppressWarnings("unchecked")
     private void populateUIElements(FilariasisRegistryRecord record) {
+        // ---> LOAD PROFILE ID <---
+        selectedProfileId = record.getProfileId();
+
         etDateOfRegistration.setText(record.getDateOfRegistration());
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
 
@@ -457,6 +462,14 @@ public class FilariasisRegistryFragment extends Fragment {
 
         FilariasisRegistryRecord record = new FilariasisRegistryRecord();
         if (currentRecordId != -1) record.setId(currentRecordId);
+        String PREFS_NAME = "AppPrefs";
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int userId = prefs.getInt("user_id", -1);
+
+        record.setUserId(userId);
+
+        // ---> SET PROFILE ID ON RECORD <---
+        record.setProfileId(selectedProfileId);
 
         record.setDateOfRegistration(etDateOfRegistration.getText().toString().trim());
         record.setFamilySerialNumber(etFamilySerialNumber.getText().toString().trim());

@@ -1,6 +1,8 @@
 package com.android.hfsis.ncdpcs.cancer;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
@@ -284,6 +286,10 @@ public class CervicalCancerScreeningFragment extends Fragment {
         btnSubmit.setOnClickListener(v -> {
             if (validateForm()) {
                 CervicalCancerScreeningData data = collectFormData();
+                String PREFS_NAME = "AppPrefs";
+                SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                int userId = prefs.getInt("user_id", -1);
+                data.userId = userId;
                 onScreeningSubmitted(data);
             }
         });
@@ -479,6 +485,7 @@ public class CervicalCancerScreeningFragment extends Fragment {
 
     public static class CervicalCancerScreeningData {
         public long id;
+        public int userId;
         public int profileId; // Added to map ID
         public String dateAssessment, familySerial, name, address, dateOfBirth, age;
         public int cervicalScreeningDone, cervicalResult, cervicalLinkedToCare;

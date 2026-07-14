@@ -3,6 +3,7 @@ package com.android.hfsis.model.ncdpcs;
 public class CervicalCancerScreeningData {
     public long id;
     public int profileId;
+    public int userId;
     public String dateAssessment;
     public String familySerial;
     public String name;

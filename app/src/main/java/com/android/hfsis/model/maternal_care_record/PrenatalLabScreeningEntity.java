@@ -63,4 +63,14 @@ public class PrenatalLabScreeningEntity {
 
     @SerializedName("syphilisTreatment")
     public String syphilisTreatment;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    public long updatedAt = System.currentTimeMillis();
 }

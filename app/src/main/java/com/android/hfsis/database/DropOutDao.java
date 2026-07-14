@@ -21,4 +21,16 @@ public interface DropOutDao {
 
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long insertDropOut(DropOutEntity dropOut);
+
+    @Query("SELECT * FROM family_planning_drop_outs WHERE isSynced = 0")
+    List<DropOutEntity> getUnsyncedRecords();
+
+    @Query("UPDATE family_planning_drop_outs SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
+    @Query("SELECT * FROM family_planning_drop_outs WHERE newInsert = 1")
+    List<DropOutEntity> getNewInsertRecords();
+
+    @Query("UPDATE family_planning_drop_outs SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Integer> ids);
 }

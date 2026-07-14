@@ -14,6 +14,9 @@ public class EyesScreeningsData {
     @SerializedName("profile_id")
     private int profileId;
 
+    @SerializedName("userId")
+    public int userId;
+
     @SerializedName("date_screening")
     private String dateScreening;
 
@@ -49,6 +52,16 @@ public class EyesScreeningsData {
 
     @SerializedName("remarks")
     private String remarks;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
 
     public EyesScreeningsData() {}
 
@@ -94,4 +107,13 @@ public class EyesScreeningsData {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public boolean isSynced() { return isSynced; }
+    public void setSynced(boolean synced) { this.isSynced = synced; }
+
+    public boolean isNewInsert() { return newInsert; }
+    public void setNewInsert(boolean newInsert) { this.newInsert = newInsert; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

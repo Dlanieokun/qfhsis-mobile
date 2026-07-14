@@ -29,4 +29,16 @@ public interface SchistosomiasisDao {
 
     @Query("SELECT * FROM schistosomiasis_registry ORDER BY id DESC")
     List<SchistosomiasisRegistryRecord> getAll();
+
+    @Query("SELECT * FROM schistosomiasis_registry WHERE isSynced = 0")
+    List<SchistosomiasisRegistryRecord> getUnsyncedRecords();
+
+    @Query("UPDATE schistosomiasis_registry SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Long> ids);
+
+    @Query("SELECT * FROM schistosomiasis_registry WHERE newInsert = 1")
+    List<SchistosomiasisRegistryRecord> getNewInsertRecords();
+
+    @Query("UPDATE schistosomiasis_registry SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Long> ids);
 }

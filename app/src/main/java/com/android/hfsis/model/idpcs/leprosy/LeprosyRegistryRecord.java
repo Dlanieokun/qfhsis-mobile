@@ -6,9 +6,16 @@ import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "leprosy_registry")
-public class LeprosyRegistryRecord {@PrimaryKey(autoGenerate = true)
-@SerializedName("id")
-private long id;
+public class LeprosyRegistryRecord {
+    @PrimaryKey(autoGenerate = true)
+    @SerializedName("id")
+    private long id;
+
+    @SerializedName("userId")
+    private long userId;
+
+    @SerializedName("profile_id")
+    private long profileId;
 
     @SerializedName("date_of_registration")
     private String dateOfRegistration;
@@ -82,10 +89,26 @@ private long id;
     @SerializedName("remarks")
     private String remarks;
 
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     public LeprosyRegistryRecord() {}
 
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
+
+    public long getUserId() { return userId; }
+    public void setUserId(long userId) { this.userId = userId; }
+
+    public long getProfileId() { return profileId; }
+    public void setProfileId(long profileId) { this.profileId = profileId; }
 
     public String getDateOfRegistration() { return dateOfRegistration; }
     public void setDateOfRegistration(String dateOfRegistration) { this.dateOfRegistration = dateOfRegistration; }
@@ -158,4 +181,13 @@ private long id;
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public boolean isSynced() { return isSynced; }
+    public void setSynced(boolean synced) { this.isSynced = synced; }
+
+    public boolean isNewInsert() { return newInsert; }
+    public void setNewInsert(boolean newInsert) { this.newInsert = newInsert; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

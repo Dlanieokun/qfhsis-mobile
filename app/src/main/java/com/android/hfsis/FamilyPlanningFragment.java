@@ -1,6 +1,8 @@
 package com.android.hfsis;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -34,14 +36,14 @@ import java.util.concurrent.Executors;
 public class FamilyPlanningFragment extends Fragment {
 
     private long selectedProfileId = -1;
-    private int existingRecordId = -1; // Track if we are editing an existing entry
+    private int existingRecordId = -1;
     private boolean isEditMode = false;
 
     private EditText spinnerRegDate;
     private EditText etFamilySerial;
     private AutoCompleteTextView etFullName;
     private EditText etAddress, etAge, etBirthDate;
-    private Spinner spinnerAgeGroup, spinnerClientType, spinnerSource, spinnerPrevMethod;
+    private Spinner spinnerAgeGroup, spinnerClientType, spinnerSource, spinnerPrevMethod, spinnerClientMethodUsed;
     private Button btnSubmitFP;
     private ScrollView fpScrollView;
     private LinearLayout fpContainer;
@@ -71,6 +73,7 @@ public class FamilyPlanningFragment extends Fragment {
 
         spinnerAgeGroup = view.findViewById(R.id.spinnerAgeGroup);
         spinnerClientType = view.findViewById(R.id.spinnerClientType);
+        spinnerClientMethodUsed = view.findViewById(R.id.spinnerClientMethodUsed);
         spinnerSource = view.findViewById(R.id.spinnerSource);
         spinnerPrevMethod = view.findViewById(R.id.spinnerPrevMethod);
         btnSubmitFP = view.findViewById(R.id.btnSubmitFP);
@@ -102,13 +105,17 @@ public class FamilyPlanningFragment extends Fragment {
         String[] ageGroupOptions = {"A - 10-14 years old", "B - 15-19 years old", "C - 20-49 years old"};
         String[] clientTypeOptions = {"NA = New Acceptors", "BC = Current Users", "OA = Other Acceptors", "CU-CM = Changing Method", "CU-CC = Changing Clinic", "CU-RS = Restarter"};
         String[] sourceOptions = {"Public", "Private"};
-        String[] methodOptions = {"NONE or New Acceptor", "BTL = Bilateral Tubal Ligation", "NSV = No-Scalpel Vasectomy", "CON = Condom", "Pills-POP = Progestin Only Pills", "Pills-COC = Combined Oral Contraceptives", "INJ = DMPA (Injectables)", "IMP-I = Implant (Interval)", "IMP-PP = Implant (Postpartum)", "IUD-I = IUD Interval", "IUD-PP = IUD Postpartum", "NFP-LAM = Lactational Amenorrhea Method", "NFP-BBT = Basal Body Temperature", "NFP-CMM = Cervical Mucus Method", "NFP-SDM = Standard Days Method"};
+        String[] methodOptions = {"NONE", "BTL = Bilateral Tubal Ligation", "NSV = No-Scalpel Vasectomy", "CON = Condom", "Pills-POP = Progestin Only Pills",
+                "Pills-COC = Combined Oral Contraceptives", "INJ = DMPA (Injectables)", "IMP-I = Implant (Interval)", "IMP-PP = Implant (Postpartum)",
+                "IUD-I = IUD Interval", "IUD-PP = IUD Postpartum", "NFP-LAM = Lactational Amenorrhea Method", "NFP-BBT = Basal Body Temperature",
+                "NFP-CMM = Cervical Mucus Method", "NFP-SDM = Standard Days Method"};
 
         if (getContext() != null) {
             spinnerAgeGroup.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, ageGroupOptions));
             spinnerClientType.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, clientTypeOptions));
             spinnerSource.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, sourceOptions));
             spinnerPrevMethod.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, methodOptions));
+            spinnerClientMethodUsed.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, methodOptions));
         }
     }
 
@@ -164,6 +171,7 @@ public class FamilyPlanningFragment extends Fragment {
                         setSpinnerValue(spinnerClientType, record.clientType);
                         setSpinnerValue(spinnerSource, record.commoditySource);
                         setSpinnerValue(spinnerPrevMethod, record.previousMethod);
+                        setSpinnerValue(spinnerClientMethodUsed, record.methodUsed); // FIX: Populates the client method used spinner
                     });
                 }
             }
@@ -301,6 +309,9 @@ public class FamilyPlanningFragment extends Fragment {
         if (isEditMode) {
             record.id = existingRecordId;
         }
+        String PREFS_NAME = "AppPrefs";
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int userId = prefs.getInt("user_id", -1);
 
         record.profileId = selectedProfileId;
         record.registrationDate = registrationDate;
@@ -308,11 +319,13 @@ public class FamilyPlanningFragment extends Fragment {
         record.address = address;
         record.age = ageStr.isEmpty() ? 0 : Integer.parseInt(ageStr);
         record.birthDate = birthDate;
+        record.userId = userId;
 
         if (spinnerAgeGroup.getSelectedItem() != null) record.ageGroupCategory = spinnerAgeGroup.getSelectedItem().toString();
         if (spinnerClientType.getSelectedItem() != null) record.clientType = spinnerClientType.getSelectedItem().toString();
         if (spinnerSource.getSelectedItem() != null) record.commoditySource = spinnerSource.getSelectedItem().toString();
         if (spinnerPrevMethod.getSelectedItem() != null) record.previousMethod = spinnerPrevMethod.getSelectedItem().toString();
+        if (spinnerClientMethodUsed.getSelectedItem() != null) record.methodUsed = spinnerClientMethodUsed.getSelectedItem().toString();
 
         persistFamilyPlanningData(record);
     }
@@ -324,12 +337,11 @@ public class FamilyPlanningFragment extends Fragment {
             DatabaseHelper db = DatabaseHelper.getDatabase(getContext().getApplicationContext());
 
             if (isEditMode) {
-                // Execute Room Update command strategy
                 db.familyPlanningDao().update(record);
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         Toast.makeText(getActivity(), "Record updated successfully", Toast.LENGTH_SHORT).show();
-                        getParentFragmentManager().popBackStack(); // Return back to the list screen
+                        getParentFragmentManager().popBackStack();
                     });
                 }
             } else {
@@ -365,6 +377,7 @@ public class FamilyPlanningFragment extends Fragment {
         spinnerClientType.setSelection(0);
         spinnerSource.setSelection(0);
         spinnerPrevMethod.setSelection(0);
+        spinnerClientMethodUsed.setSelection(0); // FIX: Resets the client method used spinner
 
         if (fpScrollView != null) {
             fpScrollView.smoothScrollTo(0, 0);

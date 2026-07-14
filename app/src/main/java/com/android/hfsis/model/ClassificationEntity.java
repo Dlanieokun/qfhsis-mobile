@@ -62,4 +62,17 @@ public class ClassificationEntity {
     @ColumnInfo(name = "q4_class")
     @SerializedName("q4_class")
     public String q4Class;
+
+    // --- Sync Tracking ---
+    @ColumnInfo(name = "isSynced")
+    @SerializedName("isSynced")
+    public boolean isSynced = false;
+
+    @ColumnInfo(name = "newInsert")
+    @SerializedName("newInsert")
+    public boolean newInsert = true;
+
+    @ColumnInfo(name = "updated_at")
+    @SerializedName("updated_at")
+    public long updatedAt = System.currentTimeMillis();
 }

@@ -1,6 +1,8 @@
 package com.android.hfsis.idpcs.leprosy;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -36,10 +38,11 @@ import java.util.concurrent.Executors;
 
 public class LeprosyRegistryFragment extends Fragment {
 
-    private static final String DATE_PATTERN = "MM/dd/yy";
+    private static final String DATE_PATTERN = "yyyy-MM-dd";
     private static final String ARG_RECORD_ID = "record_id";
 
     private long existingRecordId = -1;
+    private long selectedProfileId = -1;
     private DatabaseHelper database;
 
     private EditText etDateOfRegistration, etAddress, etDateOfBirth, etAge;
@@ -109,7 +112,7 @@ public class LeprosyRegistryFragment extends Fragment {
             tvFormTitle.setText("Update Leprosy Record");
             btnSave.setText("Update Record");
             loadExistingRecord();
-        }else {
+        } else {
             // Automatically set the current date for a new maternal record
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             etDateOfRegistration.setText(sdf.format(new Date()));
@@ -174,6 +177,8 @@ public class LeprosyRegistryFragment extends Fragment {
             HouseholdProfile profile = database.householdProfileDao().getProfileByCalculatedName(fullCalculatedName);
             if (profile != null && isAdded()) {
                 requireActivity().runOnUiThread(() -> {
+                    selectedProfileId = profile.id; // Assign the extracted ID here
+
                     StringBuilder fullAddress = new StringBuilder();
                     if (profile.sitio != null && !profile.sitio.trim().isEmpty()) {
                         fullAddress.append(profile.sitio.trim());
@@ -201,12 +206,12 @@ public class LeprosyRegistryFragment extends Fragment {
                     if (!TextUtils.isEmpty(profile.dob)) {
                         etDateOfBirth.setText(profile.dob);
                         try {
-                            String[] dobParts = profile.dob.split("/");
+                            // Updated split logic to parse YYYY-MM-DD
+                            String[] dobParts = profile.dob.split("-");
                             if (dobParts.length == 3) {
-                                int month = Integer.parseInt(dobParts[0]) - 1;
-                                int day = Integer.parseInt(dobParts[1]);
-                                int year = Integer.parseInt(dobParts[2]);
-                                if (year < 100) year += 2000;
+                                int year = Integer.parseInt(dobParts[0]);
+                                int month = Integer.parseInt(dobParts[1]) - 1;
+                                int day = Integer.parseInt(dobParts[2]);
 
                                 Calendar selectedDob = Calendar.getInstance();
                                 selectedDob.set(year, month, day);
@@ -320,6 +325,11 @@ public class LeprosyRegistryFragment extends Fragment {
         btnSave.setOnClickListener(v -> {
             if (validateForm()) {
                 LeprosyRegistryRecord record = buildRecordFromForm();
+                String PREFS_NAME = "AppPrefs";
+                SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+                int userId = prefs.getInt("user_id", -1);
+                record.setUserId(userId);
+
                 new Thread(() -> {
                     if (existingRecordId > 0) {
                         record.setId(existingRecordId);
@@ -350,6 +360,8 @@ public class LeprosyRegistryFragment extends Fragment {
     }
 
     private void populateForm(LeprosyRegistryRecord record) {
+        selectedProfileId = record.getProfileId(); // Restore the extracted ID here
+
         etDateOfRegistration.setText(record.getDateOfRegistration());
         etName.setText(record.getName());
         etAddress.setText(record.getAddress());
@@ -424,6 +436,8 @@ public class LeprosyRegistryFragment extends Fragment {
 
     private LeprosyRegistryRecord buildRecordFromForm() {
         LeprosyRegistryRecord record = new LeprosyRegistryRecord();
+
+        record.setProfileId(selectedProfileId); // Add the ID into the payload
         record.setDateOfRegistration(etDateOfRegistration.getText().toString());
         record.setName(etName.getText().toString().trim());
         record.setAddress(etAddress.getText().toString().trim());
@@ -478,6 +492,8 @@ public class LeprosyRegistryFragment extends Fragment {
 
     private void resetForm() {
         existingRecordId = -1;
+        selectedProfileId = -1; // Reset the selected ID
+
         tvFormTitle.setText("Leprosy Registry Form");
         etDateOfRegistration.setText("");
         etName.setText("");

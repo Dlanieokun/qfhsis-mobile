@@ -34,4 +34,11 @@ public interface GeriatricScreeningDao {
 
     @Query("SELECT * FROM geriatric_screening_records ORDER BY dateOfScreening DESC")
     List<GeriatricScreeningRecord> getAll();
+
+    @Query("SELECT * FROM geriatric_screening_records WHERE isSynced = 0")
+    List<GeriatricScreeningRecord> getUnsyncedRecords();
+
+    // FIXED: Changed record_no to recordNo to match the Room-generated column name
+    @Query("UPDATE geriatric_screening_records SET isSynced = 1 WHERE recordNo IN (:ids)")
+    void markAsSynced(List<Integer> ids);
 }

@@ -1,6 +1,8 @@
 package com.android.hfsis.vital_satatistics.environmental;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -185,6 +187,11 @@ public class MasterlistEnvironmentalHealthFragment extends Fragment {
         }
 
         record.setHouseholdHeadName(name);
+
+        String PREFS_NAME = "AppPrefs";
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int userId = prefs.getInt("user_id", -1);
+        record.setUserId(userId);
 
         int selectedWaterId = rgWaterSourceType.getCheckedRadioButtonId();
         record.setWaterLevelI(selectedWaterId == R.id.rbLevelI);

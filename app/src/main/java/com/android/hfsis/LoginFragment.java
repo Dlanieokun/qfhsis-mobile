@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -29,10 +30,10 @@ public class LoginFragment extends Fragment {
 
     private static final String PREFS_NAME = "AppPrefs";
     private static final String KEY_API_URL = "api_base_url";
-    private static final String DEFAULT_API_URL = "http://192.168.2.173:3030/";
+    private static final String DEFAULT_API_URL = "http://192.168.10.91:3030/";
 
     public LoginFragment() {
-        // Required empty public constructor
+
     }
 
     @Override
@@ -99,7 +100,7 @@ public class LoginFragment extends Fragment {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container, new HomeFragment())
-                    .commit(); // Note: Removed addToBackStack(null) so pressing back exits the app instead of returning to login
+                    .commit();
         }
     }
 
@@ -165,10 +166,21 @@ public class LoginFragment extends Fragment {
                         editor.putString("user_name", user.getName());
                         editor.putString("user_email", user.getEmail());
                         editor.putString("user_role", user.getRole());
+                        editor.putString("user_status", user.getStatus());
                         editor.putString("user_assigned_facility", user.getAssignedFacility());
-                        editor.putString("user_barangay", user.getBarangay());
+
+                        // barangay / barangay_codes arrive as JSON arrays; join for storage
+                        editor.putString("user_barangay",
+                                user.getBarangay() != null ? TextUtils.join(", ", user.getBarangay()) : "");
+                        editor.putString("user_barangay_codes",
+                                user.getBarangayCodes() != null ? TextUtils.join(", ", user.getBarangayCodes()) : "");
+
                         editor.putString("user_municipality", user.getMunicipality());
                         editor.putString("user_province", user.getProvince());
+                        editor.putString("user_region", user.getRegion());
+                        editor.putString("user_municipality_code", user.getMunicipalityCode());
+                        editor.putString("user_province_code", user.getProvinceCode());
+                        editor.putString("user_region_code", user.getRegionCode());
 
                         // Apply updates asynchronously
                         editor.apply();

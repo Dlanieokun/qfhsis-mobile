@@ -1,5 +1,6 @@
 package com.android.hfsis.model.maternal_care_record;
 
+import androidx.room.ColumnInfo;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 import com.google.gson.annotations.SerializedName;
@@ -132,6 +133,19 @@ public class PrenatalSupplementationEntity {
 
     @SerializedName("cc_completed_date") // Maps flawlessly to your custom table blueprint column!
     public String ccCompletedDate;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    @ColumnInfo(name = "isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    @ColumnInfo(name = "newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    @ColumnInfo(name = "updated_at")
+    public long updatedAt = System.currentTimeMillis();
 
     // Public empty constructor required for Room database engine operations
     public PrenatalSupplementationEntity() {}

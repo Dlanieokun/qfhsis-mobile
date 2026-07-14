@@ -26,10 +26,13 @@ public interface FamilyPlanningDao {
     @Delete
     void delete(FamilyPlanningRecord record);
 
-    @Query("SELECT fpr.* FROM family_planning_records fpr " +
-            "LEFT JOIN family_planning_drop_outs fpdo ON fpr.id = fpdo.recordId " +
-            "WHERE fpdo.recordId IS NULL " +
-            "ORDER BY fpr.id DESC")
+    // FIX: previously LEFT JOINed family_planning_drop_outs and filtered out
+    // any record with a matching drop-out row (WHERE fpdo.recordId IS NULL).
+    // That meant saving a drop-out made the record vanish from this list even
+    // though it was never deleted from family_planning_records. Now it just
+    // returns every record; FamilyPlanningAdapter marks dropped-out ones so
+    // they're still distinguishable in the UI instead of disappearing.
+    @Query("SELECT * FROM family_planning_records ORDER BY id DESC")
     List<FamilyPlanningRecord> getAllRecords();
 
     @Query("SELECT * FROM family_planning_records WHERE id = :recordId LIMIT 1")
@@ -38,11 +41,23 @@ public interface FamilyPlanningDao {
     @Query("SELECT * FROM family_planning_records WHERE familySerialNumber = :serialNumber")
     List<FamilyPlanningRecord> getRecordsBySerialNumber(String serialNumber);
 
+    // FIX: same issue as getAllRecords() above — dropped the LEFT JOIN/WHERE
+    // clause that hid dropped-out clients from search results.
     @Query("SELECT fpr.* FROM family_planning_records fpr " +
             "INNER JOIN household_profiles hp ON fpr.profileId = hp.id " +
-            "LEFT JOIN family_planning_drop_outs fpdo ON fpr.id = fpdo.recordId " +
-            "WHERE fpdo.recordId IS NULL " +
-            "AND (hp.memberLastName || ', ' || hp.memberFirstName || ' ' || COALESCE(hp.memberMiddleName, '')) LIKE :searchQuery " +
+            "WHERE (hp.memberLastName || ', ' || hp.memberFirstName || ' ' || COALESCE(hp.memberMiddleName, '')) LIKE :searchQuery " +
             "ORDER BY fpr.id DESC")
     List<FamilyPlanningRecord> searchRecordsByClientName(String searchQuery);
+
+    @Query("SELECT * FROM family_planning_records WHERE isSynced = 0")
+    List<FamilyPlanningRecord> getUnsyncedRecords();
+
+    @Query("UPDATE family_planning_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
+    @Query("SELECT * FROM family_planning_records WHERE newInsert = 1")
+    List<FamilyPlanningRecord> getNewInsertRecords();
+
+    @Query("UPDATE family_planning_records SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Integer> ids);
 }

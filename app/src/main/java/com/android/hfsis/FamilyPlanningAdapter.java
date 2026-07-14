@@ -11,6 +11,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.android.hfsis.database.DatabaseHelper;
+import com.android.hfsis.model.DropOutEntity;
 import com.android.hfsis.model.FamilyPlanningRecord;
 import com.android.hfsis.model.HouseholdProfile;
 
@@ -56,7 +57,9 @@ public class FamilyPlanningAdapter extends RecyclerView.Adapter<FamilyPlanningAd
         String birthDate = record.birthDate != null ? record.birthDate : "N/A";
         holder.tvDemographics.setText("SN: " + serial + " • " + record.age + " yrs • " + birthDate);
 
-        holder.tvMethod.setText(record.previousMethod != null ? record.previousMethod : "None");
+        // FIX: this used to check record.previousMethod for null but then display
+        // record.methodUsed - mismatched field, so it fell back to "None" too often.
+        holder.tvMethod.setText(record.methodUsed != null ? record.methodUsed : "None");
         holder.tvAddress.setText(record.address != null ? record.address : "N/A");
 
         // Set custom click triggers mapping back to parent Fragment listeners
@@ -76,20 +79,39 @@ public class FamilyPlanningAdapter extends RecyclerView.Adapter<FamilyPlanningAd
         holder.tvClientName.setText("Loading client name...");
         Executors.newSingleThreadExecutor().execute(() -> {
             HouseholdProfile profile = db.householdProfileDao().getProfileById(record.profileId);
-            if (profile != null && holder.getAdapterPosition() == position) {
-                String fullName = profile.memberLastName + ", " + profile.memberFirstName;
+
+            // NEW: now that FamilyPlanningDao no longer hides dropped-out clients,
+            // look up their drop-out row here so the card can say so instead of
+            // quietly looking like an active client.
+            DropOutEntity dropOutRecord = db.dropOutDao().getDropOutByRecordId(record.id);
+
+            if (holder.getAdapterPosition() != position) return;
+
+            String fullName;
+            if (profile != null) {
+                fullName = profile.memberLastName + ", " + profile.memberFirstName;
                 if (profile.memberMiddleName != null && !profile.memberMiddleName.isEmpty()) {
                     fullName += " " + profile.memberMiddleName;
                 }
-                final String finalizedName = fullName;
+            } else {
+                fullName = "Unknown Profile";
+            }
+            final String finalizedName = fullName;
 
-                if (context instanceof android.app.Activity) {
-                    ((android.app.Activity) context).runOnUiThread(() -> holder.tvClientName.setText(finalizedName));
-                }
-            } else if (profile == null && holder.getAdapterPosition() == position) {
-                if (context instanceof android.app.Activity) {
-                    ((android.app.Activity) context).runOnUiThread(() -> holder.tvClientName.setText("Unknown Profile"));
-                }
+            if (context instanceof android.app.Activity) {
+                ((android.app.Activity) context).runOnUiThread(() -> {
+                    if (holder.getAdapterPosition() != position) return;
+
+                    holder.tvClientName.setText(finalizedName);
+
+                    if (dropOutRecord != null) {
+                        String statusText = "Dropped Out";
+                        if (dropOutRecord.dropOutDate != null && !dropOutRecord.dropOutDate.isEmpty()) {
+                            statusText += " on " + dropOutRecord.dropOutDate;
+                        }
+                        holder.tvMethod.setText(statusText);
+                    }
+                });
             }
         });
     }

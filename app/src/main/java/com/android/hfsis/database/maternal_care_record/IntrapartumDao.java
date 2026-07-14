@@ -27,4 +27,16 @@ public interface IntrapartumDao {
 
     @Query("SELECT * FROM intrapartum_records WHERE maternalRecordId = :maternalId LIMIT 1")
     IntrapartumEntity getRecordByMaternalId(int maternalId);
+
+    @Query("SELECT * FROM intrapartum_records WHERE isSynced = 0")
+    List<IntrapartumEntity> getUnsyncedRecords();
+
+    @Query("UPDATE intrapartum_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
+    @Query("SELECT * FROM intrapartum_records WHERE newInsert = 1")
+    List<IntrapartumEntity> getNewInsertRecords();
+
+    @Query("UPDATE intrapartum_records SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Integer> ids);
 }

@@ -34,4 +34,16 @@ public interface PhilPENDao {
 
     @Query("SELECT * FROM philpen_risk_assessments ORDER BY id DESC")
     List<PhilPENAssessmentEntity> getAll();
+
+    @Query("SELECT * FROM philpen_risk_assessments WHERE isSynced = 0")
+    List<PhilPENAssessmentEntity> getUnsyncedRecords();
+
+    @Query("UPDATE philpen_risk_assessments SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Long> ids);
+
+    @Query("SELECT * FROM philpen_risk_assessments WHERE newInsert = 1")
+    List<PhilPENAssessmentEntity> getNewInsertRecords();
+
+    @Query("UPDATE philpen_risk_assessments SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Long> ids);
 }

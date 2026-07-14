@@ -39,4 +39,10 @@ public interface ChildImmunizationSchoolDao {
     // Filtered lookup feature based on name, layout serials, or addresses
     @Query("SELECT * FROM child_immunization_school_records WHERE childName LIKE :searchQuery OR familySerialNumber LIKE :searchQuery OR address LIKE :searchQuery ORDER BY id DESC")
     List<ChildImmunizationSchoolRecord> searchSchoolRecords(String searchQuery);
+
+    @Query("SELECT * FROM child_immunization_school_records WHERE isSynced = 0")
+    List<ChildImmunizationSchoolRecord> getUnsyncedRecords();
+
+    @Query("UPDATE child_immunization_school_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Long> ids);
 }

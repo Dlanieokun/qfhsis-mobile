@@ -29,4 +29,10 @@ public interface ChildNutritionDao {
 
     @Query("SELECT * FROM child_nutrition_records WHERE childName LIKE '%' || :searchQuery || '%' OR familySerialNumber LIKE '%' || :searchQuery || '%' ORDER BY id DESC")
     List<ChildNutritionRecord> searchRecords(String searchQuery);
+
+    @Query("SELECT * FROM child_nutrition_records WHERE isSynced = 0")
+    List<ChildNutritionRecord> getUnsyncedRecords();
+
+    @Query("UPDATE child_nutrition_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Long> ids);
 }

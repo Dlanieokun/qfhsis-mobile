@@ -2,7 +2,7 @@ package com.android.hfsis.model;
 
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
-import com.google.gson.annotations.SerializedName; // Required import
+import com.google.gson.annotations.SerializedName;
 
 @Entity(tableName = "family_planning_records")
 public class FamilyPlanningRecord {
@@ -11,7 +11,9 @@ public class FamilyPlanningRecord {
     @SerializedName("id")
     public int id;
 
-    // Matches the exact camelCase naming scheme from your Laravel migration file
+    @SerializedName("userId")
+    public long userId;
+
     @SerializedName("profileId")
     public long profileId;
 
@@ -36,11 +38,24 @@ public class FamilyPlanningRecord {
     @SerializedName("clientType")
     public String clientType;
 
+    @SerializedName("methodUsed")
+    public String methodUsed;
+
     @SerializedName("commoditySource")
     public String commoditySource;
 
     @SerializedName("previousMethod")
     public String previousMethod;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    public long updatedAt = System.currentTimeMillis();
 
     public FamilyPlanningRecord() {}
 }

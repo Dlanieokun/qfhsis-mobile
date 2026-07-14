@@ -18,6 +18,9 @@ public class PhilPENAssessmentEntity {
     @SerializedName("profile_id")
     public int profileId;
 
+    @SerializedName("userId")
+    public int userId;
+
     @SerializedName("date_assessment")
     public String dateAssessment;
 
@@ -114,6 +117,16 @@ public class PhilPENAssessmentEntity {
 
     // General remarks (applies to the assessment row)
     public String remarks;
+
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    public boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    public boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    public long updatedAt = System.currentTimeMillis();
 
 
     public static class MonthMed {

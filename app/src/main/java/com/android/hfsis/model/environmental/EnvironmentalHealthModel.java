@@ -11,6 +11,9 @@ public class EnvironmentalHealthModel {
     @SerializedName("id")
     private long id;
 
+    @SerializedName("userId")
+    private long userId;
+
     @SerializedName("householdHeadName")
     private String householdHeadName;
 
@@ -77,9 +80,22 @@ public class EnvironmentalHealthModel {
     @SerializedName("remarks")
     private String remarks;
 
+    // --- Sync Tracking ---
+    @SerializedName("isSynced")
+    private boolean isSynced = false;
+
+    @SerializedName("newInsert")
+    private boolean newInsert = true;
+
+    @SerializedName("updated_at")
+    private long updatedAt = System.currentTimeMillis();
+
     // Getters and Setters
     public long getId() { return id; }
     public void setId(long id) { this.id = id; }
+
+    public long getUserId() { return userId; }
+    public void setUserId(long userId) { this.userId = userId; }
 
     public String getHouseholdHeadName() { return householdHeadName; }
     public void setHouseholdHeadName(String householdHeadName) { this.householdHeadName = householdHeadName; }
@@ -143,4 +159,13 @@ public class EnvironmentalHealthModel {
 
     public String getRemarks() { return remarks; }
     public void setRemarks(String remarks) { this.remarks = remarks; }
+
+    public boolean isSynced() { return isSynced; }
+    public void setSynced(boolean synced) { this.isSynced = synced; }
+
+    public boolean isNewInsert() { return newInsert; }
+    public void setNewInsert(boolean newInsert) { this.newInsert = newInsert; }
+
+    public long getUpdatedAt() { return updatedAt; }
+    public void setUpdatedAt(long updatedAt) { this.updatedAt = updatedAt; }
 }

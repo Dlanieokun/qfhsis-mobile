@@ -1,6 +1,8 @@
 package com.android.hfsis.child;
 
 import android.app.DatePickerDialog;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
@@ -38,6 +40,7 @@ public class ChildManagementOfSickFragment extends Fragment {
 
     // Record state variables
     private long editingRecordId = -1;
+    private long selectedProfileId = -1; // ---> ADDED VARIABLE
     private boolean isEditMode = false;
     private DatabaseHelper database;
 
@@ -94,7 +97,7 @@ public class ChildManagementOfSickFragment extends Fragment {
             isEditMode = true;
             btnSave.setText("UPDATE ENTRY");
             loadRecordData(editingRecordId);
-        }else {
+        } else {
             // Automatically set the current date for a new maternal record
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
             etDateRegistration.setText(sdf.format(new Date()));
@@ -213,6 +216,10 @@ public class ChildManagementOfSickFragment extends Fragment {
                         etChildName.setAdapter(adapter);
                         etChildName.setOnItemClickListener((parent, view, position, id) -> {
                             HouseholdProfile profile = profiles.get(position);
+
+                            // ---> SAVE THE ID OF THE SELECTED PROFILE
+                            selectedProfileId = profile.id; // Note: Use profile.getId() if id is private in HouseholdProfile.
+
                             etFamilySerialNumber.setText(profile.hhNumber);
                             etDateOfBirth.setText(profile.dob);
                             calculateAgeInMonths(profile.dob);
@@ -261,6 +268,9 @@ public class ChildManagementOfSickFragment extends Fragment {
                 ChildSickRecord record = database.childSickDao().getRecordById(id);
                 if (record != null && getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
+                        // ---> LOAD PROFILE ID <---
+                        selectedProfileId = record.getProfileId();
+
                         etDateRegistration.setText(record.getDateRegistration());
                         etFamilySerialNumber.setText(record.getFamilySerialNumber());
                         etChildName.setText(record.getChildName());
@@ -332,6 +342,14 @@ public class ChildManagementOfSickFragment extends Fragment {
             ChildSickRecord record = isEditMode ? database.childSickDao().getRecordById(editingRecordId) : new ChildSickRecord();
             if (record == null) record = new ChildSickRecord();
 
+            String PREFS_NAME = "AppPrefs";
+            SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            int userId = prefs.getInt("user_id", -1);
+            record.setUserId(userId);
+
+            // ---> PASS PROFILE ID TO OBJECT <---
+            record.setProfileId(selectedProfileId);
+
             record.setDateRegistration(dateReg);
             record.setFamilySerialNumber(getText(etFamilySerialNumber));
             record.setChildName(childName);
@@ -379,6 +397,8 @@ public class ChildManagementOfSickFragment extends Fragment {
     }
 
     private void clearForm() {
+        selectedProfileId = -1; // ---> RESET VARIABLE
+
         etDateRegistration.setText("");
         etFamilySerialNumber.setText("");
         etChildName.setText("");

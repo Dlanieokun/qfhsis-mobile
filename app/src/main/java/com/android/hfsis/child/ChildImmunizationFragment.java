@@ -1,6 +1,8 @@
 package com.android.hfsis.child;
 
 import android.annotation.SuppressLint;
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
@@ -433,6 +435,11 @@ public class ChildImmunizationFragment extends Fragment {
             if (isEditMode) {
                 record.setId(editingRecordId);
             }
+
+            String PREFS_NAME = "AppPrefs";
+            SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+            int userId = prefs.getInt("user_id", -1);
+            record.userId = userId;
 
             record.setProfileId(selectedProfileId);
             record.setRegistrationDate(getTextOrEmpty(etRegDate));

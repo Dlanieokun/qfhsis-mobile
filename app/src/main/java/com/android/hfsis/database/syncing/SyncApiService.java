@@ -3,6 +3,7 @@ package com.android.hfsis.database.syncing;
 import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
+import retrofit2.http.Header;
 import retrofit2.http.POST;
 import retrofit2.http.Query;
 
@@ -22,9 +23,14 @@ public interface SyncApiService {
      * Pass null to perform a full pull on first install.
      *
      * Example: GET /api/sync/pull?last_synced_at=2026-06-20T10:00:00.000000Z
+     *
+     * This endpoint now sits behind auth:sanctum on the server (so it can
+     * scope results to the logged-in user's assigned location), so a
+     * bearer token — formatted as "Bearer <token>" — must be supplied.
      */
     @GET("api/sync/pull")
     Call<SyncPullResponse> pullFromServer(
+            @Header("Authorization") String bearerToken,
             @Query("last_synced_at") String lastSyncedAt
     );
 
@@ -35,4 +41,7 @@ public interface SyncApiService {
     Call<SyncPushResponse> pushToServer(
             @Body SyncPayload payload
     );
+
+    @POST("api/upload")
+    Call<SyncPushResponse> uploadToServer(@Body SyncPayload payload);
 }

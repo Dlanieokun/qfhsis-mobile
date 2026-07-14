@@ -29,4 +29,16 @@ public interface MaternalCareDao {
     // Query to retrieve a single record for editing
     @Query("SELECT * FROM maternal_care_records WHERE id = :recordId LIMIT 1")
     MaternalCareRecord getMaternalRecordById(int recordId);
+
+    @Query("SELECT * FROM maternal_care_records WHERE isSynced = 0")
+    List<MaternalCareRecord> getUnsyncedRecords();
+
+    @Query("UPDATE maternal_care_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
+    @Query("SELECT * FROM maternal_care_records WHERE newInsert = 1")
+    List<MaternalCareRecord> getNewInsertRecords();
+
+    @Query("UPDATE maternal_care_records SET newInsert = 0 WHERE id IN (:ids)")
+    void markAsInserted(List<Integer> ids);
 }
