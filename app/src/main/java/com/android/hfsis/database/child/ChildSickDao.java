@@ -36,6 +36,6 @@ public interface ChildSickDao {
     @Query("SELECT * FROM child_sick_records WHERE isSynced = 0")
     List<ChildSickRecord> getUnsyncedRecords();
 
-    @Query("UPDATE child_sick_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE child_sick_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 }

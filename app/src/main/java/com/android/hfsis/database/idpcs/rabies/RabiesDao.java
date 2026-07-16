@@ -31,6 +31,6 @@ public interface RabiesDao {
     @Query("SELECT * FROM rabies_records WHERE isSynced = 0")
     List<RabiesRecord> getUnsyncedRecords();
 
-    @Query("UPDATE rabies_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE rabies_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 }

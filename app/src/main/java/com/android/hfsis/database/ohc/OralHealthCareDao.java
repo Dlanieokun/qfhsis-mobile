@@ -33,7 +33,7 @@ public interface OralHealthCareDao {
     @Query("SELECT * FROM oral_health_care WHERE isSynced = 0")
     List<OralHealthCareEntity> getUnsyncedRecords();
 
-    @Query("UPDATE oral_health_care SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE oral_health_care SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM oral_health_care WHERE newInsert = 1")

@@ -31,7 +31,7 @@ public interface IntrapartumDao {
     @Query("SELECT * FROM intrapartum_records WHERE isSynced = 0")
     List<IntrapartumEntity> getUnsyncedRecords();
 
-    @Query("UPDATE intrapartum_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE intrapartum_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM intrapartum_records WHERE newInsert = 1")

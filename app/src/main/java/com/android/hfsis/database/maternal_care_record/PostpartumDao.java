@@ -29,7 +29,7 @@ public interface PostpartumDao {
     @Query("SELECT * FROM postpartum_records WHERE isSynced = 0")
     List<PostpartumEntity> getUnsyncedRecords();
 
-    @Query("UPDATE postpartum_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE postpartum_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM postpartum_records WHERE newInsert = 1")

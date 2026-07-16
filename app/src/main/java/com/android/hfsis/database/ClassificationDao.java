@@ -25,7 +25,7 @@ public interface ClassificationDao {
     @Query("SELECT * FROM classification_metrics WHERE isSynced = 0")
     List<ClassificationEntity> getUnsyncedRecords();
 
-    @Query("UPDATE classification_metrics SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE classification_metrics SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 
     @Query("SELECT * FROM classification_metrics WHERE newInsert = 1")

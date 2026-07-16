@@ -46,7 +46,7 @@ public interface HouseholdProfileDao {
     @Query("SELECT * FROM household_profiles WHERE isSynced = 0")
     List<HouseholdProfile> getUnsyncedRecords();
 
-    @Query("UPDATE household_profiles SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE household_profiles SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM household_profiles WHERE newInsert = 1")

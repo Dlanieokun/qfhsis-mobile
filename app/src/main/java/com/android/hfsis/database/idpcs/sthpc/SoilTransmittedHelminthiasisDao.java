@@ -38,7 +38,7 @@ public interface SoilTransmittedHelminthiasisDao {
     @Query("SELECT * FROM sth_registry_records WHERE isSynced = 0")
     List<SoilTransmittedHelminthiasisRegistryRecord> getUnsyncedRecords();
 
-    @Query("UPDATE sth_registry_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE sth_registry_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM sth_registry_records WHERE newInsert = 1")

@@ -35,6 +35,6 @@ public interface FilariasisDao {
     @Query("SELECT * FROM filariasis_registry_table WHERE isSynced = 0")
     List<FilariasisRegistryRecord> getUnsyncedRecords();
 
-    @Query("UPDATE filariasis_registry_table SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE filariasis_registry_table SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 }

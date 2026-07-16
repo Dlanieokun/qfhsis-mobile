@@ -33,7 +33,7 @@ public interface SchistosomiasisDao {
     @Query("SELECT * FROM schistosomiasis_registry WHERE isSynced = 0")
     List<SchistosomiasisRegistryRecord> getUnsyncedRecords();
 
-    @Query("UPDATE schistosomiasis_registry SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE schistosomiasis_registry SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 
     @Query("SELECT * FROM schistosomiasis_registry WHERE newInsert = 1")

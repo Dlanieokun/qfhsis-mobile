@@ -52,7 +52,7 @@ public interface FamilyPlanningDao {
     @Query("SELECT * FROM family_planning_records WHERE isSynced = 0")
     List<FamilyPlanningRecord> getUnsyncedRecords();
 
-    @Query("UPDATE family_planning_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE family_planning_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM family_planning_records WHERE newInsert = 1")

@@ -33,7 +33,7 @@ public interface MaternalCareDao {
     @Query("SELECT * FROM maternal_care_records WHERE isSynced = 0")
     List<MaternalCareRecord> getUnsyncedRecords();
 
-    @Query("UPDATE maternal_care_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE maternal_care_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM maternal_care_records WHERE newInsert = 1")

@@ -29,7 +29,7 @@ public interface PrenatalImmunizationDao {
     @Query("SELECT * FROM prenatal_immunization_records WHERE isSynced = 0")
     List<PrenatalImmunizationEntity> getUnsyncedRecords();
 
-    @Query("UPDATE prenatal_immunization_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE prenatal_immunization_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM prenatal_immunization_records WHERE newInsert = 1")

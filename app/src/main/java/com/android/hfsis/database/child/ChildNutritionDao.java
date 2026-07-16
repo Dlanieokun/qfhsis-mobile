@@ -33,6 +33,6 @@ public interface ChildNutritionDao {
     @Query("SELECT * FROM child_nutrition_records WHERE isSynced = 0")
     List<ChildNutritionRecord> getUnsyncedRecords();
 
-    @Query("UPDATE child_nutrition_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE child_nutrition_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 }

@@ -38,7 +38,7 @@ public interface EyesScreeningDao {
     @Query("SELECT * FROM eyes_screenings WHERE isSynced = 0")
     List<EyesScreeningsData> getUnsyncedRecords();
 
-    @Query("UPDATE eyes_screenings SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE eyes_screenings SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 
     @Query("SELECT * FROM eyes_screenings WHERE newInsert = 1")

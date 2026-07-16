@@ -32,7 +32,7 @@ public interface FollowUpDao {
     @Query("SELECT * FROM family_planning_follow_ups WHERE isSynced = 0")
     List<FollowUpEntity> getUnsyncedRecords();
 
-    @Query("UPDATE family_planning_follow_ups SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE family_planning_follow_ups SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM family_planning_follow_ups WHERE newInsert = 1")

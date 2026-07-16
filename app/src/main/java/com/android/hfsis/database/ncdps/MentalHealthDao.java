@@ -48,7 +48,7 @@ public interface MentalHealthDao {
     @Query("SELECT * FROM mental_health_records WHERE isSynced = 0")
     List<MentalHealthRecord> getUnsyncedRecords();
 
-    @Query("UPDATE mental_health_records SET isSynced = 1 WHERE recordNo IN (:ids)")
+    @Query("UPDATE mental_health_records SET isSynced = 1, newInsert = 0 WHERE recordNo IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM mental_health_records WHERE newInsert = 1")

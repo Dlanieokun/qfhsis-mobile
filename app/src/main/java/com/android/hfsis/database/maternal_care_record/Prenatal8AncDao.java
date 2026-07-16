@@ -29,7 +29,7 @@ public interface Prenatal8AncDao {
     @Query("SELECT * FROM prenatal_8anc_records WHERE isSynced = 0")
     List<Prenatal8AncEntity> getUnsyncedRecords();
 
-    @Query("UPDATE prenatal_8anc_records SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE prenatal_8anc_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Integer> ids);
 
     @Query("SELECT * FROM prenatal_8anc_records WHERE newInsert = 1")

@@ -41,7 +41,7 @@ public interface CervicalCancerScreeningDao {
     @Query("SELECT * FROM cervical_cancer_screenings WHERE isSynced = 0")
     List<CervicalCancerScreeningEntity> getUnsyncedRecords();
 
-    @Query("UPDATE cervical_cancer_screenings SET isSynced = 1 WHERE id IN (:ids)")
+    @Query("UPDATE cervical_cancer_screenings SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
 
     @Query("SELECT * FROM cervical_cancer_screenings WHERE newInsert = 1")
