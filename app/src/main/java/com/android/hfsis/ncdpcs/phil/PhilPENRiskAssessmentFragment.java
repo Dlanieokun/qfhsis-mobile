@@ -79,7 +79,7 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
     private EditText etRemarks;
 
     private long currentAssessmentId = 0;
-    private int selectedProfileId = 0; // Tracks the selected profile database ID
+    private int selectedProfileId = 0;
     private DatabaseHelper dbHelper;
 
     // Hypertension monthly medicine grid covers January–September per TCL_PhilPEN

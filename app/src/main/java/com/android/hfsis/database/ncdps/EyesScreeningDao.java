@@ -46,4 +46,7 @@ public interface EyesScreeningDao {
 
     @Query("UPDATE eyes_screenings SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Long> ids);
+
+    @Query("DELETE FROM eyes_screenings")
+    void deleteAll();
 }

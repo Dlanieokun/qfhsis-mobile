@@ -346,6 +346,7 @@ public class FamilyPlanningFragment extends Fragment {
                 }
             } else {
                 // Execute standard Room Insert option path
+                record.newInsert = true;
                 long insertedId = db.familyPlanningDao().insertRecord(record);
                 if (getActivity() != null) {
                     getActivity().runOnUiThread(() -> {

@@ -228,6 +228,7 @@ public class MasterlistEnvironmentalHealthFragment extends Fragment {
             if (currentRecordId > 0) {
                 db.environmentalHealthDao().updateRecord(record);
             } else {
+                record.setNewInsert(true);
                 db.environmentalHealthDao().insertRecord(record);
             }
 

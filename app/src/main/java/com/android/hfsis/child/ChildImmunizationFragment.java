@@ -505,6 +505,7 @@ public class ChildImmunizationFragment extends Fragment {
                 if (isEditMode) {
                     database.childImmunizationDao().update(record);
                 } else {
+                    record.setNewInsert(true);
                     database.childImmunizationDao().insert(record);
                 }
 

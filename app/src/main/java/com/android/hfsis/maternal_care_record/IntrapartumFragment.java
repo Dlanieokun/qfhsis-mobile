@@ -149,6 +149,7 @@ public class IntrapartumFragment extends Fragment {
 
             // Insert if null, Update if found
             if (existing == null) {
+                entity.newInsert = true;
                 db.intrapartumDao().insertIntrapartum(entity);
             } else {
                 db.intrapartumDao().updateIntrapartum(entity);

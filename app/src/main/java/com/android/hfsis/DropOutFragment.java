@@ -183,7 +183,7 @@ public class DropOutFragment extends Fragment {
             entryModel.dropOutDate = dropDate;
             entryModel.reasonCode = selectedReasonCodeToken;
             entryModel.remarks = remarksText;
-
+            entryModel.newInsert = true;
             db.dropOutDao().insertDropOut(entryModel);
 
             if (getActivity() != null) {

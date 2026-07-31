@@ -39,4 +39,7 @@ public interface IntrapartumDao {
 
     @Query("UPDATE intrapartum_records SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM prenatal_lab_screening_records")
+    void deleteAll();
 }

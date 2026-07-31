@@ -408,6 +408,7 @@ public class GeriatricScreeningFragment extends Fragment {
                 if (existingRecordId != -1) {
                     database.geriatricScreeningDao().update(record);
                 } else {
+                    record.setNewInsert(true);
                     database.geriatricScreeningDao().insert(record);
                 }
 

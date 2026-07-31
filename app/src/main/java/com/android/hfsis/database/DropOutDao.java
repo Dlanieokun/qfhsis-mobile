@@ -33,4 +33,7 @@ public interface DropOutDao {
 
     @Query("UPDATE family_planning_drop_outs SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM family_planning_drop_outs")
+    void deleteAll();
 }

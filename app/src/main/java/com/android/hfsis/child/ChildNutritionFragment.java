@@ -542,6 +542,7 @@ public class ChildNutritionFragment extends Fragment {
                 if (isEditMode) {
                     database.childNutritionDao().update(record);
                 } else {
+                    record.setNewInsert(true);
                     database.childNutritionDao().insert(record);
                 }
 

@@ -503,6 +503,7 @@ public class RabiesFragment extends Fragment {
     private void onRecordSaved(RabiesRecord record) {
         new Thread(() -> {
             try {
+                record.setNewInsert(true);
                 long id = database.rabiesDao().insertOrUpdate(record);
                 currentRecordId = id;
 

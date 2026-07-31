@@ -245,7 +245,7 @@ public class RabiesRecord {
     private boolean isSynced = false;
 
     @SerializedName("newInsert")
-    private boolean newInsert = true;
+    private boolean newInsert = false;
 
     @SerializedName("updated_at")
     private long updatedAt = System.currentTimeMillis();

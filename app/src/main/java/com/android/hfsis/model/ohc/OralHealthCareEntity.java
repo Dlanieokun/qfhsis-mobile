@@ -141,7 +141,7 @@ public class OralHealthCareEntity {
 
     @SerializedName("newInsert")
     @ColumnInfo(name = "newInsert")
-    public boolean newInsert = true;
+    public boolean newInsert = false;
 
     @SerializedName("updated_at")
     @ColumnInfo(name = "updated_at")

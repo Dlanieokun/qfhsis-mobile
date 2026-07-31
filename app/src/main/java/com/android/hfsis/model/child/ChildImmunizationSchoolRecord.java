@@ -42,7 +42,7 @@ public class ChildImmunizationSchoolRecord {
     // --- Sync Tracking ---
     private boolean isSynced = false;
 
-    private boolean newInsert = true;
+    private boolean newInsert = false;
     private long updatedAt = System.currentTimeMillis();
 
     // Public empty constructor required by Room

@@ -359,6 +359,7 @@ public class ChildImmunizationSchoolFragment extends Fragment {
                     if (isEditMode) {
                         database.childImmunizationSchoolDao().update(record);
                     } else {
+                        record.setNewInsert(true);
                         database.childImmunizationSchoolDao().insert(record);
                     }
 

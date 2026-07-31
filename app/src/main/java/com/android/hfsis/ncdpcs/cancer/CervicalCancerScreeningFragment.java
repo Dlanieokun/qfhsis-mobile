@@ -443,6 +443,7 @@ public class CervicalCancerScreeningFragment extends Fragment {
                 DatabaseHelper db = DatabaseHelper.getInstance(requireContext());
 
                 if (entity.getId() == 0) {
+                    entity.setNewInsert(true);
                     long newId = db.cervicalCancerScreeningDao().insert(entity);
                     if (isAdded()) {
                         requireActivity().runOnUiThread(() -> {

@@ -123,7 +123,7 @@ public class PhilPENAssessmentEntity {
     public boolean isSynced = false;
 
     @SerializedName("newInsert")
-    public boolean newInsert = true;
+    public boolean newInsert = false;
 
     @SerializedName("updated_at")
     public long updatedAt = System.currentTimeMillis();

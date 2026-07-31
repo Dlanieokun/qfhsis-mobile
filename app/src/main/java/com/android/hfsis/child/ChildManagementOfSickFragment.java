@@ -383,6 +383,7 @@ public class ChildManagementOfSickFragment extends Fragment {
                 if (isEditMode) {
                     database.childSickDao().update(record);
                 } else {
+                    record.setNewInsert(true);
                     database.childSickDao().insert(record);
                 }
 

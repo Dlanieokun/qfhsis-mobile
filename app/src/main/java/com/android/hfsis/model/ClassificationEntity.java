@@ -70,7 +70,7 @@ public class ClassificationEntity {
 
     @ColumnInfo(name = "newInsert")
     @SerializedName("newInsert")
-    public boolean newInsert = true;
+    public boolean newInsert = false;
 
     @ColumnInfo(name = "updated_at")
     @SerializedName("updated_at")

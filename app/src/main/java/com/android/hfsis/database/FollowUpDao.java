@@ -40,4 +40,7 @@ public interface FollowUpDao {
 
     @Query("UPDATE family_planning_follow_ups SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM family_planning_follow_ups")
+    void deleteAll();
 }

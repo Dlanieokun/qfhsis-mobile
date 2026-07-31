@@ -287,6 +287,7 @@ public class Prenatal8AncFormFragment extends Fragment {
                 record.id = existingRecordId;
                 db.prenatal8AncDao().update8AncRecord(record);
             } else {
+                record.newInsert = true;
                 db.prenatal8AncDao().insert8AncRecord(record);
             }
 

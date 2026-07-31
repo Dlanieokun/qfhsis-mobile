@@ -470,6 +470,7 @@ public class MentalHealthFragment extends Fragment {
                     });
                 } else {
                     // Insert a new entry
+                    record.setNewInsert(true);
                     dao.insert(record);
                     requireActivity().runOnUiThread(() -> {
                         Toast.makeText(requireContext(), "Mental Health record saved successfully!", Toast.LENGTH_SHORT).show();

@@ -37,4 +37,7 @@ public interface PostpartumDao {
 
     @Query("UPDATE postpartum_records SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM postpartum_records")
+    void deleteAll();
 }

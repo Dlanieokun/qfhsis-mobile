@@ -33,4 +33,7 @@ public interface RabiesDao {
 
     @Query("UPDATE rabies_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
+
+    @Query("DELETE FROM rabies_records")
+    void deleteAll();
 }

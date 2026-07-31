@@ -404,6 +404,7 @@ public class PostpartumFragment extends Fragment {
             PostpartumEntity existing = db.postpartumDao().getByMaternalId(maternalRecordId);
 
             if (existing == null) {
+                entity.newInsert = true;
                 db.postpartumDao().insert(entity);
             } else {
                 entity.id = existing.id; // Ensure ID matches to update correctly

@@ -471,6 +471,7 @@ public class EyesScreeningFragment extends Fragment {
                     DatabaseHelper db = DatabaseHelper.getInstance(requireContext());
 
                     if (data.getId() == 0) {
+                        data.setNewInsert(true);
                         long newId = db.eyesScreeningDao().insert(data);
                         data.setId(newId);
                     } else {

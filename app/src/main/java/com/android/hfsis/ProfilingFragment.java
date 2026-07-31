@@ -672,6 +672,7 @@ public class ProfilingFragment extends Fragment {
                 db.householdProfileDao().updateProfile(profile);
                 operationalResult = 1;
             } else {
+                profile.newInsert = true;
                 operationalResult = db.householdProfileDao().insertProfile(profile);
             }
 

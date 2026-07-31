@@ -44,4 +44,7 @@ public interface ChildImmunizationDao {
 
     @Query("UPDATE child_immunization_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
+
+    @Query("DELETE FROM child_immunization_records")
+    void deleteAll();
 }

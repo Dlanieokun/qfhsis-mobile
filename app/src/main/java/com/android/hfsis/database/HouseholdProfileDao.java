@@ -43,6 +43,9 @@ public interface HouseholdProfileDao {
     @Delete
     void delete(HouseholdProfile profile);
 
+    @Query("DELETE FROM household_profiles")
+    void deleteAll();
+
     @Query("SELECT * FROM household_profiles WHERE isSynced = 0")
     List<HouseholdProfile> getUnsyncedRecords();
 

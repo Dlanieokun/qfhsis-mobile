@@ -60,4 +60,7 @@ public interface FamilyPlanningDao {
 
     @Query("UPDATE family_planning_records SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM family_planning_records")
+    void deleteAll();
 }

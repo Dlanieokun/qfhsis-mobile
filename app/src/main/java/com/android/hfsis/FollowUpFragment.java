@@ -178,6 +178,7 @@ public class FollowUpFragment extends Fragment {
                         newRow.monthName = month;
                         newRow.scheduledDate = sDate;
                         newRow.actualDate = aDate;
+                        newRow.newInsert = true;
                         db.followUpDao().insertFollowUp(newRow);
                     } else {
                         existingRow.scheduledDate = sDate;

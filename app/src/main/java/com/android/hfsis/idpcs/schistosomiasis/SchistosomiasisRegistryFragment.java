@@ -695,6 +695,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
                 DatabaseHelper db = DatabaseHelper.getInstance(requireContext());
 
                 if (record.getId() == 0) {
+                    record.setNewInsert(true);
                     long generatedId = db.schistosomiasisDao().insert(record);
                     record.setId(generatedId);
                 } else {

@@ -117,7 +117,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
     }
 
     private void setupAgeGroupSpinner() {
-        String[] groups = {"10-14", "15-19", "20-49", "Other"};
+        String[] groups = {"A - 10-14 years old", "B - 15-19 years old", "C - 20-49 years old"};
         ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
                 android.R.layout.simple_dropdown_item_1line, groups);
         spinnerMaternalAgeGroup.setAdapter(adapter);
@@ -269,10 +269,10 @@ public class MaternalCareAndServicesFragment extends Fragment {
     }
 
     private void autoSelectAgeGroup(int age) {
-        String groupValue = "Other";
-        if (age >= 10 && age <= 14) groupValue = "10-14";
-        else if (age >= 15 && age <= 19) groupValue = "15-19";
-        else if (age >= 20 && age <= 49) groupValue = "20-49";
+        String groupValue = "A - 10-14 years old";
+        if (age >= 10 && age <= 14) groupValue = "A - 10-14 years old";
+        else if (age >= 15 && age <= 19) groupValue = "B - 15-19 years old";
+        else if (age >= 20 && age <= 49) groupValue = "C - 20-49 years old";
 
         spinnerMaternalAgeGroup.setText(groupValue, false);
     }
@@ -418,6 +418,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
             if (isEditMode) {
                 db.maternalCareDao().updateMaternalRecord(record);
             } else {
+                record.newInsert = true;
                 db.maternalCareDao().insertMaternalRecord(record);
             }
 

@@ -87,7 +87,7 @@ public class CervicalCancerScreeningEntity {
 
     @ColumnInfo(name = "newInsert")
     @SerializedName("newInsert")
-    private boolean newInsert = true;
+    private boolean newInsert = false;
 
     @ColumnInfo(name = "updated_at")
     @SerializedName("updated_at")

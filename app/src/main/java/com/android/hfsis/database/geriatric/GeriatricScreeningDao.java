@@ -41,4 +41,7 @@ public interface GeriatricScreeningDao {
     // FIXED: Changed record_no to recordNo to match the Room-generated column name
     @Query("UPDATE geriatric_screening_records SET isSynced = 1, newInsert = 0 WHERE recordNo IN (:ids)")
     void markAsSynced(List<Integer> ids);
+
+    @Query("DELETE FROM geriatric_screening_records")
+    void deleteAll();
 }

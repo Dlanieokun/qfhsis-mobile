@@ -153,6 +153,7 @@ public class PrenatalImmunizationFragment extends Fragment {
                 targetRecordRow.id = existingRecordId;
                 db.prenatalImmunizationDao().updateImmunizationRecord(targetRecordRow);
             } else {
+                targetRecordRow.newInsert = true;
                 db.prenatalImmunizationDao().insertImmunizationRecord(targetRecordRow);
             }
 

@@ -256,6 +256,7 @@ public class PrenatalLabScreeningFragment extends Fragment {
                 data.id = existingRecordId;
                 db.prenatalLabScreeningDao().updateLabScreening(data);
             } else {
+                data.newInsert = true;
                 db.prenatalLabScreeningDao().insertLabScreening(data);
             }
 

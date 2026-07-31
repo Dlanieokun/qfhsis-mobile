@@ -269,6 +269,7 @@ public class PrenatalSupplementationFragment extends Fragment {
                 data.id = existingRecordId;
                 db.prenatalSupplementationDao().updateSupplementationRecord(data);
             } else {
+                data.newInsert = true;
                 db.prenatalSupplementationDao().insertSupplementationRecord(data);
             }
 

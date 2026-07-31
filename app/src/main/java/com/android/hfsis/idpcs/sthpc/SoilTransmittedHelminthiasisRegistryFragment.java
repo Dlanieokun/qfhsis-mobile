@@ -488,6 +488,7 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
         Executors.newSingleThreadExecutor().execute(() -> {
             DatabaseHelper db = DatabaseHelper.getInstance(requireContext());
             if (record.getId() == 0) {
+                record.setNewInsert(true);
                 db.soilTransmittedHelminthiasisDao().insertRecord(record);
             } else {
                 db.soilTransmittedHelminthiasisDao().updateRecord(record);

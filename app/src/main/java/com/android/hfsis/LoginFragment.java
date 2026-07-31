@@ -30,7 +30,7 @@ public class LoginFragment extends Fragment {
 
     private static final String PREFS_NAME = "AppPrefs";
     private static final String KEY_API_URL = "api_base_url";
-    private static final String DEFAULT_API_URL = "http://192.168.10.91:3030/";
+    private static final String DEFAULT_API_URL = "http://192.168.1.27:3030/";
 
     public LoginFragment() {
 

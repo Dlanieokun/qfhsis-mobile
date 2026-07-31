@@ -43,4 +43,7 @@ public interface LeprosyRegistryDao {
 
     @Query("UPDATE leprosy_registry SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Long> ids);
+
+    @Query("DELETE FROM leprosy_registry")
+    void deleteAll();
 }

@@ -37,4 +37,7 @@ public interface Prenatal8AncDao {
 
     @Query("UPDATE prenatal_8anc_records SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM prenatal_8anc_records")
+    void deleteAll();
 }

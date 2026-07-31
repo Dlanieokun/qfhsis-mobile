@@ -41,4 +41,7 @@ public interface SchistosomiasisDao {
 
     @Query("UPDATE schistosomiasis_registry SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Long> ids);
+
+    @Query("DELETE FROM schistosomiasis_registry")
+    void deleteAll();
 }

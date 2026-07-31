@@ -551,6 +551,7 @@ public class OralHealthCareFragment extends Fragment {
 
         Executors.newSingleThreadExecutor().execute(() -> {
             if (entryId == -1) {
+                entry.newInsert = true;
                 dbHelper.oralHealthCareDao().insert(entry);
             } else {
                 dbHelper.oralHealthCareDao().update(entry);

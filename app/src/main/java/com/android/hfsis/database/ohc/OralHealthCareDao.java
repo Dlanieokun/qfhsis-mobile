@@ -41,4 +41,7 @@ public interface OralHealthCareDao {
 
     @Query("UPDATE oral_health_care SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM oral_health_care")
+    void deleteAll();
 }

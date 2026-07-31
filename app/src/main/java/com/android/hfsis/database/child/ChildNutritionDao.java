@@ -35,4 +35,7 @@ public interface ChildNutritionDao {
 
     @Query("UPDATE child_nutrition_records SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
+
+    @Query("DELETE FROM child_nutrition_records")
+    void deleteAll();
 }

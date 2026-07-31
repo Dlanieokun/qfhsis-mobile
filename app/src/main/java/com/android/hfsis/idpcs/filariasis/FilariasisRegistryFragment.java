@@ -521,6 +521,7 @@ public class FilariasisRegistryFragment extends Fragment {
         executorService.execute(() -> {
             FilariasisDao dao = dbHelper.filariasisDao();
             if (currentRecordId == -1) {
+                record.setNewInsert(true);
                 dao.insertRecord(record);
             } else {
                 dao.updateRecord(record);

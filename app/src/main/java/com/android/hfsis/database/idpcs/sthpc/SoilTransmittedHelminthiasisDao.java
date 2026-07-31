@@ -46,4 +46,7 @@ public interface SoilTransmittedHelminthiasisDao {
 
     @Query("UPDATE sth_registry_records SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM sth_registry_records")
+    void deleteAll();
 }

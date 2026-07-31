@@ -33,4 +33,7 @@ public interface ClassificationDao {
 
     @Query("UPDATE classification_metrics SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Long> ids);
+
+    @Query("DELETE FROM classification_metrics")
+    void deleteAll();
 }

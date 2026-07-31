@@ -137,6 +137,7 @@ public class ClassificationFragment extends Fragment {
 
         Executors.newSingleThreadExecutor().execute(() -> {
             DatabaseHelper db = DatabaseHelper.getDatabase(getContext().getApplicationContext());
+            metrics.newInsert = true;
             long result = db.classificationDao().saveClassification(metrics);
 
             if (getActivity() != null) {

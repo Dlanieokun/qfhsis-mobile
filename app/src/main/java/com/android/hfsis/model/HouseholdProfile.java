@@ -47,7 +47,7 @@ public class HouseholdProfile {
     // --- Sync Tracking ---
     public boolean isSynced = false;
 
-    public boolean newInsert = true;
+    public boolean newInsert = false;
     public long updatedAt = System.currentTimeMillis();
 
     // Public empty constructor required by Room

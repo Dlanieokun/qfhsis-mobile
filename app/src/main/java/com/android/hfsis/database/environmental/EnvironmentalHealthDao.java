@@ -43,4 +43,7 @@ public interface EnvironmentalHealthDao {
 
     @Query("UPDATE environmental_health_records SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Long> ids);
+
+    @Query("DELETE FROM environmental_health_records")
+    void deleteAll();
 }

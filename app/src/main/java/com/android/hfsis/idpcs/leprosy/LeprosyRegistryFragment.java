@@ -339,6 +339,7 @@ public class LeprosyRegistryFragment extends Fragment {
                             getParentFragmentManager().popBackStack();
                         });
                     } else {
+                        record.setNewInsert(true);
                         database.leprosyRegistryDao().insert(record);
                         requireActivity().runOnUiThread(() -> {
                             Toast.makeText(requireContext(), "Record saved successfully", Toast.LENGTH_SHORT).show();

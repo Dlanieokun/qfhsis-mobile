@@ -95,7 +95,7 @@ public class ChildImmunizationRecord {
     // --- Sync Tracking ---
     private boolean isSynced = false;
 
-    private boolean newInsert = true;
+    private boolean newInsert = false;
     private long updatedAt = System.currentTimeMillis();
 
     // Constructor

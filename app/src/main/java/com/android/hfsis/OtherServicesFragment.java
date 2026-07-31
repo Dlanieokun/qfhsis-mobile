@@ -1,5 +1,7 @@
 package com.android.hfsis;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -211,6 +213,39 @@ public class OtherServicesFragment extends Fragment {
         });
         btnDemographics.setOnClickListener(v -> Toast.makeText(getContext(), "Demographics Clicked", Toast.LENGTH_SHORT).show());
         btnVitalStatistics.setOnClickListener(v -> Toast.makeText(getContext(), "Vital Statistics Clicked", Toast.LENGTH_SHORT).show());
+
+        // Apply role-based button visibility
+        applyRoleVisibility();
+    }
+
+    /**
+     * Reads the logged-in user's role from SharedPreferences.
+     * When the role is "BHW", only btnProfiling is shown;
+     * all other action buttons are hidden.
+     */
+    private void applyRoleVisibility() {
+        if (getActivity() == null) return;
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        String userRole = prefs.getString("user_role", "");
+
+        if ("BHW".equals(userRole)) {
+            // Hide every button except btnProfiling, btnPull, and btnUpload
+            btnSync.setVisibility(View.GONE);
+            btnFamilyPlanning.setVisibility(View.GONE);
+            btnMaternalCare.setVisibility(View.GONE);
+            btnChildCare.setVisibility(View.GONE);
+            btnOralHealth.setVisibility(View.GONE);
+            btnNonCommunicable.setVisibility(View.GONE);
+            btnGeriatricHealth.setVisibility(View.GONE);
+            btnInfectiousDisease.setVisibility(View.GONE);
+            btnWash.setVisibility(View.GONE);
+            btnDemographics.setVisibility(View.GONE);
+            btnVitalStatistics.setVisibility(View.GONE);
+
+            // Ensure btnProfiling remains visible
+            btnProfiling.setVisibility(View.VISIBLE);
+        }
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -319,17 +354,11 @@ public class OtherServicesFragment extends Fragment {
                 updateProgress(10, "Opening Database Connection...");
                 DatabaseHelper db = DatabaseHelper.getInstance(getContext());
 
-                final String finalLastSyncedAt;
                 android.content.SharedPreferences prefs = null;
                 if (getContext() != null) {
                     prefs = getContext().getSharedPreferences(PREFS_NAME, android.content.Context.MODE_PRIVATE);
-                    finalLastSyncedAt = prefs.getString(KEY_LAST_SYNCED_AT, null);
-                } else {
-                    finalLastSyncedAt = null;
                 }
 
-                // Pull is now scoped server-side to the logged-in user's
-                // assigned location, so it requires a valid bearer token.
                 String authToken = prefs != null ? prefs.getString("auth_bearer_token", null) : null;
                 if (authToken == null || authToken.isEmpty()) {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -339,13 +368,12 @@ public class OtherServicesFragment extends Fragment {
                     return;
                 }
 
-                updateProgress(25, finalLastSyncedAt == null
-                        ? "Requesting Full Pull From Server..."
-                        : "Requesting Delta Pull Since " + finalLastSyncedAt + "...");
+                updateProgress(25, "Requesting Full Pull From Server...");
 
                 Retrofit retrofit = buildRetrofit();
                 SyncApiService apiService = retrofit.create(SyncApiService.class);
-                Response<SyncPullResponse> response = apiService.pullFromServer("Bearer " + authToken, finalLastSyncedAt).execute();
+                // Pass null for last_synced_at — always do a full pull
+                Response<SyncPullResponse> response = apiService.pullFromServer("Bearer " + authToken, null).execute();
 
                 if (!response.isSuccessful() || response.body() == null) {
                     final int code = response.code();
@@ -355,7 +383,6 @@ public class OtherServicesFragment extends Fragment {
                             android.util.Log.e("SYNC_ERROR", "Server Pull Crash: " + errorJson);
                         }
                     } catch (Exception ignored) {}
-
                     new Handler(Looper.getMainLooper()).post(() -> {
                         progressOverlay.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Pull Failed (HTTP " + code + "). Check Logcat!", Toast.LENGTH_LONG).show();
@@ -374,83 +401,225 @@ public class OtherServicesFragment extends Fragment {
 
                 SyncPullPayload data = pullResponse.data;
 
-                // WRAP DATABASE INSERTS IN A TRANSACTION FOR MASSIVE PERFORMANCE INCREASE
+                updateProgress(40, "Clearing Local Database...");
+
                 db.runInTransaction(() -> {
 
-                    // Clear out lookups during a full pull to avoid duplicates or indexing conflict anomalies
-                    if (finalLastSyncedAt == null) {
-                        db.regionDao().deleteAll();
-                        db.provinceDao().deleteAll();
-                        db.municipalityDao().deleteAll();
-                        db.barangayDao().deleteAll();
-                    }
+                    // ── STEP 1: WIPE EVERYTHING ──────────────────────────────
+                    // Address lookups
+                    db.regionDao().deleteAll();
+                    db.provinceDao().deleteAll();
+                    db.municipalityDao().deleteAll();
+                    db.barangayDao().deleteAll();
 
-                    // Save Location Reference Tables safely with Null and Empty Checks
-                    if (data.regions != null && !data.regions.isEmpty()) {
+                    // Health records — all tables cleared before fresh insert
+                    db.householdProfileDao().deleteAll();
+                    db.familyPlanningDao().deleteAll();
+                    db.classificationDao().deleteAll();
+                    db.followUpDao().deleteAll();
+                    db.dropOutDao().deleteAll();
+
+                    db.maternalCareDao().deleteAll();
+                    db.prenatal8AncDao().deleteAll();
+                    db.prenatalImmunizationDao().deleteAll();
+                    db.prenatalSupplementationDao().deleteAll();
+                    db.prenatalLabScreeningDao().deleteAll();
+                    db.intrapartumDao().deleteAll();
+                    db.postpartumDao().deleteAll();
+
+                    db.childImmunizationDao().deleteAll();
+                    db.childImmunizationSchoolDao().deleteAll();
+                    db.childNutritionDao().deleteAll();
+                    db.childSickDao().deleteAll();
+
+                    db.oralHealthCareDao().deleteAll();
+                    db.philPENDao().deleteAll();
+                    db.eyesScreeningDao().deleteAll();
+                    db.cervicalCancerScreeningDao().deleteAll();
+                    db.geriatricScreeningDao().deleteAll();
+
+                    db.filariasisDao().deleteAll();
+                    db.leprosyRegistryDao().deleteAll();
+                    db.rabiesDao().deleteAll();
+                    db.schistosomiasisDao().deleteAll();
+                    db.soilTransmittedHelminthiasisDao().deleteAll();
+
+                    db.mentalHealthDao().deleteAll();
+                    db.environmentalHealthDao().deleteAll();
+
+                    // ── STEP 2: INSERT FRESH DATA FROM LARAVEL ───────────────
+
+                    // Address lookups
+                    if (data.regions != null && !data.regions.isEmpty())
                         db.regionDao().insertAll(data.regions);
-                    }
-                    if (data.provinces != null && !data.provinces.isEmpty()) {
+                    if (data.provinces != null && !data.provinces.isEmpty())
                         db.provinceDao().insertAll(data.provinces);
-                    }
-                    if (data.municipalities != null && !data.municipalities.isEmpty()) {
+                    if (data.municipalities != null && !data.municipalities.isEmpty())
                         db.municipalityDao().insertAll(data.municipalities);
-                    }
-                    if (data.barangays != null && !data.barangays.isEmpty()) {
+                    if (data.barangays != null && !data.barangays.isEmpty())
                         db.barangayDao().insertAll(data.barangays);
-                    }
 
-                    // Save Household & Family Planning Records
-                    for (HouseholdProfile r : data.householdProfiles) db.householdProfileDao().insertProfile(r);
-                    for (FamilyPlanningRecord r : data.familyPlanningRecords) db.familyPlanningDao().insertRecord(r);
-                    for (ClassificationEntity r : data.classificationEntities) db.classificationDao().saveClassification(r);
-                    for (FollowUpEntity r : data.followUpEntities) db.followUpDao().insertFollowUp(r);
-                    for (DropOutEntity r : data.dropOutEntities) db.dropOutDao().insertDropOut(r);
+                    // Household & Family Planning
+                    if (data.householdProfiles != null)
+                        for (HouseholdProfile r : data.householdProfiles) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.householdProfileDao().insertProfile(r);
+                        }
+                    if (data.familyPlanningRecords != null)
+                        for (FamilyPlanningRecord r : data.familyPlanningRecords) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.familyPlanningDao().insertRecord(r);
+                        }
+                    if (data.classificationEntities != null)
+                        for (ClassificationEntity r : data.classificationEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.classificationDao().saveClassification(r);
+                        }
+                    if (data.followUpEntities != null)
+                        for (FollowUpEntity r : data.followUpEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.followUpDao().insertFollowUp(r);
+                        }
+                    if (data.dropOutEntities != null)
+                        for (DropOutEntity r : data.dropOutEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.dropOutDao().insertDropOut(r);
+                        }
 
-                    // Save Maternal Care Records
-                    for (MaternalCareRecord r : data.maternalCareRecords) db.maternalCareDao().insertMaternalRecord(r);
-                    for (Prenatal8AncEntity r : data.prenatal8AncEntities) db.prenatal8AncDao().insert8AncRecord(r);
-                    for (PrenatalImmunizationEntity r : data.prenatalImmunizationEntities) db.prenatalImmunizationDao().insertImmunizationRecord(r);
-                    for (PrenatalSupplementationEntity r : data.prenatalSupplementationEntities) db.prenatalSupplementationDao().insertSupplementationRecord(r);
-                    for (PrenatalLabScreeningEntity r : data.prenatalLabScreeningEntities) db.prenatalLabScreeningDao().insertLabScreening(r);
-                    for (IntrapartumEntity r : data.intrapartumEntities) db.intrapartumDao().insertIntrapartum(r);
-                    for (PostpartumEntity r : data.postpartumEntities) db.postpartumDao().insert(r);
+                    // Maternal Care
+                    if (data.maternalCareRecords != null)
+                        for (MaternalCareRecord r : data.maternalCareRecords) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.maternalCareDao().insertMaternalRecord(r);
+                        }
+                    if (data.prenatal8AncEntities != null)
+                        for (Prenatal8AncEntity r : data.prenatal8AncEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.prenatal8AncDao().insert8AncRecord(r);
+                        }
+                    if (data.prenatalImmunizationEntities != null)
+                        for (PrenatalImmunizationEntity r : data.prenatalImmunizationEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.prenatalImmunizationDao().insertImmunizationRecord(r);
+                        }
+                    if (data.prenatalSupplementationEntities != null)
+                        for (PrenatalSupplementationEntity r : data.prenatalSupplementationEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.prenatalSupplementationDao().insertSupplementationRecord(r);
+                        }
+                    if (data.prenatalLabScreeningEntities != null)
+                        for (PrenatalLabScreeningEntity r : data.prenatalLabScreeningEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.prenatalLabScreeningDao().insertLabScreening(r);
+                        }
+                    if (data.intrapartumEntities != null)
+                        for (IntrapartumEntity r : data.intrapartumEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.intrapartumDao().insertIntrapartum(r);
+                        }
+                    if (data.postpartumEntities != null)
+                        for (PostpartumEntity r : data.postpartumEntities) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.postpartumDao().insert(r);
+                        }
 
-                    // Save Child Health Records
-                    for (ChildImmunizationRecord r : data.childImmunizationRecords) db.childImmunizationDao().insert(r);
-                    for (ChildImmunizationSchoolRecord r : data.childImmunizationSchoolRecords) db.childImmunizationSchoolDao().insert(r);
-                    for (ChildNutritionRecord r : data.childNutritionRecords) db.childNutritionDao().insert(r);
-                    for (ChildSickRecord r : data.childSickRecords) db.childSickDao().insert(r);
+                    // Child Health
+                    if (data.childImmunizationRecords != null)
+                        for (ChildImmunizationRecord r : data.childImmunizationRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.childImmunizationDao().insert(r);
+                        }
+                    if (data.childImmunizationSchoolRecords != null)
+                        for (ChildImmunizationSchoolRecord r : data.childImmunizationSchoolRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.childImmunizationSchoolDao().insert(r);
+                        }
+                    if (data.childNutritionRecords != null)
+                        for (ChildNutritionRecord r : data.childNutritionRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.childNutritionDao().insert(r);
+                        }
+                    if (data.childSickRecords != null)
+                        for (ChildSickRecord r : data.childSickRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.childSickDao().insert(r);
+                        }
 
-                    // Save OHC, NCD, and Geriatric Records
-                    for (OralHealthCareEntity r : data.oralHealthCareRecords) db.oralHealthCareDao().insert(r);
-                    for (PhilPENAssessmentEntity r : data.philpenRiskAssessments) db.philPENDao().insert(r);
-                    for (EyesScreeningsData r : data.eyesScreenings) db.eyesScreeningDao().insert(r);
-                    for (CervicalCancerScreeningEntity r : data.cervicalCancerScreenings) db.cervicalCancerScreeningDao().insert(r);
-                    for (GeriatricScreeningRecord r : data.geriatricScreeningRecords) db.geriatricScreeningDao().insert(r);
+                    // OHC, NCD, Geriatric
+                    if (data.oralHealthCareRecords != null)
+                        for (OralHealthCareEntity r : data.oralHealthCareRecords) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.oralHealthCareDao().insert(r);
+                        }
+                    if (data.philpenRiskAssessments != null)
+                        for (PhilPENAssessmentEntity r : data.philpenRiskAssessments) {
+                            r.newInsert = false; r.isSynced = true;
+                            db.philPENDao().insert(r);
+                        }
+                    if (data.eyesScreenings != null)
+                        for (EyesScreeningsData r : data.eyesScreenings) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.eyesScreeningDao().insert(r);
+                        }
+                    if (data.cervicalCancerScreenings != null)
+                        for (CervicalCancerScreeningEntity r : data.cervicalCancerScreenings) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.cervicalCancerScreeningDao().insert(r);
+                        }
+                    if (data.geriatricScreeningRecords != null)
+                        for (GeriatricScreeningRecord r : data.geriatricScreeningRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.geriatricScreeningDao().insert(r);
+                        }
 
-                    // Save IDPCS Records
-                    for (FilariasisRegistryRecord r : data.filariasisRegistryRecords) db.filariasisDao().insertRecord(r);
-                    for (LeprosyRegistryRecord r : data.leprosyRegistryRecords) db.leprosyRegistryDao().insert(r);
-                    for (RabiesRecord r : data.rabiesRecords) db.rabiesDao().insertOrUpdate(r);
-                    for (SchistosomiasisRegistryRecord r : data.schistosomiasisRegistryRecords) db.schistosomiasisDao().insert(r);
-                    for (SoilTransmittedHelminthiasisRegistryRecord r : data.sthRegistryRecords) db.soilTransmittedHelminthiasisDao().insertRecord(r);
+                    // IDPCS
+                    if (data.filariasisRegistryRecords != null)
+                        for (FilariasisRegistryRecord r : data.filariasisRegistryRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.filariasisDao().insertRecord(r);
+                        }
+                    if (data.leprosyRegistryRecords != null)
+                        for (LeprosyRegistryRecord r : data.leprosyRegistryRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.leprosyRegistryDao().insert(r);
+                        }
+                    if (data.rabiesRecords != null)
+                        for (RabiesRecord r : data.rabiesRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.rabiesDao().insertOrUpdate(r);
+                        }
+                    if (data.schistosomiasisRegistryRecords != null)
+                        for (SchistosomiasisRegistryRecord r : data.schistosomiasisRegistryRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.schistosomiasisDao().insert(r);
+                        }
+                    if (data.sthRegistryRecords != null)
+                        for (SoilTransmittedHelminthiasisRegistryRecord r : data.sthRegistryRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.soilTransmittedHelminthiasisDao().insertRecord(r);
+                        }
 
-                    // --- NEW: Save Mental & Environmental Health ---
-                    for (MentalHealthRecord r : data.mentalHealthRecords) db.mentalHealthDao().insert(r);
-                    for (EnvironmentalHealthModel r : data.environmentalHealthRecords) db.environmentalHealthDao().insertRecord(r);
-
+                    // Mental & Environmental Health
+                    if (data.mentalHealthRecords != null)
+                        for (MentalHealthRecord r : data.mentalHealthRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.mentalHealthDao().insert(r);
+                        }
+                    if (data.environmentalHealthRecords != null)
+                        for (EnvironmentalHealthModel r : data.environmentalHealthRecords) {
+                            r.setNewInsert(false); r.setSynced(true);
+                            db.environmentalHealthDao().insertRecord(r);
+                        }
                 });
 
-                // Persist synced_at for the next delta pull
-                if (prefs != null && pullResponse.syncedAt != null) {
-                    prefs.edit()
-                            .putString(KEY_LAST_SYNCED_AT, pullResponse.syncedAt)
-                            .apply();
+                // Clear the last_synced_at so next pull is always a fresh full pull
+                if (prefs != null) {
+                    prefs.edit().remove(KEY_LAST_SYNCED_AT).apply();
                 }
 
                 new Handler(Looper.getMainLooper()).post(() -> {
                     progressOverlay.setVisibility(View.GONE);
-                    Toast.makeText(getContext(), "Pull Success! Local Database Updated.", Toast.LENGTH_LONG).show();
+                    Toast.makeText(getContext(), "Pull Success! Local Database Replaced With Server Data.", Toast.LENGTH_LONG).show();
                 });
 
             } catch (Exception e) {
@@ -618,6 +787,7 @@ public class OtherServicesFragment extends Fragment {
                     new Handler(Looper.getMainLooper()).post(() -> {
                         progressOverlay.setVisibility(View.GONE);
                         Toast.makeText(getContext(), "Upload Success! " + finalTotalUnsynced + " record(s) uploaded.", Toast.LENGTH_LONG).show();
+                        triggerDatabasePull();
                     });
 
                 } else if (response.isSuccessful() && response.body() != null) {

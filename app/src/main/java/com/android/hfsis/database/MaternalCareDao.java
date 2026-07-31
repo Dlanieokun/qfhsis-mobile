@@ -41,4 +41,7 @@ public interface MaternalCareDao {
 
     @Query("UPDATE maternal_care_records SET newInsert = 0 WHERE id IN (:ids)")
     void markAsInserted(List<Integer> ids);
+
+    @Query("DELETE FROM maternal_care_records")
+    void deleteAll();
 }

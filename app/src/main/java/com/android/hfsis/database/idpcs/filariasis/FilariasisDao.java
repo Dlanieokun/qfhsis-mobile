@@ -37,4 +37,7 @@ public interface FilariasisDao {
 
     @Query("UPDATE filariasis_registry_table SET isSynced = 1, newInsert = 0 WHERE id IN (:ids)")
     void markAsSynced(List<Long> ids);
+
+    @Query("DELETE FROM filariasis_registry_table")
+    void deleteAll();
 }
