@@ -67,13 +67,15 @@ public class OtherServicesFragment extends Fragment {
     private static final String KEY_LAST_SYNCED_AT = "last_synced_at";
     private static final String DEFAULT_BASE_URL = "http://192.168.0.174:8000/";
 
-    // Buttons Setup
+    // Sync buttons (real Button widgets in the layout)
     private Button btnSync;
     private Button btnPull;
     private Button btnUpload;
-    private Button btnProfiling, btnFamilyPlanning, btnMaternalCare;
-    private Button btnChildCare, btnOralHealth, btnNonCommunicable, btnGeriatricHealth;
-    private Button btnInfectiousDisease, btnWash, btnDemographics, btnVitalStatistics;
+
+    // Service card rows (LinearLayout in the new design — use View as common superclass)
+    private View btnProfiling, btnFamilyPlanning, btnMaternalCare;
+    private View btnChildCare, btnOralHealth, btnNonCommunicable, btnGeriatricHealth;
+    private View btnInfectiousDisease, btnWash, btnDemographics, btnVitalStatistics;
 
     // Overlay Progress Widgets
     private ConstraintLayout progressOverlay;
