@@ -75,7 +75,7 @@ public class OtherServicesFragment extends Fragment {
     // Service card rows (LinearLayout in the new design — use View as common superclass)
     private View btnProfiling, btnFamilyPlanning, btnMaternalCare;
     private View btnChildCare, btnOralHealth, btnNonCommunicable, btnGeriatricHealth;
-    private View btnInfectiousDisease, btnWash, btnDemographics, btnVitalStatistics;
+    private View btnInfectiousDisease, btnWash, btnDemographics, btnVitalStatistics, btnMorbidity;
 
     // Overlay Progress Widgets
     private ConstraintLayout progressOverlay;
@@ -111,6 +111,7 @@ public class OtherServicesFragment extends Fragment {
         btnWash = view.findViewById(R.id.btnWash);
         btnDemographics = view.findViewById(R.id.btnDemographics);
         btnVitalStatistics = view.findViewById(R.id.btnVitalStatistics);
+        btnMorbidity = view.findViewById(R.id.btnMorbidity);
 
         // Initialize Progress Elements
         progressOverlay = view.findViewById(R.id.progressOverlay);
@@ -215,6 +216,7 @@ public class OtherServicesFragment extends Fragment {
         });
         btnDemographics.setOnClickListener(v -> Toast.makeText(getContext(), "Demographics Clicked", Toast.LENGTH_SHORT).show());
         btnVitalStatistics.setOnClickListener(v -> Toast.makeText(getContext(), "Vital Statistics Clicked", Toast.LENGTH_SHORT).show());
+        btnMorbidity.setOnClickListener(v -> Toast.makeText(getContext(), "Morbidity Clicked", Toast.LENGTH_SHORT).show());
 
         // Apply role-based button visibility
         applyRoleVisibility();
@@ -244,6 +246,7 @@ public class OtherServicesFragment extends Fragment {
             btnWash.setVisibility(View.GONE);
             btnDemographics.setVisibility(View.GONE);
             btnVitalStatistics.setVisibility(View.GONE);
+            btnMorbidity.setVisibility(View.GONE);
 
             // Ensure btnProfiling remains visible
             btnProfiling.setVisibility(View.VISIBLE);
