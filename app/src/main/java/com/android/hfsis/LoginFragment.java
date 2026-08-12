@@ -1,7 +1,6 @@
 package com.android.hfsis;
 
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -16,6 +15,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import retrofit2.Call;
@@ -27,13 +27,15 @@ public class LoginFragment extends Fragment {
     private EditText etUsername, etPassword;
     private Button btnLogin;
     private TextView tvRegisterLink, tvSetApi;
+    private NestedScrollView scrollView;
+    private View loadingOverlay;
 
     private static final String PREFS_NAME = "AppPrefs";
     private static final String KEY_API_URL = "api_base_url";
     private static final String DEFAULT_API_URL = "http://192.168.1.27:3030/";
 
     public LoginFragment() {
-
+        // Required empty public constructor
     }
 
     @Override
@@ -49,11 +51,48 @@ public class LoginFragment extends Fragment {
         // 1. Check if user is already logged in before initializing UI components
         checkExistingSession();
 
+        scrollView = view.findViewById(R.id.scrollView);
         etUsername = view.findViewById(R.id.etUsername);
         etPassword = view.findViewById(R.id.etPassword);
         btnLogin = view.findViewById(R.id.btnLogin);
         tvRegisterLink = view.findViewById(R.id.tvRegisterLink);
         tvSetApi = view.findViewById(R.id.tvSetApi);
+        loadingOverlay = view.findViewById(R.id.loadingOverlay);
+
+        // Zoom effect and automatic scroll-up on focus
+        View.OnFocusChangeListener zoomFocusListener = (v, hasFocus) -> {
+            if (hasFocus) {
+                // 1. Zoom in slightly when focused
+                v.animate().scaleX(1.05f).scaleY(1.05f).setDuration(200).start();
+
+                // 2. Automatically scroll up so the focused field is clear of the soft keyboard
+                scrollView.postDelayed(() -> {
+                    if (isAdded() && scrollView != null) {
+                        int[] viewLocation = new int[2];
+                        v.getLocationOnScreen(viewLocation);
+
+                        int[] scrollLocation = new int[2];
+                        scrollView.getLocationOnScreen(scrollLocation);
+
+                        // Calculate relative distance from scroll view top
+                        int relativeY = viewLocation[1] - scrollLocation[1];
+
+                        // Smoothly scroll down to reveal the input field above the keyboard
+                        scrollView.smoothScrollBy(0, relativeY - 150);
+                    }
+                }, 250); // Slight delay allows keyboard animation to finish layout resizing
+            } else {
+                // Return to normal size when focus is lost
+                v.animate().scaleX(1.0f).scaleY(1.0f).setDuration(200).start();
+            }
+        };
+
+        // Apply listener to EditText fields
+        etUsername.setOnFocusChangeListener(zoomFocusListener);
+        etPassword.setOnFocusChangeListener(zoomFocusListener);
+
+        // 2. Trigger the intro animation for the UI elements
+        startIntroAnimation(view);
 
         tvSetApi.setOnClickListener(v -> showApiUrlDialog());
 
@@ -71,6 +110,48 @@ public class LoginFragment extends Fragment {
     }
 
     /**
+     * Creates a staggered fade-in and slide-up animation for the main layout elements.
+     */
+    private void startIntroAnimation(View view) {
+        View topBar = view.findViewById(R.id.llTopBar);
+        View heroCard = view.findViewById(R.id.cvHero);
+        View heroGlow = view.findViewById(R.id.viewHeroGlow);
+        View loginCard = view.findViewById(R.id.cardLogin);
+
+        // Set initial states (invisible and slightly offset)
+        if (topBar != null) {
+            topBar.setAlpha(0f);
+            topBar.setTranslationY(-30f);
+        }
+
+        if (heroCard != null && heroGlow != null) {
+            heroCard.setAlpha(0f);
+            heroCard.setScaleX(0.8f);
+            heroCard.setScaleY(0.8f);
+            heroGlow.setAlpha(0f);
+        }
+
+        if (loginCard != null) {
+            loginCard.setAlpha(0f);
+            loginCard.setTranslationY(80f);
+        }
+
+        // Animate elements into their natural positions sequentially
+        if (topBar != null) {
+            topBar.animate().alpha(1f).translationY(0f).setDuration(400).start();
+        }
+
+        if (heroCard != null && heroGlow != null) {
+            heroGlow.animate().alpha(1f).setDuration(500).setStartDelay(150).start();
+            heroCard.animate().alpha(1f).scaleX(1f).scaleY(1f).setDuration(500).setStartDelay(200).start();
+        }
+
+        if (loginCard != null) {
+            loginCard.animate().alpha(1f).translationY(0f).setDuration(600).setStartDelay(350).start();
+        }
+    }
+
+    /**
      * Checks if a user profile and valid token exist in SharedPreferences.
      * If true, skips login and immediately navigates to HomeFragment.
      */
@@ -79,23 +160,16 @@ public class LoginFragment extends Fragment {
 
         SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
 
-        // Check if an auth token and user ID exist (indicating a complete authenticated profile)
         String token = prefs.getString("auth_bearer_token", null);
         int userId = prefs.getInt("user_id", -1);
 
         if (token != null && userId != -1) {
-            // Optional: Show a quick toast greeting the returning user
             String name = prefs.getString("user_name", "User");
             Toast.makeText(getActivity(), "Welcome back, " + name + "!", Toast.LENGTH_SHORT).show();
-
-            // Redirect immediately to HomeFragment without showing the login interface
             navigateToHome();
         }
     }
 
-    /**
-     * Helper method to handle fragment redirection to HomeFragment
-     */
     private void navigateToHome() {
         if (getActivity() != null) {
             getActivity().getSupportFragmentManager().beginTransaction()
@@ -141,6 +215,9 @@ public class LoginFragment extends Fragment {
         btnLogin.setEnabled(false);
         btnLogin.setText("Authenticating...");
 
+        // SHOW LOADING OVERLAY
+        loadingOverlay.setVisibility(View.VISIBLE);
+
         ApiService apiService = RetrofitClient.getClient(baseUrl).create(ApiService.class);
         LoginRequest loginRequest = new LoginRequest(email, password);
 
@@ -148,19 +225,18 @@ public class LoginFragment extends Fragment {
             @Override
             public void onResponse(@NonNull Call<LoginResponse> call, @NonNull Response<LoginResponse> response) {
                 btnLogin.setEnabled(true);
-                btnLogin.setText("Login");
+                btnLogin.setText("Login →");
+
+                // HIDE LOADING OVERLAY
+                loadingOverlay.setVisibility(View.GONE);
 
                 if (response.isSuccessful() && response.body() != null) {
                     LoginResponse loginResponse = response.body();
 
                     if ("success".equals(loginResponse.getStatus())) {
-                        // Open SharedPreferences editor
                         SharedPreferences.Editor editor = prefs.edit();
-
-                        // Save authentication session token
                         editor.putString("auth_bearer_token", loginResponse.getAccessToken());
 
-                        // Extract and automatically save all user meta parameters
                         LoginResponse.UserData user = loginResponse.getUser();
                         editor.putInt("user_id", user.getId());
                         editor.putString("user_name", user.getName());
@@ -169,7 +245,6 @@ public class LoginFragment extends Fragment {
                         editor.putString("user_status", user.getStatus());
                         editor.putString("user_assigned_facility", user.getAssignedFacility());
 
-                        // barangay / barangay_codes arrive as JSON arrays; join for storage
                         editor.putString("user_barangay",
                                 user.getBarangay() != null ? TextUtils.join(", ", user.getBarangay()) : "");
                         editor.putString("user_barangay_codes",
@@ -182,12 +257,9 @@ public class LoginFragment extends Fragment {
                         editor.putString("user_province_code", user.getProvinceCode());
                         editor.putString("user_region_code", user.getRegionCode());
 
-                        // Apply updates asynchronously
                         editor.apply();
 
                         Toast.makeText(getActivity(), "Welcome " + user.getName() + "!", Toast.LENGTH_SHORT).show();
-
-                        // Automatically switch to the Home screen fragment dashboard layout right away
                         navigateToHome();
                     } else {
                         Toast.makeText(getActivity(), loginResponse.getMessage(), Toast.LENGTH_LONG).show();
@@ -206,7 +278,11 @@ public class LoginFragment extends Fragment {
             @Override
             public void onFailure(@NonNull Call<LoginResponse> call, @NonNull Throwable t) {
                 btnLogin.setEnabled(true);
-                btnLogin.setText("Login");
+                btnLogin.setText("Login →");
+
+                // HIDE LOADING OVERLAY
+                loadingOverlay.setVisibility(View.GONE);
+
                 Toast.makeText(getActivity(), "Network Connection Failed: " + t.getLocalizedMessage(), Toast.LENGTH_LONG).show();
             }
         });
