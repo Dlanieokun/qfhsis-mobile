@@ -38,6 +38,8 @@ import com.android.hfsis.database.ncdps.EyesScreeningDao;
 import com.android.hfsis.database.ncdps.PhilPENDao;
 import com.android.hfsis.database.ohc.OralHealthCareDao;
 import com.android.hfsis.database.ncdps.MentalHealthDao;
+import com.android.hfsis.database.vital_statistics.InfantDeathDao;
+import com.android.hfsis.database.vital_statistics.MaternalDeathDao;
 import com.android.hfsis.model.DropOutEntity;
 import com.android.hfsis.model.FamilyPlanningRecord;
 import com.android.hfsis.model.FollowUpEntity;
@@ -70,6 +72,8 @@ import com.android.hfsis.model.ncdpcs.EyesScreeningsData;
 import com.android.hfsis.model.ncdpcs.PhilPENAssessmentEntity;
 import com.android.hfsis.model.ncdpcs.mental.MentalHealthRecord;
 import com.android.hfsis.model.ohc.OralHealthCareEntity;
+import com.android.hfsis.model.vital_statistics.InfantDeathRecord;
+import com.android.hfsis.model.vital_statistics.MaternalDeathRecord;
 
 
 @Database(
@@ -105,9 +109,11 @@ import com.android.hfsis.model.ohc.OralHealthCareEntity;
                 SchistosomiasisRegistryRecord.class,
                 SoilTransmittedHelminthiasisRegistryRecord.class,
                 LeprosyRegistryRecord.class,
-                EnvironmentalHealthModel.class
+                EnvironmentalHealthModel.class,
+                InfantDeathRecord.class,
+                MaternalDeathRecord.class
         },
-        version = 2,
+        version = 3,
         exportSchema = false
 )
 public abstract class DatabaseHelper extends RoomDatabase {
@@ -147,6 +153,9 @@ public abstract class DatabaseHelper extends RoomDatabase {
     public abstract SoilTransmittedHelminthiasisDao soilTransmittedHelminthiasisDao();
     public abstract LeprosyRegistryDao leprosyRegistryDao();
     public abstract EnvironmentalHealthDao environmentalHealthDao();
+    public abstract InfantDeathDao infantDeathDao();
+    public abstract MaternalDeathDao maternalDeathDao();
+
 
     // Original method mapping
     public static DatabaseHelper getDatabase(final Context context) {

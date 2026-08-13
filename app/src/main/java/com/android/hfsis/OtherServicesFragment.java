@@ -25,7 +25,7 @@ import com.android.hfsis.database.syncing.SyncPayload;
 import com.android.hfsis.database.syncing.SyncPullPayload;
 import com.android.hfsis.database.syncing.SyncPullResponse;
 import com.android.hfsis.database.syncing.SyncPushResponse;
-import com.android.hfsis.vital_satatistics.environmental.MasterlistEnvironmentalHealthFragment;
+import com.android.hfsis.vital_statistics.VitalStatisticsFragment;
 import com.android.hfsis.geriatric.ViewGeriatricScreeningFragment;
 import com.android.hfsis.idpcs.IDPCSFragment;
 import com.android.hfsis.ncdpcs.NCDPCSFragment;
@@ -37,7 +37,7 @@ import com.android.hfsis.model.child.ChildSickRecord;
 import com.android.hfsis.model.maternal_care_record.*;
 import com.android.hfsis.maternal_care_record.ViewMaternalCareRecordsFragment;
 import com.android.hfsis.ohc.ViewOralHealthCareFragment;
-import com.android.hfsis.vital_satatistics.environmental.ViewMasterlistEnvironmentalHealthFragment;
+import com.android.hfsis.vital_statistics.environmental.ViewMasterlistEnvironmentalHealthFragment;
 
 import com.android.hfsis.model.ohc.OralHealthCareEntity;
 import com.android.hfsis.model.ncdpcs.PhilPENAssessmentEntity;
@@ -215,7 +215,13 @@ public class OtherServicesFragment extends Fragment {
             }
         });
         btnDemographics.setOnClickListener(v -> Toast.makeText(getContext(), "Demographics Clicked", Toast.LENGTH_SHORT).show());
-        btnVitalStatistics.setOnClickListener(v -> Toast.makeText(getContext(), "Vital Statistics Clicked", Toast.LENGTH_SHORT).show());
+        btnVitalStatistics.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new VitalStatisticsFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
         btnMorbidity.setOnClickListener(v -> Toast.makeText(getContext(), "Morbidity Clicked", Toast.LENGTH_SHORT).show());
 
         // Apply role-based button visibility

@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Maternal Death Age Groups -->
+    <string-array name="maternal_age_groups">
+        <item>A - 10-14 years old</item>
+        <item>B - 15-19 years old</item>
+        <item>C - 20-49 years old</item>
+    </string-array>
+
+    <!-- Place of Occurrence -->
+    <string-array name="place_of_occurrence">
+        <item>A - Resident</item>
+        <item>B - Non-Resident</item>
+    </string-array>
+
+    <!-- Cause of Death -->
+    <string-array name="cause_of_death">
+        <item>A - Direct</item>
+        <item>B - Indirect</item>
+    </string-array>
+
+    <!-- Infant Sex -->
+    <string-array name="infant_sex">
+        <item>M - Male</item>
+        <item>F - Female</item>
+    </string-array>
+</resources>

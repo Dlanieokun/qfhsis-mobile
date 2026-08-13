@@ -1,4 +1,4 @@
-package com.android.hfsis.vital_satatistics.environmental;
+package com.android.hfsis.vital_statistics.environmental;
 
 import android.app.DatePickerDialog;
 import android.content.Context;
