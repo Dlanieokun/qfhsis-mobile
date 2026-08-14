@@ -1,0 +1,474 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_topbar_aurora"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:id="@+id/tv_disease_name"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Disease Name"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:id="@+id/tv_icd_code"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ICD Code: A00"
+                    android:textColor="#CCffffff"
+                    android:textSize="13sp"
+                    android:layout_marginTop="4dp" />
+
+                <TextView
+                    android:id="@+id/tv_period"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="January 2025"
+                    android:textColor="#CCffffff"
+                    android:textSize="13sp"
+                    android:layout_marginTop="2dp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Location Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Barangay -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="4dp">
+                    <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                        android:text="Barangay" android:textSize="13sp" android:textColor="@color/text_secondary"/>
+                    <TextView android:id="@+id/tv_barangay" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="—" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Municipality -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="4dp">
+                    <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                        android:text="Municipality" android:textSize="13sp" android:textColor="@color/text_secondary"/>
+                    <TextView android:id="@+id/tv_municipality" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="—" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Province -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <TextView android:layout_width="100dp" android:layout_height="wrap_content"
+                        android:text="Province" android:textSize="13sp" android:textColor="@color/text_secondary"/>
+                    <TextView android:id="@+id/tv_province" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="—" android:textSize="13sp" android:textStyle="bold"/>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Cases Table Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cases by Age Group and Sex"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="14sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Table Header -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:background="@color/colorPrimary"
+                    android:padding="8dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="Age Group"
+                        android:textColor="@android:color/white" android:textStyle="bold" android:textSize="12sp"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:text="M"
+                        android:textColor="@android:color/white" android:textStyle="bold"
+                        android:textSize="12sp" android:gravity="center"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:text="F"
+                        android:textColor="@android:color/white" android:textStyle="bold"
+                        android:textSize="12sp" android:gravity="center"/>
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:text="T"
+                        android:textColor="@android:color/white" android:textStyle="bold"
+                        android:textSize="12sp" android:gravity="center"/>
+                </LinearLayout>
+
+                <!-- 0-6 days -->
+                <include layout="@layout/item_morbidity_detail_row"
+                    android:id="@+id/row_detail_0to6d"/>
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="0–6 days" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_0to6d_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_0to6d_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_0to6d_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 7-28 days -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="7–28 days" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_7to28d_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_7to28d_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_7to28d_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 29 days to 11 months -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="29 days–11 mos" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_29dto11mo_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_29dto11mo_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_29dto11mo_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 1-4 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="1–4 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_1to4yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_1to4yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_1to4yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 5-9 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="5–9 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_5to9yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_5to9yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_5to9yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 10-14 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="10–14 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_10to14yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_10to14yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_10to14yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 15-19 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="15–19 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_15to19yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_15to19yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_15to19yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 20-24 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="20–24 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_20to24yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_20to24yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_20to24yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 25-29 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="25–29 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_25to29yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_25to29yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_25to29yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 30-34 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="30–34 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_30to34yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_30to34yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_30to34yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 35-39 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="35–39 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_35to39yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_35to39yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_35to39yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 40-44 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="40–44 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_40to44yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_40to44yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_40to44yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 45-49 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="45–49 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_45to49yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_45to49yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_45to49yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 50-54 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="50–54 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_50to54yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_50to54yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_50to54yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 55-59 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#FAFAFA">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="55–59 years old" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_55to59yrs_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_55to59yrs_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_55to59yrs_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- 60 years and above -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="8dp" android:background="#F0F4FF">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="60 years and above" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_60plus_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_60plus_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_60plus_t" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textSize="13sp" android:gravity="center" android:textStyle="bold"/>
+                </LinearLayout>
+
+                <!-- Grand Total Row -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:padding="10dp"
+                    android:background="@color/colorPrimary" android:layout_marginTop="4dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="3" android:text="GRAND TOTAL"
+                        android:textColor="@android:color/white" android:textStyle="bold" android:textSize="13sp"/>
+                    <TextView android:id="@+id/tv_grand_total_m" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textColor="@android:color/white"
+                        android:textStyle="bold" android:textSize="14sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_grand_total_f" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textColor="@android:color/white"
+                        android:textStyle="bold" android:textSize="14sp" android:gravity="center"/>
+                    <TextView android:id="@+id/tv_grand_total_both" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textColor="#FFD700"
+                        android:textStyle="bold" android:textSize="15sp" android:gravity="center"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Action Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginBottom="24dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btn_back"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="← Back"
+                android:backgroundTint="@android:color/darker_gray"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <Button
+                android:id="@+id/btn_edit"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="✎ Edit Record"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

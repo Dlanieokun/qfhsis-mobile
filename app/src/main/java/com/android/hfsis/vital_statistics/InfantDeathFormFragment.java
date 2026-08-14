@@ -46,13 +46,13 @@ public class InfantDeathFormFragment extends Fragment {
 
         // Initialize views
         etFullName = view.findViewById(R.id.etFullName);
-        etDate = view.findViewById(R.id.etDate);
-        etAddress = view.findViewById(R.id.etAddress);
-        etAge = view.findViewById(R.id.etAge);
-        etRemarks = view.findViewById(R.id.etRemarks);
-        spSex = view.findViewById(R.id.spSex);
-        btnSave = view.findViewById(R.id.btnSave);
-        btnCancel = view.findViewById(R.id.btnCancel);
+        etDate     = view.findViewById(R.id.etDate);
+        etAddress  = view.findViewById(R.id.etAddress);
+        etAge      = view.findViewById(R.id.etAge);
+        etRemarks  = view.findViewById(R.id.etRemarks);
+        spSex      = view.findViewById(R.id.spSex);
+        btnSave    = view.findViewById(R.id.btnSave);
+        btnCancel  = view.findViewById(R.id.btnCancel);
 
         setupSpinners();
 
@@ -74,20 +74,26 @@ public class InfantDeathFormFragment extends Fragment {
     }
 
     private void setupSpinners() {
-        // Sex Spinner
-        ArrayAdapter<CharSequence> sexAdapter = ArrayAdapter.createFromResource(getContext(),
-                R.array.infant_sex, android.R.layout.simple_spinner_item);
+        ArrayAdapter<CharSequence> sexAdapter = ArrayAdapter.createFromResource(
+                getContext(),
+                R.array.infant_sex,
+                android.R.layout.simple_spinner_item);
         sexAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         spSex.setAdapter(sexAdapter);
     }
 
     private void showDatePicker() {
         Calendar calendar = Calendar.getInstance();
-        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+        DatePickerDialog datePickerDialog = new DatePickerDialog(
+                getContext(),
                 (view, year, month, dayOfMonth) -> {
-                    String date = String.format(Locale.US, "%02d/%02d/%04d", month + 1, dayOfMonth, year);
+                    String date = String.format(Locale.US, "%02d/%02d/%04d",
+                            month + 1, dayOfMonth, year);
                     etDate.setText(date);
-                }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
 
@@ -107,8 +113,6 @@ public class InfantDeathFormFragment extends Fragment {
             etAddress.setText(record.completeAddress != null ? record.completeAddress : "");
             etAge.setText(String.valueOf(record.age));
             etRemarks.setText(record.remarks != null ? record.remarks : "");
-
-            // Set spinner value
             setSpinnerValue(spSex, record.sex);
         }
     }
@@ -123,40 +127,74 @@ public class InfantDeathFormFragment extends Fragment {
 
     private void saveRecord() {
         String fullName = etFullName.getText().toString().trim();
-        String date = etDate.getText().toString().trim();
-        String address = etAddress.getText().toString().trim();
-        String ageStr = etAge.getText().toString().trim();
-        String remarks = etRemarks.getText().toString().trim();
-        String sex = spSex.getSelectedItem().toString();
+        String date     = etDate.getText().toString().trim();
+        String address  = etAddress.getText().toString().trim();
+        String ageStr   = etAge.getText().toString().trim();
+        String remarks  = etRemarks.getText().toString().trim();
+        String sex      = spSex.getSelectedItem().toString();
 
-        if (fullName.isEmpty() || date.isEmpty() || address.isEmpty() || ageStr.isEmpty()) {
-            Toast.makeText(getContext(), "Please fill in all required fields", Toast.LENGTH_SHORT).show();
+        // ── Validate required fields ──────────────────────────────────────────
+        if (fullName.isEmpty()) {
+            etFullName.setError("Full name is required");
+            etFullName.requestFocus();
+            return;
+        }
+        if (date.isEmpty()) {
+            etDate.setError("Date is required");
+            etDate.requestFocus();
+            return;
+        }
+        if (address.isEmpty()) {
+            etAddress.setError("Address is required");
+            etAddress.requestFocus();
+            return;
+        }
+        if (ageStr.isEmpty()) {
+            etAge.setError("Age is required");
+            etAge.requestFocus();
             return;
         }
 
-        int age = Integer.parseInt(ageStr);
+        // ── FIX: safely parse age — catches the NumberFormatException ─────────
+        int age;
+        try {
+            age = Integer.parseInt(ageStr);
+        } catch (NumberFormatException e) {
+            etAge.setError("Please enter a valid age (numbers only)");
+            etAge.requestFocus();
+            Toast.makeText(getContext(),
+                    "Invalid age — numbers only", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (age < 0 || age > 12) {          // infant: 0–12 months; adjust as needed
+            etAge.setError("Age must be between 0 and 12 months");
+            etAge.requestFocus();
+            return;
+        }
+        // ─────────────────────────────────────────────────────────────────────
 
         new Thread(() -> {
             if (recordId == -1) {
-                // Create new record
+                // Insert new record
                 InfantDeathRecord newRecord = new InfantDeathRecord(
-                        date, fullName, address, age, sex, remarks
-                );
+                        date, fullName, address, age, sex, remarks);
                 db.infantDeathDao().insert(newRecord);
             } else {
                 // Update existing record
                 record.dateOfRegistration = date;
-                record.fullName = fullName;
-                record.completeAddress = address;
-                record.age = age;
-                record.sex = sex;
-                record.remarks = remarks;
+                record.fullName           = fullName;
+                record.completeAddress    = address;
+                record.age                = age;
+                record.sex                = sex;
+                record.remarks            = remarks;
                 db.infantDeathDao().update(record);
             }
 
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    Toast.makeText(getContext(), "Record saved successfully", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(getContext(),
+                            "Record saved successfully", Toast.LENGTH_SHORT).show();
                     if (getActivity() != null) {
                         getActivity().onBackPressed();
                     }

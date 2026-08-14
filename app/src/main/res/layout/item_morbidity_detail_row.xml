@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:padding="8dp"
+    android:background="#FAFAFA">
+
+    <!-- Age group label (3 weight) -->
+    <TextView
+        android:id="@+id/tv_age_label"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="3"
+        android:textSize="13sp" />
+
+    <!-- Male count (1 weight) -->
+    <TextView
+        android:id="@+id/tv_male"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0"
+        android:textSize="13sp"
+        android:gravity="center" />
+
+    <!-- Female count (1 weight) -->
+    <TextView
+        android:id="@+id/tv_female"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0"
+        android:textSize="13sp"
+        android:gravity="center" />
+
+    <!-- Total count (1 weight, bold) -->
+    <TextView
+        android:id="@+id/tv_total"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="0"
+        android:textSize="13sp"
+        android:gravity="center"
+        android:textStyle="bold" />
+
+</LinearLayout>

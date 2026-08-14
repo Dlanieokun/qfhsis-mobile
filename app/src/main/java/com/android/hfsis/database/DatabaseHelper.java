@@ -33,6 +33,7 @@ import com.android.hfsis.database.maternal_care_record.Prenatal8AncDao;
 import com.android.hfsis.database.maternal_care_record.PrenatalImmunizationDao;
 import com.android.hfsis.database.maternal_care_record.PrenatalLabScreeningDao;
 import com.android.hfsis.database.maternal_care_record.PrenatalSupplementationDao;
+import com.android.hfsis.database.morbidity.MorbidityDao;
 import com.android.hfsis.database.ncdps.CervicalCancerScreeningDao;
 import com.android.hfsis.database.ncdps.EyesScreeningDao;
 import com.android.hfsis.database.ncdps.PhilPENDao;
@@ -67,6 +68,7 @@ import com.android.hfsis.model.maternal_care_record.Prenatal8AncEntity;
 import com.android.hfsis.model.maternal_care_record.PrenatalImmunizationEntity;
 import com.android.hfsis.model.maternal_care_record.PrenatalLabScreeningEntity;
 import com.android.hfsis.model.maternal_care_record.PrenatalSupplementationEntity;
+import com.android.hfsis.model.morbidity.MorbidityRecord;
 import com.android.hfsis.model.ncdpcs.CervicalCancerScreeningEntity;
 import com.android.hfsis.model.ncdpcs.EyesScreeningsData;
 import com.android.hfsis.model.ncdpcs.PhilPENAssessmentEntity;
@@ -111,9 +113,10 @@ import com.android.hfsis.model.vital_statistics.MaternalDeathRecord;
                 LeprosyRegistryRecord.class,
                 EnvironmentalHealthModel.class,
                 InfantDeathRecord.class,
-                MaternalDeathRecord.class
+                MaternalDeathRecord.class,
+                MorbidityRecord.class
         },
-        version = 3,
+        version = 4,
         exportSchema = false
 )
 public abstract class DatabaseHelper extends RoomDatabase {
@@ -155,6 +158,8 @@ public abstract class DatabaseHelper extends RoomDatabase {
     public abstract EnvironmentalHealthDao environmentalHealthDao();
     public abstract InfantDeathDao infantDeathDao();
     public abstract MaternalDeathDao maternalDeathDao();
+    public abstract MorbidityDao morbidityDao();
+
 
 
     // Original method mapping

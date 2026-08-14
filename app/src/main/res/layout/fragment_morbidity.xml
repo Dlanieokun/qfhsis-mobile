@@ -1,0 +1,654 @@
+<?xml version="1.0" encoding="utf-8"?>
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/background_light"
+    android:fillViewport="true">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="16dp">
+
+        <!-- Header Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="12dp"
+            app:cardElevation="4dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:background="@drawable/bg_topbar_aurora"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Section A.1. Morbidity Report"
+                    android:textColor="@android:color/white"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="M2 Form – HFSIS"
+                    android:textColor="#CCffffff"
+                    android:textSize="13sp" />
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Disease Info Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Disease Information"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <!-- Disease dropdown -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Disease / Condition *"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                    <AutoCompleteTextView
+                        android:id="@+id/spinner_disease"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Select Disease"
+                        android:inputType="none"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- ICD Code (auto-filled) -->
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ICD Code/s"
+                    android:textSize="13sp"
+                    android:textColor="@color/text_secondary" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_icd_code"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="Auto-filled from disease selection"
+                        android:textSize="14sp"
+                        android:inputType="text" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <!-- Report Period Row -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:weightSum="2">
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingEnd="6dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Report Month *"
+                            android:textSize="13sp"
+                            android:textColor="@color/text_secondary" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/spinner_month"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Month"
+                                android:inputType="none"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+
+                    <LinearLayout
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:orientation="vertical"
+                        android:paddingStart="6dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Report Year *"
+                            android:textSize="13sp"
+                            android:textColor="@color/text_secondary" />
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+
+                            <AutoCompleteTextView
+                                android:id="@+id/spinner_year"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:hint="Year"
+                                android:inputType="none"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </LinearLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Location Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Location"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="12dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="Barangay">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_barangay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="8dp"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="Municipality / City">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_municipality"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:hint="Province">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/et_province"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:textSize="14sp" />
+                </com.google.android.material.textfield.TextInputLayout>
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Age Group Data Card -->
+        <androidx.cardview.widget.CardView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="12dp"
+            app:cardCornerRadius="10dp"
+            app:cardElevation="3dp">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="16dp">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Cases by Age Group and Sex"
+                    android:textColor="@color/colorPrimary"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <!-- Column Headers -->
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:background="#F0F0F0"
+                    android:padding="8dp"
+                    android:layout_marginBottom="4dp">
+
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="Age Group"
+                        android:textStyle="bold" android:textSize="12sp" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:text="Male"
+                        android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="1" android:text="Female"
+                        android:textStyle="bold" android:textSize="12sp" android:gravity="center" />
+                </LinearLayout>
+
+                <!-- 0-6 days -->
+                <include layout="@layout/item_age_group_row"
+                    android:id="@+id/row_0to6d" />
+
+                <!-- Labels set programmatically; IDs below are the EditTexts -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="0–6 days" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_0to6d_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_0to6d_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 7-28 days -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="7–28 days" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_7to28d_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_7to28d_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 29 days to 11 months -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="29 days–11 mos" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_29dto11mo_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_29dto11mo_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 1-4 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="1–4 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_1to4yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_1to4yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 5-9 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="5–9 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_5to9yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_5to9yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 10-14 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="10–14 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_10to14yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_10to14yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 15-19 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="15–19 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_15to19yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_15to19yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 20-24 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="20–24 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_20to24yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_20to24yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 25-29 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="25–29 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_25to29yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_25to29yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 30-34 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="30–34 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_30to34yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_30to34yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 35-39 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="35–39 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_35to39yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_35to39yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 40-44 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="40–44 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_40to44yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_40to44yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 45-49 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="45–49 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_45to49yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_45to49yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 50-54 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="50–54 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_50to54yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_50to54yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 55-59 years -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="55–59 years old" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_55to59yrs_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_55to59yrs_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- 60 years and above -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:layout_marginBottom="6dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="60 years and above" android:textSize="13sp"
+                        android:gravity="center_vertical" android:padding="4dp"/>
+                    <EditText android:id="@+id/et_60plus_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                    <EditText android:id="@+id/et_60plus_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:inputType="number" android:hint="0" android:textSize="13sp"
+                        android:gravity="center" android:background="@drawable/bg_input_field"
+                        android:padding="8dp" android:layout_marginStart="4dp"/>
+                </LinearLayout>
+
+                <!-- Divider -->
+                <View android:layout_width="match_parent" android:layout_height="1dp"
+                    android:background="@color/colorPrimary" android:layout_marginVertical="8dp"/>
+
+                <!-- Totals Row -->
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:background="#EEF0FF" android:padding="8dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="GRAND TOTAL"
+                        android:textStyle="bold" android:textSize="13sp"
+                        android:gravity="center_vertical"/>
+                    <TextView android:id="@+id/tv_total_male" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textStyle="bold" android:textSize="14sp"
+                        android:gravity="center" android:textColor="@color/colorPrimary"/>
+                    <TextView android:id="@+id/tv_total_female" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="1"
+                        android:text="0" android:textStyle="bold" android:textSize="14sp"
+                        android:gravity="center" android:textColor="@color/colorAccent"/>
+                </LinearLayout>
+
+                <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
+                    android:orientation="horizontal" android:background="#D0D8FF" android:padding="8dp"
+                    android:layout_marginTop="4dp">
+                    <TextView android:layout_width="0dp" android:layout_height="wrap_content"
+                        android:layout_weight="2" android:text="Both Sexes"
+                        android:textStyle="bold" android:textSize="13sp"
+                        android:gravity="center_vertical"/>
+                    <TextView android:id="@+id/tv_grand_total" android:layout_width="0dp"
+                        android:layout_height="wrap_content" android:layout_weight="2"
+                        android:text="0" android:textStyle="bold" android:textSize="16sp"
+                        android:gravity="center" android:textColor="@color/colorPrimary"/>
+                </LinearLayout>
+
+            </LinearLayout>
+        </androidx.cardview.widget.CardView>
+
+        <!-- Buttons -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal"
+            android:layout_marginTop="8dp"
+            android:layout_marginBottom="24dp"
+            android:weightSum="2">
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginEnd="6dp"
+                android:text="Cancel"
+                android:backgroundTint="@android:color/darker_gray"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button" />
+
+            <Button
+                android:id="@+id/btn_save"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:layout_marginStart="6dp"
+                android:text="Save Record"
+                android:backgroundTint="@color/colorPrimary"
+                android:textColor="@android:color/white"
+                android:textAllCaps="false"
+                style="@style/Widget.MaterialComponents.Button" />
+        </LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

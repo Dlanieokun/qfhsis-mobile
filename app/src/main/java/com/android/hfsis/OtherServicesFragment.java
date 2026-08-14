@@ -25,6 +25,8 @@ import com.android.hfsis.database.syncing.SyncPayload;
 import com.android.hfsis.database.syncing.SyncPullPayload;
 import com.android.hfsis.database.syncing.SyncPullResponse;
 import com.android.hfsis.database.syncing.SyncPushResponse;
+import com.android.hfsis.morbidity.MorbidityFragment;
+import com.android.hfsis.morbidity.ViewMorbidityFragment;
 import com.android.hfsis.vital_statistics.VitalStatisticsFragment;
 import com.android.hfsis.geriatric.ViewGeriatricScreeningFragment;
 import com.android.hfsis.idpcs.IDPCSFragment;
@@ -222,7 +224,13 @@ public class OtherServicesFragment extends Fragment {
                         .addToBackStack(null).commit();
             }
         });
-        btnMorbidity.setOnClickListener(v -> Toast.makeText(getContext(), "Morbidity Clicked", Toast.LENGTH_SHORT).show());
+        btnMorbidity.setOnClickListener(v -> {
+            if (getActivity() != null) {
+                getActivity().getSupportFragmentManager().beginTransaction()
+                        .replace(R.id.fragment_container, new ViewMorbidityFragment())
+                        .addToBackStack(null).commit();
+            }
+        });
 
         // Apply role-based button visibility
         applyRoleVisibility();
