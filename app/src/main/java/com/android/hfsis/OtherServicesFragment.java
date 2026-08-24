@@ -55,19 +55,21 @@ import com.android.hfsis.model.idpcs.sthpc.SoilTransmittedHelminthiasisRegistryR
 // --- NEW MODULE IMPORTS ---
 import com.android.hfsis.model.ncdpcs.mental.MentalHealthRecord;
 import com.android.hfsis.model.environmental.EnvironmentalHealthModel;
+import com.android.hfsis.model.vital_statistics.InfantDeathRecord;
+import com.android.hfsis.model.vital_statistics.MaternalDeathRecord;
+import com.android.hfsis.model.morbidity.MorbidityRecord;
 
 import java.util.List;
 
 import retrofit2.Response;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
 
 public class OtherServicesFragment extends Fragment {
 
     private static final String PREFS_NAME = "AppPrefs";
     private static final String KEY_API_BASE_URL = "api_base_url";
     private static final String KEY_LAST_SYNCED_AT = "last_synced_at";
-    private static final String DEFAULT_BASE_URL = "http://192.168.0.174:8000/";
+    private static final String DEFAULT_BASE_URL = "https://services.leyteprovince.gov.ph:8282/qfhsis/public/";
 
     // Sync buttons (real Button widgets in the layout)
     private Button btnSync;
@@ -318,6 +320,9 @@ public class OtherServicesFragment extends Fragment {
                 // --- NEW EXTRACTS ---
                 List<MentalHealthRecord> mentalHealth = db.mentalHealthDao().getAll();
                 List<EnvironmentalHealthModel> envHealth = db.environmentalHealthDao().getAll();
+                List<InfantDeathRecord> infantDeaths = db.infantDeathDao().getAllRecords();
+                List<MaternalDeathRecord> maternalDeaths = db.maternalDeathDao().getAllRecords();
+                List<MorbidityRecord> morbidityRecords = db.morbidityDao().getAllRecords();
 
                 updateProgress(70, "Packaging JSON Data Payload...");
 
@@ -327,7 +332,8 @@ public class OtherServicesFragment extends Fragment {
                         childImmunizations, childImmunizationsSchool, childNutrition, childSick,
                         ohc, philpen, eyes, cervical, geriatric,
                         filariasis, leprosy, rabies, schisto, sth,
-                        mentalHealth, envHealth // NEW
+                        mentalHealth, envHealth, // NEW
+                        infantDeaths, maternalDeaths, morbidityRecords // NEW
                 );
 
                 updateProgress(85, "Uploading payload to Laravel Server...");
@@ -465,6 +471,9 @@ public class OtherServicesFragment extends Fragment {
 
                     db.mentalHealthDao().deleteAll();
                     db.environmentalHealthDao().deleteAll();
+                    db.infantDeathDao().deleteAll();
+                    db.maternalDeathDao().deleteAll();
+                    db.morbidityDao().deleteAll();
 
                     // ── STEP 2: INSERT FRESH DATA FROM LARAVEL ───────────────
 
@@ -629,6 +638,23 @@ public class OtherServicesFragment extends Fragment {
                             r.setNewInsert(false); r.setSynced(true);
                             db.environmentalHealthDao().insertRecord(r);
                         }
+
+                    // Vital Statistics
+                    if (data.infantDeathRecords != null)
+                        for (InfantDeathRecord r : data.infantDeathRecords) {
+                            r.synced = true;
+                            db.infantDeathDao().insert(r);
+                        }
+                    if (data.maternalDeathRecords != null)
+                        for (MaternalDeathRecord r : data.maternalDeathRecords) {
+                            r.synced = true;
+                            db.maternalDeathDao().insert(r);
+                        }
+                    if (data.morbidityRecords != null)
+                        for (MorbidityRecord r : data.morbidityRecords) {
+                            r.isSynced = true;
+                            db.morbidityDao().insert(r);
+                        }
                 });
 
                 // Clear the last_synced_at so next pull is always a fresh full pull
@@ -664,10 +690,10 @@ public class OtherServicesFragment extends Fragment {
         if (!baseUrl.endsWith("/")) {
             baseUrl += "/";
         }
-        return new Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build();
+        // Route through the shared client so all requests (including sync/pull/upload)
+        // use the same OkHttpClient config — e.g. the debug-only trust-all SSL setup —
+        // instead of this method building its own Retrofit with default strict SSL.
+        return RetrofitClient.getClient(baseUrl);
     }
 
     // ─────────────────────────────────────────────────────────────
@@ -722,13 +748,17 @@ public class OtherServicesFragment extends Fragment {
 
                 List<MentalHealthRecord> mentalHealth = db.mentalHealthDao().getUnsyncedRecords();
                 List<EnvironmentalHealthModel> envHealth = db.environmentalHealthDao().getUnsyncedRecords();
+                List<InfantDeathRecord> infantDeaths = db.infantDeathDao().getUnsyncedRecords();
+                List<MaternalDeathRecord> maternalDeaths = db.maternalDeathDao().getUnsyncedRecords();
+                List<MorbidityRecord> morbidityRecords = db.morbidityDao().getUnsyncedRecords();
 
                 int totalUnsynced = profiles.size() + familyPlans.size() + classes.size() + followUps.size()
                         + dropOuts.size() + maternal.size() + anc.size() + immunizations.size() + supplements.size()
                         + labs.size() + intra.size() + post.size() + childImmunizations.size() + childImmunizationsSchool.size()
                         + childNutrition.size() + childSick.size() + ohc.size() + philpen.size() + eyes.size()
                         + cervical.size() + geriatric.size() + filariasis.size() + leprosy.size() + rabies.size()
-                        + schisto.size() + sth.size() + mentalHealth.size() + envHealth.size();
+                        + schisto.size() + sth.size() + mentalHealth.size() + envHealth.size()
+                        + infantDeaths.size() + maternalDeaths.size() + morbidityRecords.size();
 
                 if (totalUnsynced == 0) {
                     new Handler(Looper.getMainLooper()).post(() -> {
@@ -748,7 +778,8 @@ public class OtherServicesFragment extends Fragment {
                         childImmunizations, childImmunizationsSchool, childNutrition, childSick,
                         ohc, philpen, eyes, cervical, geriatric,
                         filariasis, leprosy, rabies, schisto, sth,
-                        mentalHealth, envHealth
+                        mentalHealth, envHealth,
+                        infantDeaths, maternalDeaths, morbidityRecords
                 );
 
                 updateProgress(75, "Uploading Payload to Server...");
@@ -801,6 +832,9 @@ public class OtherServicesFragment extends Fragment {
 
                         db.mentalHealthDao().markAsSynced(idsOf(mentalHealth, MentalHealthRecord::getRecordNo));
                         db.environmentalHealthDao().markAsSynced(idsOf(envHealth, EnvironmentalHealthModel::getId));
+                        db.infantDeathDao().markAsSynced(idsOf(infantDeaths, r -> r.id));
+                        db.maternalDeathDao().markAsSynced(idsOf(maternalDeaths, r -> r.id));
+                        db.morbidityDao().markAsSynced(idsOf(morbidityRecords, r -> r.id));
                     });
 
                     new Handler(Looper.getMainLooper()).post(() -> {

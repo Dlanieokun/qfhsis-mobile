@@ -35,6 +35,9 @@ import com.android.hfsis.model.idpcs.sthpc.SoilTransmittedHelminthiasisRegistryR
 // --- NEW IMPORTS ---
 import com.android.hfsis.model.ncdpcs.mental.MentalHealthRecord;
 import com.android.hfsis.model.environmental.EnvironmentalHealthModel;
+import com.android.hfsis.model.vital_statistics.InfantDeathRecord;
+import com.android.hfsis.model.vital_statistics.MaternalDeathRecord;
+import com.android.hfsis.model.morbidity.MorbidityRecord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -86,4 +89,9 @@ public class SyncPullPayload {
     // --- NEW: Mental & Environmental Health ---
     public List<MentalHealthRecord>            mentalHealthRecords            = new ArrayList<>();
     public List<EnvironmentalHealthModel>      environmentalHealthRecords     = new ArrayList<>();
+
+    // --- NEW: Vital Statistics & Morbidity ---
+    public List<InfantDeathRecord>             infantDeathRecords             = new ArrayList<>();
+    public List<MaternalDeathRecord>           maternalDeathRecords           = new ArrayList<>();
+    public List<MorbidityRecord>               morbidityRecords               = new ArrayList<>();
 }

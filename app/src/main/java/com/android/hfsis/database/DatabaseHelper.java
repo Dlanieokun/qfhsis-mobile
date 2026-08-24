@@ -116,7 +116,7 @@ import com.android.hfsis.model.vital_statistics.MaternalDeathRecord;
                 MaternalDeathRecord.class,
                 MorbidityRecord.class
         },
-        version = 4,
+        version = 6,
         exportSchema = false
 )
 public abstract class DatabaseHelper extends RoomDatabase {

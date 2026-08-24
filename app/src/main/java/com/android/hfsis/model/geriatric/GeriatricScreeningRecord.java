@@ -8,6 +8,10 @@ import com.google.gson.annotations.SerializedName;
 /**
  * Represents a single row of the "Target Client List for Geriatric Screening
  * and Senior Citizen Immunization" table.
+ *
+ * IMPORTANT: All @SerializedName annotations use snake_case to match the
+ * Laravel migration column names exactly. This prevents the sync controller's
+ * field filter from dropping fields due to naming mismatches.
  */
 @Entity(tableName = "geriatric_screening_records")
 public class GeriatricScreeningRecord {
@@ -19,11 +23,11 @@ public class GeriatricScreeningRecord {
     @SerializedName("profile_id")
     private int profileId;
 
+    @SerializedName("user_id")
+    private int userId;
+
     @SerializedName("date_of_screening")
     private String dateOfScreening;
-
-    @SerializedName("userId")
-    private int userId;
 
     @SerializedName("family_serial_number")
     private String familySerialNumber;
@@ -61,15 +65,15 @@ public class GeriatricScreeningRecord {
     @SerializedName("remarks")
     private String remarks;
 
-    // --- Sync Tracking ---
-    @SerializedName("isSynced")
+    // --- Sync Tracking (also snake_case) ---
+    @SerializedName("is_synced")
     private boolean isSynced = false;
 
-    @SerializedName("newInsert")
+    @SerializedName("new_insert")
     private boolean newInsert = false;
 
-    @SerializedName("updated_at")
-    private long updatedAt = System.currentTimeMillis();
+    @SerializedName("updated_at_ts")
+    private long updatedAtTs = System.currentTimeMillis();
 
     // Getters and Setters
     public int getRecordNo() {
@@ -80,7 +84,6 @@ public class GeriatricScreeningRecord {
         this.recordNo = recordNo;
     }
 
-    // ---> ADDED GETTER AND SETTER FOR PROFILE ID <---
     public int getProfileId() {
         return profileId;
     }
@@ -217,11 +220,11 @@ public class GeriatricScreeningRecord {
         this.newInsert = newInsert;
     }
 
-    public long getUpdatedAt() {
-        return updatedAt;
+    public long getUpdatedAtTs() {
+        return updatedAtTs;
     }
 
-    public void setUpdatedAt(long updatedAt) {
-        this.updatedAt = updatedAt;
+    public void setUpdatedAtTs(long updatedAtTs) {
+        this.updatedAtTs = updatedAtTs;
     }
 }

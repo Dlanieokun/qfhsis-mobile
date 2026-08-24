@@ -8,6 +8,8 @@ public class MaternalDeathRecord {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    public long profileId;                  // FK → HouseholdProfile.id
+
     public String dateOfRegistration;      // Date (mm/dd/yy format)
     public String fullName;                 // LastName, FirstName, MI
     public String completeAddress;          // Address with Province/HUC/ICC
@@ -35,7 +37,28 @@ public class MaternalDeathRecord {
         this.placeOfOccurrence = placeOfOccurrence;
         this.causeOfDeath = causeOfDeath;
         this.remarks = remarks;
+        this.profileId = 0;
         this.synced = false;
         this.syncTimestamp = 0;
+    }
+
+    public MaternalDeathRecord(String dateOfRegistration, String fullName, String completeAddress,
+                               int age, String ageGroup, String placeOfOccurrence,
+                               String causeOfDeath, String remarks, long profileId) {
+        this.dateOfRegistration = dateOfRegistration;
+        this.fullName = fullName;
+        this.completeAddress = completeAddress;
+        this.age = age;
+        this.ageGroup = ageGroup;
+        this.placeOfOccurrence = placeOfOccurrence;
+        this.causeOfDeath = causeOfDeath;
+        this.remarks = remarks;
+        this.profileId = profileId;
+        this.synced = false;
+        this.syncTimestamp = 0;
+    }
+
+    public int getId() {
+        return id;
     }
 }

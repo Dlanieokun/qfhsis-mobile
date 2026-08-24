@@ -41,8 +41,14 @@ public interface MorbidityDao {
     @Query("UPDATE morbidity_records SET isSynced = 1 WHERE id = :id")
     void markAsSynced(int id);
 
+    @Query("UPDATE morbidity_records SET isSynced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
     @Query("DELETE FROM morbidity_records WHERE id = :id")
     void deleteById(int id);
+
+    @Query("DELETE FROM morbidity_records")
+    void deleteAll();
 
     @Query("SELECT COUNT(*) FROM morbidity_records")
     int getTotalCount();

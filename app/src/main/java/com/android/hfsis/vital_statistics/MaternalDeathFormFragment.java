@@ -6,10 +6,16 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Spinner;
 import android.widget.Toast;
+
+import com.android.hfsis.model.HouseholdProfile;
+
+import java.util.List;
+import java.util.concurrent.Executors;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -25,13 +31,15 @@ import java.util.Locale;
 
 public class MaternalDeathFormFragment extends Fragment {
 
-    private EditText etFullName, etAddress, etAge, etRemarks;
+    private AutoCompleteTextView etFullName;
+    private EditText etAddress, etAge, etRemarks;
     private EditText etDate;
     private Spinner spAgeGroup, spPlace, spCause;
     private Button btnSave, btnCancel;
     private DatabaseHelper db;
     private MaternalDeathRecord record;
     private int recordId = -1;
+    private long selectedProfileId = -1;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -46,7 +54,7 @@ public class MaternalDeathFormFragment extends Fragment {
         db = DatabaseHelper.getInstance(getContext());
 
         // Initialize views
-        etFullName = view.findViewById(R.id.etFullName);
+        etFullName = (AutoCompleteTextView) view.findViewById(R.id.etFullName);
         etDate = view.findViewById(R.id.etDate);
         etAddress = view.findViewById(R.id.etAddress);
         etAge = view.findViewById(R.id.etAge);
@@ -58,12 +66,19 @@ public class MaternalDeathFormFragment extends Fragment {
         btnCancel = view.findViewById(R.id.btnCancel);
 
         setupSpinners();
+        loadHouseholdNamesAutoComplete();
 
         // Check if editing existing record
         if (getArguments() != null && getArguments().containsKey("recordId")) {
             recordId = getArguments().getInt("recordId");
             loadRecordData();
         }
+
+        // Autocomplete selection — autofill address from household profile
+        etFullName.setOnItemClickListener((parent, v, position, id) -> {
+            String selectedName = (String) parent.getItemAtPosition(position);
+            autofillFromProfile(selectedName);
+        });
 
         // Date picker
         etDate.setOnClickListener(v -> showDatePicker());
@@ -72,6 +87,56 @@ public class MaternalDeathFormFragment extends Fragment {
         btnCancel.setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().onBackPressed();
+            }
+        });
+    }
+
+    private void loadHouseholdNamesAutoComplete() {
+        if (getContext() == null) return;
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            List<String> names = db.householdProfileDao().getAllHouseholdNames();
+
+            if (getActivity() != null) {
+                getActivity().runOnUiThread(() -> {
+                    if (names != null && !names.isEmpty() && isAdded()) {
+                        etFullName.setAdapter(new ArrayAdapter<>(
+                                getContext(),
+                                android.R.layout.simple_list_item_1,
+                                names));
+                    }
+                });
+            }
+        });
+    }
+
+    private void autofillFromProfile(String selectedFullName) {
+        if (getContext() == null) return;
+
+        Executors.newSingleThreadExecutor().execute(() -> {
+            HouseholdProfile profile = db.householdProfileDao()
+                    .getProfileByCalculatedName(selectedFullName);
+
+            if (getActivity() != null && profile != null) {
+                getActivity().runOnUiThread(() -> {
+                    if (!isAdded()) return;
+
+                    selectedProfileId = profile.id;
+
+                    StringBuilder address = new StringBuilder();
+                    if (profile.sitio != null && !profile.sitio.isEmpty())
+                        address.append(profile.sitio).append(", ");
+                    if (profile.barangay != null && !profile.barangay.isEmpty())
+                        address.append(profile.barangay);
+                    if (profile.municipality != null && !profile.municipality.isEmpty())
+                        address.append(", ").append(profile.municipality);
+                    if (profile.region != null && !profile.region.isEmpty())
+                        address.append(", ").append(profile.region);
+
+                    etAddress.setText(address.toString().trim());
+                    etFullName.setError(null);
+                    etAddress.setError(null);
+                });
             }
         });
     }
@@ -117,7 +182,8 @@ public class MaternalDeathFormFragment extends Fragment {
 
     private void populateFields() {
         if (record != null) {
-            etFullName.setText(record.fullName != null ? record.fullName : "");
+            selectedProfileId = record.profileId;
+            etFullName.setText(record.fullName != null ? record.fullName : "", false);
             etDate.setText(record.dateOfRegistration != null ? record.dateOfRegistration : "");
             etAddress.setText(record.completeAddress != null ? record.completeAddress : "");
             etAge.setText(String.valueOf(record.age));
@@ -161,6 +227,7 @@ public class MaternalDeathFormFragment extends Fragment {
                 MaternalDeathRecord newRecord = new MaternalDeathRecord(
                         date, fullName, address, age, ageGroup, place, cause, remarks
                 );
+                newRecord.profileId = selectedProfileId;
                 db.maternalDeathDao().insert(newRecord);
             } else {
                 // Update existing record
@@ -172,6 +239,7 @@ public class MaternalDeathFormFragment extends Fragment {
                 record.placeOfOccurrence = place;
                 record.causeOfDeath = cause;
                 record.remarks = remarks;
+                record.profileId = selectedProfileId;
                 db.maternalDeathDao().update(record);
             }
 

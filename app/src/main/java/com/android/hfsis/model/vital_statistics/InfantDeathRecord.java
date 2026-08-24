@@ -8,6 +8,8 @@ public class InfantDeathRecord {
     @PrimaryKey(autoGenerate = true)
     public int id;
 
+    public long profileId;                  // FK → HouseholdProfile.id
+
     public String dateOfRegistration;      // Date (mm/dd/yy format)
     public String fullName;                 // LastName, FirstName, MI
     public String completeAddress;          // Address with Province/HUC/ICC
@@ -23,13 +25,14 @@ public class InfantDeathRecord {
     }
 
     public InfantDeathRecord(String dateOfRegistration, String fullName, String completeAddress,
-                             int age, String sex, String remarks) {
+                             int age, String sex, String remarks, long profileId) {
         this.dateOfRegistration = dateOfRegistration;
         this.fullName = fullName;
         this.completeAddress = completeAddress;
         this.age = age;
         this.sex = sex;
         this.remarks = remarks;
+        this.profileId = profileId;
         this.synced = false;
         this.syncTimestamp = 0;
     }

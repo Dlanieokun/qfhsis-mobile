@@ -24,6 +24,9 @@ import com.android.hfsis.model.idpcs.sthpc.SoilTransmittedHelminthiasisRegistryR
 // --- NEW IMPORTS ---
 import com.android.hfsis.model.ncdpcs.mental.MentalHealthRecord;
 import com.android.hfsis.model.environmental.EnvironmentalHealthModel;
+import com.android.hfsis.model.vital_statistics.InfantDeathRecord;
+import com.android.hfsis.model.vital_statistics.MaternalDeathRecord;
+import com.android.hfsis.model.morbidity.MorbidityRecord;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -61,6 +64,9 @@ public class SyncPayload {
     // --- NEW FIELDS ---
     public List<MentalHealthRecord> mentalHealthRecords = new ArrayList<>();
     public List<EnvironmentalHealthModel> environmentalHealthRecords = new ArrayList<>();
+    public List<InfantDeathRecord> infantDeathRecords = new ArrayList<>();
+    public List<MaternalDeathRecord> maternalDeathRecords = new ArrayList<>();
+    public List<MorbidityRecord> morbidityRecords = new ArrayList<>();
 
     public SyncPayload(
             List<HouseholdProfile> householdProfiles,
@@ -90,7 +96,10 @@ public class SyncPayload {
             List<SchistosomiasisRegistryRecord> schisto,
             List<SoilTransmittedHelminthiasisRegistryRecord> sth,
             List<MentalHealthRecord> mentalHealthRecords, // NEW
-            List<EnvironmentalHealthModel> environmentalHealthRecords // NEW
+            List<EnvironmentalHealthModel> environmentalHealthRecords, // NEW
+            List<InfantDeathRecord> infantDeathRecords, // NEW
+            List<MaternalDeathRecord> maternalDeathRecords, // NEW
+            List<MorbidityRecord> morbidityRecords // NEW
     ) {
         this.householdProfiles = householdProfiles;
         this.familyPlanningRecords = familyPlanningRecords;
@@ -123,5 +132,8 @@ public class SyncPayload {
         // Assign new lists
         this.mentalHealthRecords = mentalHealthRecords;
         this.environmentalHealthRecords = environmentalHealthRecords;
+        this.infantDeathRecords = infantDeathRecords;
+        this.maternalDeathRecords = maternalDeathRecords;
+        this.morbidityRecords = morbidityRecords;
     }
 }

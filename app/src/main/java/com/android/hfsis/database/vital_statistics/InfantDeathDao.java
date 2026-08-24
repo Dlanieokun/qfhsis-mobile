@@ -43,6 +43,9 @@ public interface InfantDeathDao {
     @Query("UPDATE infant_deaths SET synced = 1, syncTimestamp = :timestamp WHERE id IN (:ids)")
     void markMultipleAsSynced(List<Integer> ids, long timestamp);
 
+    @Query("UPDATE infant_deaths SET synced = 1 WHERE id IN (:ids)")
+    void markAsSynced(List<Integer> ids);
+
     @Query("DELETE FROM infant_deaths")
     void deleteAll();
 }

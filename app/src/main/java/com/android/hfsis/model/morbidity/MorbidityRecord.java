@@ -8,86 +8,86 @@ import androidx.annotation.NonNull;
 public class MorbidityRecord {
 
     @PrimaryKey(autoGenerate = true)
-    private int id;
+    public int id;
 
-    private String householdId;
-    private String barangay;
-    private String municipality;
-    private String province;
-    private String reportMonth;
-    private String reportYear;
+    public String householdId;
+    public String barangay;
+    public String municipality;
+    public String province;
+    public String reportMonth;
+    public String reportYear;
 
     // Disease name and ICD code
-    private String diseaseName;
-    private String icdCode;
+    public String diseaseName;
+    public String icdCode;
 
     // Age group: 0-6 days
-    private int age0to6daysMale;
-    private int age0to6daysFemale;
+    public int age0to6daysMale;
+    public int age0to6daysFemale;
 
     // Age group: 7-28 days
-    private int age7to28daysMale;
-    private int age7to28daysFemale;
+    public int age7to28daysMale;
+    public int age7to28daysFemale;
 
     // Age group: 29 days to 11 months
-    private int age29daysto11moMale;
-    private int age29daysto11moFemale;
+    public int age29daysto11moMale;
+    public int age29daysto11moFemale;
 
     // Age group: 1-4 years old
-    private int age1to4yrsMale;
-    private int age1to4yrsFemale;
+    public int age1to4yrsMale;
+    public int age1to4yrsFemale;
 
     // Age group: 5-9 years old
-    private int age5to9yrsMale;
-    private int age5to9yrsFemale;
+    public int age5to9yrsMale;
+    public int age5to9yrsFemale;
 
     // Age group: 10-14 years old
-    private int age10to14yrsMale;
-    private int age10to14yrsFemale;
+    public int age10to14yrsMale;
+    public int age10to14yrsFemale;
 
     // Age group: 15-19 years old
-    private int age15to19yrsMale;
-    private int age15to19yrsFemale;
+    public int age15to19yrsMale;
+    public int age15to19yrsFemale;
 
     // Age group: 20-24 years old
-    private int age20to24yrsMale;
-    private int age20to24yrsFemale;
+    public int age20to24yrsMale;
+    public int age20to24yrsFemale;
 
     // Age group: 25-29 years old
-    private int age25to29yrsMale;
-    private int age25to29yrsFemale;
+    public int age25to29yrsMale;
+    public int age25to29yrsFemale;
 
     // Age group: 30-34 years old
-    private int age30to34yrsMale;
-    private int age30to34yrsFemale;
+    public int age30to34yrsMale;
+    public int age30to34yrsFemale;
 
     // Age group: 35-39 years old
-    private int age35to39yrsMale;
-    private int age35to39yrsFemale;
+    public int age35to39yrsMale;
+    public int age35to39yrsFemale;
 
     // Age group: 40-44 years old
-    private int age40to44yrsMale;
-    private int age40to44yrsFemale;
+    public int age40to44yrsMale;
+    public int age40to44yrsFemale;
 
     // Age group: 45-49 years old
-    private int age45to49yrsMale;
-    private int age45to49yrsFemale;
+    public int age45to49yrsMale;
+    public int age45to49yrsFemale;
 
     // Age group: 50-54 years old
-    private int age50to54yrsMale;
-    private int age50to54yrsFemale;
+    public int age50to54yrsMale;
+    public int age50to54yrsFemale;
 
     // Age group: 55-59 years old
-    private int age55to59yrsMale;
-    private int age55to59yrsFemale;
+    public int age55to59yrsMale;
+    public int age55to59yrsFemale;
 
     // Age group: 60 years and above
-    private int age60plusMale;
-    private int age60plusFemale;
+    public int age60plusMale;
+    public int age60plusFemale;
 
-    private boolean isSynced;
-    private long createdAt;
-    private long updatedAt;
+    public boolean isSynced;
+    public long createdAt;
+    public long updatedAt;
 
     public MorbidityRecord() {
         this.createdAt = System.currentTimeMillis();

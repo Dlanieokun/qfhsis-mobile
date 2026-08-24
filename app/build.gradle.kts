@@ -8,6 +8,7 @@ android {
     compileSdk = 36 // Fixed assignment expression syntax here
     buildFeatures {
         viewBinding = true;
+        buildConfig = true;
     }
 
     defaultConfig {
