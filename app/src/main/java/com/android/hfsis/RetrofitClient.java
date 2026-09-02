@@ -26,12 +26,12 @@ public class RetrofitClient {
         OkHttpClient.Builder builder = new OkHttpClient.Builder()
                 .addInterceptor(interceptor);
 
-        if (BuildConfig.DEBUG) {
-            try {
-                applyTrustAllSsl(builder);
-            } catch (Exception e) {
-                throw new RuntimeException("Failed to set up trust-all SSL for debug build", e);
-            }
+        // Applied in ALL builds now, not just DEBUG — needed because the
+        // server's cert chain isn't fully trusted by Android's default store.
+        try {
+            applyTrustAllSsl(builder);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to set up trust-all SSL", e);
         }
 
         OkHttpClient client = builder.build();
@@ -45,11 +45,6 @@ public class RetrofitClient {
         return retrofit;
     }
 
-    /**
-     * DEBUG-ONLY: disables SSL certificate and hostname verification for ALL requests
-     * made through this client. Never reaches release builds due to the BuildConfig.DEBUG
-     * check above, but do not call this from anywhere else.
-     */
     private static void applyTrustAllSsl(OkHttpClient.Builder builder) throws Exception {
         TrustManager[] trustAllCerts = new TrustManager[]{
                 new X509TrustManager() {

@@ -26,7 +26,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:hint="Date of Registration (MM/dd/yy)"
+            android:hint="Date of Registration (yyyy-MM-dd)"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
@@ -34,7 +34,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="8" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -121,7 +121,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:hint="Date of Birth (MM/dd/yy)"
+            android:hint="Date of Birth (yyyy-MM-dd)"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
@@ -133,7 +133,7 @@
                 android:focusableInTouchMode="false"
                 android:clickable="false"
                 android:cursorVisible="false"
-                android:maxLength="8" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -239,7 +239,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:hint="Date of Screening (MM/dd/yy)"
+            android:hint="Date of Screening (yyyy-MM-dd)"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
@@ -247,7 +247,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="8" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -278,7 +278,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:hint="Date of Result (MM/dd/yy)"
+            android:hint="Date of Result (yyyy-MM-dd)"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
@@ -286,7 +286,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="8" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -309,7 +309,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="20dp"
-            android:hint="Date Given (MM/dd/yy)"
+            android:hint="Date Given (yyyy-MM-dd)"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
@@ -317,7 +317,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="8" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -342,7 +342,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="January MDA — Date (MM/dd/yy)"
+            android:hint="January MDA — Date (yyyy-MM-dd)"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
@@ -350,7 +350,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="8" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
@@ -385,7 +385,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="8dp"
-            android:hint="July MDA — Date (MM/dd/yy)"
+            android:hint="July MDA — Date (yyyy-MM-dd)"
             app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
             <EditText
@@ -393,7 +393,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="8" />
+                android:maxLength="10" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <TextView
