@@ -7,47 +7,71 @@
     android:background="#F8F9FA"
     tools:context=".ViewHouseholdProfileFragment">
 
-    <androidx.cardview.widget.CardView
-        android:id="@+id/searchCardWrapper"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_margin="12dp"
-        app:cardCornerRadius="8dp"
-        app:cardElevation="2dp">
-
-        <androidx.appcompat.widget.SearchView
-            android:id="@+id/searchViewProfiles"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            app:iconifiedByDefault="false"
-            app:queryBackground="@android:color/transparent"
-            app:queryHint="Search by member name or HH number..." />
-    </androidx.cardview.widget.CardView>
-
-    <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/rvProfiles"
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_marginTop="72dp"
-        android:clipToPadding="false"
-        android:paddingVertical="8dp" />
+        android:orientation="vertical">
 
-    <ProgressBar
-        android:id="@+id/progressBar"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:visibility="gone" />
+        <TextView
+            android:id="@+id/tvHeaderTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="Household Member"
+            android:textColor="#1F2937"
+            android:textSize="20sp"
+            android:textStyle="bold" />
 
-    <TextView
-        android:id="@+id/tvEmptyMessage"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="No household profiles captured yet."
-        android:textColor="#9CA3AF"
-        android:textSize="16sp"
-        android:visibility="gone" />
+        <androidx.cardview.widget.CardView
+            android:id="@+id/searchCardWrapper"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="12dp"
+            app:cardCornerRadius="8dp"
+            app:cardElevation="2dp">
+
+            <androidx.appcompat.widget.SearchView
+                android:id="@+id/searchViewProfiles"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                app:iconifiedByDefault="false"
+                app:queryBackground="@android:color/transparent"
+                app:queryHint="Search by member name or HH number..." />
+        </androidx.cardview.widget.CardView>
+
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1">
+
+            <androidx.recyclerview.widget.RecyclerView
+                android:id="@+id/rvProfiles"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:clipToPadding="false"
+                android:paddingVertical="8dp" />
+
+            <ProgressBar
+                android:id="@+id/progressBar"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/tvEmptyMessage"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:text="No household profiles captured yet."
+                android:textColor="#9CA3AF"
+                android:textSize="16sp"
+                android:visibility="gone" />
+
+        </FrameLayout>
+
+    </LinearLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabAddProfile"

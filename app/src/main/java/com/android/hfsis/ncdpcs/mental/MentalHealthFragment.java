@@ -44,7 +44,7 @@ import java.util.concurrent.Executors;
  */
 public class MentalHealthFragment extends Fragment {
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String DATE_PATTERN = "MM-dd-yyyy";
     private static final String ARG_RECORD_ID = "record_id";
 
     private TextInputLayout tilDateOfAssessment, tilDateOfBirth, tilName;
@@ -105,6 +105,7 @@ public class MentalHealthFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         database = DatabaseHelper.getInstance(requireContext());
+        dateFormat.setLenient(false); // reject impossible dates like 13-45-2020
 
         bindViews(view);
         setupNameAutocomplete();
@@ -117,9 +118,8 @@ public class MentalHealthFragment extends Fragment {
         if (existingRecordId != -1) {
             loadExistingRecord(existingRecordId);
         } else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            etDateOfAssessment.setText(sdf.format(new Date()));
+            // Automatically set the current date for a new record
+            etDateOfAssessment.setText(dateFormat.format(new Date()));
         }
     }
 
@@ -208,18 +208,17 @@ public class MentalHealthFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
+                        // Profile DOB may be legacy yyyy-MM-dd or MM-dd-yyyy; normalize for display.
+                        String displayDob = toDisplayDate(profile.dob);
+                        etDateOfBirth.setText(displayDob);
                         try {
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
+                            Date parsed = dateFormat.parse(displayDob);
+                            if (parsed != null) {
                                 Calendar dob = Calendar.getInstance();
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1;
-                                int day = Integer.parseInt(dobParts[2]);
-                                dob.set(year, month, day);
+                                dob.setTime(parsed);
                                 updateAgeFromDateOfBirth(dob);
                             }
-                        } catch (Exception e) {
+                        } catch (ParseException e) {
                             e.printStackTrace();
                         }
                     }
@@ -241,8 +240,17 @@ public class MentalHealthFragment extends Fragment {
     }
 
     private void setupDatePickers() {
-        tilDateOfAssessment.setStartIconOnClickListener(v -> showDatePicker(etDateOfAssessment, false));
-        tilDateOfBirth.setStartIconOnClickListener(v -> showDatePicker(etDateOfBirth, true));
+        // Calendar opens only from the end icon; the field itself accepts typed input.
+        tilDateOfAssessment.setEndIconOnClickListener(v -> showDatePicker(etDateOfAssessment, false));
+        tilDateOfBirth.setEndIconOnClickListener(v -> showDatePicker(etDateOfBirth, true));
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
     }
 
     private void showDatePicker(EditText target, boolean isDateOfBirth) {
@@ -350,11 +358,11 @@ public class MentalHealthFragment extends Fragment {
         // ---> LOAD PROFILE ID <---
         selectedProfileId = record.getProfileId();
 
-        etDateOfAssessment.setText(record.getDateOfAssessment());
+        etDateOfAssessment.setText(toDisplayDate(record.getDateOfAssessment()));
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
         etName.setText(record.getName(), false); // Dropdown format protection parameter insertion
         etAddress.setText(record.getAddress());
-        etDateOfBirth.setText(record.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(record.getDateOfBirth()));
         etAge.setText(String.valueOf(record.getAge()));
 
         // Map code values back to selection descriptions
@@ -520,7 +528,7 @@ public class MentalHealthFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -534,7 +542,7 @@ public class MentalHealthFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

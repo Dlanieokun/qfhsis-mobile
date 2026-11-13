@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Existing string kept for compatibility with other call sites -->
+    <string name="household_number_label">HH No: %s</string>
+
+    <!-- New strings for the redesigned list -->
+    <string name="household_title_label">Household No. %s</string>
+    <string name="household_members_header">Household List</string>
+    <string name="household_active_count">%1$d Active</string>
+    <string name="household_search_hint">Search members…</string>
+    <string name="household_empty_state">No household records found.</string>
+    <string name="household_more_options">View household details</string>
+    <string name="household_add_new">Add household member</string>
+</resources>

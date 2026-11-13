@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,6 +29,8 @@ import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.FamilyPlanningRecord;
 import com.android.hfsis.model.HouseholdProfile;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.List;
@@ -39,6 +43,7 @@ public class FamilyPlanningFragment extends Fragment {
     private int existingRecordId = -1;
     private boolean isEditMode = false;
 
+    private TextInputLayout tilRegDate;
     private EditText spinnerRegDate;
     private EditText etFamilySerial;
     private AutoCompleteTextView etFullName;
@@ -64,6 +69,7 @@ public class FamilyPlanningFragment extends Fragment {
         fpScrollView = view.findViewById(R.id.fpScrollView);
         fpContainer = view.findViewById(R.id.fpContainer);
 
+        tilRegDate = view.findViewById(R.id.tilRegDate);
         spinnerRegDate = view.findViewById(R.id.spinnerRegDate);
         etFamilySerial = view.findViewById(R.id.etFamilySerial);
         etFullName = view.findViewById(R.id.etFullName);
@@ -97,7 +103,7 @@ public class FamilyPlanningFragment extends Fragment {
     }
 
     private void setCurrentDateAsDefault() {
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
         spinnerRegDate.setText(sdf.format(Calendar.getInstance().getTime()));
     }
 
@@ -151,11 +157,11 @@ public class FamilyPlanningFragment extends Fragment {
                         if (!isAdded()) return;
 
                         selectedProfileId = record.profileId;
-                        spinnerRegDate.setText(record.registrationDate);
+                        spinnerRegDate.setText(toDisplayDate(record.registrationDate));
                         etFamilySerial.setText(record.familySerialNumber);
                         etAddress.setText(record.address);
                         etAge.setText(String.valueOf(record.age));
-                        etBirthDate.setText(record.birthDate);
+                        etBirthDate.setText(toDisplayDate(record.birthDate));
 
                         // Populate the autocomplete text view with patient full name
                         if (profile != null) {
@@ -195,7 +201,11 @@ public class FamilyPlanningFragment extends Fragment {
             autofillClientData(selectedName);
         });
 
-        spinnerRegDate.setOnClickListener(v -> showDatePickerDialog(spinnerRegDate));
+        // Formats keyboard inputs while typing manually
+        spinnerRegDate.addTextChangedListener(new DateFormattingWatcher(spinnerRegDate));
+
+        // Opens calendar date picker only when clicking the end icon
+        tilRegDate.setEndIconOnClickListener(v -> showDatePickerDialog(spinnerRegDate));
         btnSubmitFP.setOnClickListener(v -> saveFamilyPlanningRecord());
     }
 
@@ -219,7 +229,7 @@ public class FamilyPlanningFragment extends Fragment {
                     if (profile.region != null && !profile.region.isEmpty()) derivedAddress +=", " + profile.region;
 
                     etAddress.setText(derivedAddress.trim());
-                    etBirthDate.setText(profile.dob != null ? profile.dob : "");
+                    etBirthDate.setText(profile.dob != null ? toDisplayDate(profile.dob) : "");
                     etFamilySerial.setText(profile.hhNumber != null ? profile.hhNumber : "");
 
                     if (profile.dob != null && !profile.dob.isEmpty()) {
@@ -237,11 +247,19 @@ public class FamilyPlanningFragment extends Fragment {
         });
     }
 
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
     private void calculateAndSetAge(String dateOfBirthStr) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             Calendar dobCalendar = Calendar.getInstance();
-            dobCalendar.setTime(sdf.parse(dateOfBirthStr));
+            dobCalendar.setTime(sdf.parse(toDisplayDate(dateOfBirthStr)));
 
             Calendar todayCalendar = Calendar.getInstance();
             int computedAge = todayCalendar.get(Calendar.YEAR) - dobCalendar.get(Calendar.YEAR);
@@ -267,7 +285,7 @@ public class FamilyPlanningFragment extends Fragment {
         final Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
                 (view, selectedYear, selectedMonth, selectedDay) -> {
-                    String formattedDate = String.format(Locale.US, "%04d-%02d-%02d", selectedYear, (selectedMonth + 1), selectedDay);
+                    String formattedDate = String.format(Locale.US, "%02d-%02d-%04d", (selectedMonth + 1), selectedDay, selectedYear);
                     targetField.setText(formattedDate);
                     targetField.setError(null);
                 }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -382,6 +400,51 @@ public class FamilyPlanningFragment extends Fragment {
 
         if (fpScrollView != null) {
             fpScrollView.smoothScrollTo(0, 0);
+        }
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
         }
     }
 }

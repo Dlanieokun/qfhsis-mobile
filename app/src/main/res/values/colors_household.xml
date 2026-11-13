@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Screen background -->
+    <color name="household_bg">#F3F5FC</color>
+
+    <!-- Card -->
+    <color name="household_card_bg">#FFFFFF</color>
+    <color name="household_title_color">#4A5FD6</color>
+    <color name="household_name_color">#1B1D28</color>
+    <color name="household_address_color">#8A8D9C</color>
+
+    <!-- Search bar -->
+    <color name="household_search_bg">#EDEFF6</color>
+    <color name="household_search_hint">#9A9DAD</color>
+    <color name="household_search_icon">#9A9DAD</color>
+
+    <!-- Header / badge -->
+    <color name="active_badge_bg">#E3E8FD</color>
+    <color name="active_badge_text">#4A5FD6</color>
+
+    <!-- FAB -->
+    <color name="fab_bg">#4A5FD6</color>
+
+    <!-- Arrow icon -->
+    <color name="household_menu_dots">#B7BAC8</color>
+</resources>

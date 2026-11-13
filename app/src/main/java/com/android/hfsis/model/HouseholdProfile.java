@@ -3,8 +3,10 @@ package com.android.hfsis.model;
 import androidx.room.Entity;
 import androidx.room.PrimaryKey;
 
+import java.io.Serializable;
+
 @Entity(tableName = "household_profiles")
-public class HouseholdProfile {
+public class HouseholdProfile implements Serializable {
 
     @PrimaryKey(autoGenerate = true)
     public int id;

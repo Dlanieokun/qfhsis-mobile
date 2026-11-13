@@ -1,8 +1,11 @@
 package com.android.hfsis.child;
 
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -15,13 +18,16 @@ import android.widget.RadioGroup;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.HouseholdProfile;
 import com.android.hfsis.model.child.ChildImmunizationSchoolRecord;
-import com.google.android.material.datepicker.MaterialDatePicker;
 import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
@@ -59,6 +65,7 @@ public class ChildImmunizationSchoolFragment extends Fragment {
                              @Nullable ViewGroup container,
                              @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_immunization_school, container, false);
+        setupKeyboardInsets(view);
 
         database = DatabaseHelper.getInstance(getContext());
 
@@ -74,13 +81,58 @@ public class ChildImmunizationSchoolFragment extends Fragment {
         if (isEditMode) {
             loadExistingRecordDetails();
         }else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Automatically set the current date for a new record (MM-dd-yyyy)
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etRegDate.setText(sdf.format(new Date()));
         }
 
         btnSave.setOnClickListener(v -> saveRecord());
         return view;
+    }
+
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof NestedScrollView) || !isAdded()) return;
+        NestedScrollView scroll = (NestedScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
     }
 
     private void initViews(View v) {
@@ -145,28 +197,102 @@ public class ChildImmunizationSchoolFragment extends Fragment {
         bindDatePicker(tilHpv1CbiDate, etHpv1CbiDate);
         bindDatePicker(tilHpv2CbiDate, etHpv2CbiDate);
         bindDatePicker(tilHpvCompletedDate, etHpvCompletedDate);
+
+        // Auto-compute age while the DOB is typed manually
+        etDob.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                if (s.length() == 10) {
+                    calculateAgeInYears(s.toString());
+                } else if (s.length() == 0) {
+                    etAgeYears.setText("");
+                }
+            }
+        });
     }
 
+    // Formats keyboard input as MM-dd-yyyy while typing, and opens the
+    // calendar dialog from the end icon (same behavior as ProfilingFragment).
     private void bindDatePicker(TextInputLayout layout, EditText editText) {
         if (layout == null || editText == null) return;
-        layout.setEndIconOnClickListener(v -> {
-            MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                    .setTitleText("Select Date")
-                    .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                    .build();
 
-            datePicker.addOnPositiveButtonClickListener(selection -> {
-                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                String formattedDate = sdf.format(new Date(selection));
-                editText.setText(formattedDate);
+        editText.addTextChangedListener(new DateFormattingWatcher(editText));
 
-                if (editText.getId() == R.id.etDob) {
-                    calculateAgeInYears(formattedDate);
-                }
-            });
+        layout.setEndIconOnClickListener(v -> showDatePickerDialog(editText));
+    }
 
-            datePicker.show(getParentFragmentManager(), "DATE_PICKER_" + editText.getId());
-        });
+    private void showDatePickerDialog(EditText targetEditText) {
+        if (getContext() == null) return;
+
+        // Start on the date already in the field (if valid), otherwise today
+        Calendar calendar = Calendar.getInstance();
+        Date existing = parseDate(targetEditText.getText().toString().trim());
+        if (existing != null) calendar.setTime(existing);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                (view, selYear, selMonth, selDay) -> {
+                    Calendar selCalendar = Calendar.getInstance();
+                    selCalendar.set(Calendar.YEAR, selYear);
+                    selCalendar.set(Calendar.MONTH, selMonth);
+                    selCalendar.set(Calendar.DAY_OF_MONTH, selDay);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+                    String formattedDate = sdf.format(selCalendar.getTime());
+                    targetEditText.setText(formattedDate);
+                    targetEditText.setError(null);
+
+                    if (targetEditText.getId() == R.id.etDob) {
+                        calculateAgeInYears(formattedDate);
+                    }
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+        datePickerDialog.show();
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
+    // Strict MM-dd-yyyy parser; returns null if the text is not a real date
+    private Date parseDate(String text) {
+        if (text == null || !text.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            return sdf.parse(text);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Returns true when every non-empty date field holds a valid, non-future date
+    private boolean validateDateFields() {
+        EditText[] fields = new EditText[]{
+                etRegDate, etDob, etTdDate, etMrDate,
+                etHpv1SbiDate, etHpv1CbiDate, etHpv2CbiDate, etHpvCompletedDate
+        };
+        Date now = new Date();
+        for (EditText f : fields) {
+            if (f == null || f.getVisibility() != View.VISIBLE) continue;
+            String text = f.getText().toString().trim();
+            if (text.isEmpty()) continue;
+            Date d = parseDate(text);
+            if (d == null || d.after(now)) {
+                f.setError("Enter a valid date (MM-DD-YYYY)");
+                f.requestFocus();
+                return false;
+            }
+        }
+        return true;
     }
 
     private void loadHouseholdProfilesAutocomplete() {
@@ -203,8 +329,9 @@ public class ChildImmunizationSchoolFragment extends Fragment {
                                         etFamilySerialNumber.setText(profile.hhNumber);
                                     }
                                     if (etDob != null) {
-                                        etDob.setText(profile.dob);
-                                        calculateAgeInYears(profile.dob);
+                                        String dobDisplay = toDisplayDate(profile.dob);
+                                        etDob.setText(dobDisplay);
+                                        calculateAgeInYears(dobDisplay);
                                     }
                                     if (etAddress != null) {
                                         String sitioPart = (profile.sitio != null && !profile.sitio.isEmpty()) ? profile.sitio : "";
@@ -238,10 +365,10 @@ public class ChildImmunizationSchoolFragment extends Fragment {
                 if (record != null && isAdded() && getActivity() != null) {
                     getActivity().runOnUiThread(() -> {
                         selectedProfileId = record.getProfileId();
-                        etRegDate.setText(record.getRegistrationDate());
+                        etRegDate.setText(toDisplayDate(record.getRegistrationDate()));
                         etFamilySerialNumber.setText(record.getFamilySerialNumber());
                         etChildName.setText(record.getChildName());
-                        etDob.setText(record.getDateOfBirth());
+                        etDob.setText(toDisplayDate(record.getDateOfBirth()));
                         etAgeYears.setText(record.getAgeYears());
                         etAddress.setText(record.getAddress());
 
@@ -257,16 +384,16 @@ public class ChildImmunizationSchoolFragment extends Fragment {
                         else if ("C".equals(grade)) rbGradeC.setChecked(true);
                         else if ("D".equals(grade)) rbGradeD.setChecked(true);
 
-                        etTdDate.setText(record.getTdDate());
-                        etMrDate.setText(record.getMrDate());
-                        etHpv1SbiDate.setText(record.getHpv1SbiDate());
-                        etHpv1CbiDate.setText(record.getHpv1CbiDate());
-                        etHpv2CbiDate.setText(record.getHpv2CbiDate());
+                        etTdDate.setText(toDisplayDate(record.getTdDate()));
+                        etMrDate.setText(toDisplayDate(record.getMrDate()));
+                        etHpv1SbiDate.setText(toDisplayDate(record.getHpv1SbiDate()));
+                        etHpv1CbiDate.setText(toDisplayDate(record.getHpv1CbiDate()));
+                        etHpv2CbiDate.setText(toDisplayDate(record.getHpv2CbiDate()));
 
                         if (record.getHpvCompleted() == 1) {
                             rbHpvCompletedYes.setChecked(true);
                             tilHpvCompletedDate.setVisibility(View.VISIBLE);
-                            etHpvCompletedDate.setText(record.getHpvCompletedDate());
+                            etHpvCompletedDate.setText(toDisplayDate(record.getHpvCompletedDate()));
                         } else {
                             rbHpvCompletedNo.setChecked(true);
                             tilHpvCompletedDate.setVisibility(View.GONE);
@@ -282,8 +409,7 @@ public class ChildImmunizationSchoolFragment extends Fragment {
     private void calculateAgeInYears(String dobString) {
         if (dobString == null || dobString.isEmpty() || etAgeYears == null) return;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date birthDate = sdf.parse(dobString);
+            Date birthDate = parseDate(toDisplayDate(dobString));
             if (birthDate != null) {
                 Calendar birth = Calendar.getInstance();
                 birth.setTime(birthDate);
@@ -302,6 +428,11 @@ public class ChildImmunizationSchoolFragment extends Fragment {
         String childName = etChildName.getText().toString().trim();
         if (childName.isEmpty()) {
             Toast.makeText(getContext(), "Child Full Name is required!", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        if (!validateDateFields()) {
+            Toast.makeText(getContext(), "Please check the highlighted date", Toast.LENGTH_SHORT).show();
             return;
         }
 
@@ -357,6 +488,8 @@ public class ChildImmunizationSchoolFragment extends Fragment {
 
                 if (database != null) {
                     if (isEditMode) {
+                        record.setSynced(false);
+                        record.setUpdatedAt(System.currentTimeMillis());
                         database.childImmunizationSchoolDao().update(record);
                     } else {
                         record.setNewInsert(true);
@@ -372,5 +505,51 @@ public class ChildImmunizationSchoolFragment extends Fragment {
                 }
             }
         });
+    }
+
+    // Same auto-formatting watcher used in ProfilingFragment (types as MM-dd-yyyy)
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

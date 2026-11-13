@@ -101,8 +101,8 @@ public class EyesScreeningFragment extends Fragment {
             existingRecordId = getArguments().getLong("EDIT_RECORD_ID");
             loadExistingRecordData(existingRecordId);
         }else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Automatically set the current date for a new record (MM-dd-yyyy)
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etDateScreening.setText(sdf.format(new Date()));
         }
     }
@@ -202,19 +202,8 @@ public class EyesScreeningFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
-                        try {
-                            // Updated profile parsing split configuration to accommodate YYYY-MM-DD layout indices
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1;
-                                int day = Integer.parseInt(dobParts[2]);
-                                calculateAgeAndGroup(year, month, day);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        // Setting the text also triggers the DOB watcher, which computes age and age group
+                        etDateOfBirth.setText(toDisplayDate(profile.dob));
                     }
                 });
             }
@@ -272,20 +261,41 @@ public class EyesScreeningFragment extends Fragment {
     }
 
     private void setupDatePickersAndFormatters() {
-        tilDateScreening.setStartIconOnClickListener(v -> showDatePickerDialog(etDateScreening));
-        tilDateOfBirth.setStartIconOnClickListener(v -> showDatePickerDialog(etDateOfBirth));
-        tilDateReferred.setStartIconOnClickListener(v -> showDatePickerDialog(etDateReferred));
+        bindDatePicker(tilDateScreening, etDateScreening);
+        bindDatePicker(tilDateOfBirth, etDateOfBirth);
+        bindDatePicker(tilDateReferred, etDateReferred);
 
-        etDateScreening.addTextChangedListener(new DateFormattingWatcher(etDateScreening));
-        etDateOfBirth.addTextChangedListener(new DateFormattingWatcher(etDateOfBirth));
-        etDateReferred.addTextChangedListener(new DateFormattingWatcher(etDateReferred));
+        // Auto-compute age and age group while the DOB is typed manually
+        etDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                if (s.length() == 10) {
+                    Date d = parseDate(s.toString());
+                    if (d != null) {
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(d);
+                        calculateAgeAndGroup(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                    }
+                } else if (s.length() == 0) {
+                    etAge.setText("");
+                }
+            }
+        });
+    }
+
+    // Formats keyboard input as MM-dd-yyyy while typing, and opens the
+    // calendar dialog from the end icon (same behavior as ProfilingFragment).
+    private void bindDatePicker(TextInputLayout layout, EditText editText) {
+        editText.addTextChangedListener(new DateFormattingWatcher(editText));
+        layout.setEndIconOnClickListener(v -> showDatePickerDialog(editText));
     }
 
     private void showDatePickerDialog(EditText targetEditText) {
+        // Start on the date already in the field (if valid), otherwise today
         final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        Date existing = parseDate(targetEditText.getText().toString().trim());
+        if (existing != null) calendar.setTime(existing);
 
         DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view, selYear, selMonth, selDay) -> {
             Calendar selCalendar = Calendar.getInstance();
@@ -293,13 +303,33 @@ public class EyesScreeningFragment extends Fragment {
             selCalendar.set(Calendar.MONTH, selMonth);
             selCalendar.set(Calendar.DAY_OF_MONTH, selDay);
 
-            // Modified default UI formatter pattern sequence
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             targetEditText.setText(sdf.format(selCalendar.getTime()));
             targetEditText.setError(null);
-        }, year, month, day);
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
+        dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         dialog.show();
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
+    // Strict MM-dd-yyyy parser; returns null if the text is not a real date
+    private Date parseDate(String text) {
+        if (text == null || !text.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            return sdf.parse(text);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void loadExistingRecordData(long id) {
@@ -319,11 +349,11 @@ public class EyesScreeningFragment extends Fragment {
 
     private void populateFormFields(EyesScreeningsData data) {
         selectedProfileId = data.getProfileId();
-        etDateScreening.setText(data.getDateScreening());
+        etDateScreening.setText(toDisplayDate(data.getDateScreening()));
         etFamilySerial.setText(data.getFamilySerial());
         etName.setText(data.getName(), false);
         etAddress.setText(data.getAddress());
-        etDateOfBirth.setText(data.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(data.getDateOfBirth()));
         etAge.setText(data.getAge());
 
         String ageGroupCode = data.getAgeGroup();
@@ -356,7 +386,7 @@ public class EyesScreeningFragment extends Fragment {
             updateDiseaseDetailMessage(diseaseIndex);
         }
 
-        etDateReferred.setText(data.getDateReferred());
+        etDateReferred.setText(toDisplayDate(data.getDateReferred()));
         etRemarks.setText(data.getRemarks());
 
         btnSubmit.setText("UPDATE SCREENING");
@@ -383,22 +413,22 @@ public class EyesScreeningFragment extends Fragment {
         }
 
         String screeningDate = etDateScreening.getText().toString().trim();
-        if (!isValidDateFormat(screeningDate)) {
-            etDateScreening.setError("Required format is YYYY-MM-DD");
+        if (!isValidDate(screeningDate)) {
+            etDateScreening.setError("Enter a valid date (MM-DD-YYYY)");
             etDateScreening.requestFocus();
             return false;
         }
 
         String dobDate = etDateOfBirth.getText().toString().trim();
-        if (!dobDate.isEmpty() && !isValidDateFormat(dobDate)) {
-            etDateOfBirth.setError("Invalid date format (YYYY-MM-DD)");
+        if (!dobDate.isEmpty() && !isValidDate(dobDate)) {
+            etDateOfBirth.setError("Enter a valid date (MM-DD-YYYY)");
             etDateOfBirth.requestFocus();
             return false;
         }
 
         String refDate = etDateReferred.getText().toString().trim();
-        if (!refDate.isEmpty() && !isValidDateFormat(refDate)) {
-            etDateReferred.setError("Invalid date format (YYYY-MM-DD)");
+        if (!refDate.isEmpty() && !isValidDate(refDate)) {
+            etDateReferred.setError("Enter a valid date (MM-DD-YYYY)");
             etDateReferred.requestFocus();
             return false;
         }
@@ -418,9 +448,10 @@ public class EyesScreeningFragment extends Fragment {
         return true;
     }
 
-    private boolean isValidDateFormat(String date) {
-        // Adjusted regex expression filter pattern validation constraint structure matches matching YYYY-MM-DD ISO structures
-        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+    // A date is valid when it is a real MM-dd-yyyy date that is not in the future
+    private boolean isValidDate(String date) {
+        Date d = parseDate(date);
+        return d != null && !d.after(new Date());
     }
 
     private EyesScreeningsData collectFormData() {
@@ -525,9 +556,9 @@ public class EyesScreeningFragment extends Fragment {
 
         @Override
         public void afterTextChanged(Editable s) {
-            // Modified length positions to correctly erase hyphens for YYYY-MM-DD strings on backspace
+            // Erase the trailing hyphen on backspace for MM-dd-yyyy strings
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -541,8 +572,8 @@ public class EyesScreeningFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                // Automatically injects hyphens dynamically after index 3 (YYYY-) and index 5 (YYYY-MM-)
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                // Automatically injects hyphens after the month (MM-) and the day (MM-DD-)
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

@@ -36,15 +36,19 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginBottom="12dp"
-            android:hint="Date of Screening (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+            android:hint="Date of Screening (MM-DD-YYYY)"
+            app:endIconMode="custom"
+            app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+            app:endIconContentDescription="Open calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDateOfScreening"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="10" />
+                android:maxLength="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -98,19 +102,19 @@
             android:id="@+id/tilDateOfBirth"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Date of Birth (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+            android:hint="Date of Birth (MM-DD-YYYY)"
+            app:endIconMode="custom"
+            app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+            app:endIconContentDescription="Open calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etDateOfBirth"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:focusable="false"
-                android:focusableInTouchMode="false"
-                android:clickable="false"
-                android:cursorVisible="false"
-                android:maxLength="10" />
+                android:maxLength="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
@@ -262,30 +266,38 @@
             android:id="@+id/tilPpvDateGiven"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="PPV Date Given (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+            android:hint="PPV Date Given (MM-DD-YYYY)"
+            app:endIconMode="custom"
+            app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+            app:endIconContentDescription="Open calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etPpvDateGiven"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="10" />
+                android:maxLength="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/tilInfluenzaDateGiven"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:hint="Influenza Date Given (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+            android:hint="Influenza Date Given (MM-DD-YYYY)"
+            app:endIconMode="custom"
+            app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+            app:endIconContentDescription="Open calendar"
             style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etInfluenzaDateGiven"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:inputType="date"
-                android:maxLength="10" />
+                android:maxLength="10"
+                android:focusable="true"
+                android:focusableInTouchMode="true" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout

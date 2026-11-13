@@ -41,7 +41,7 @@ import java.util.concurrent.Executors;
 
 public class FilariasisRegistryFragment extends Fragment {
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String DATE_PATTERN = "MM-dd-yyyy";
     private static final String ARG_RECORD_ID = "arg_record_id";
 
     private EditText etDateOfRegistration, etDateOfBirth, etDateNbeRdt;
@@ -107,8 +107,8 @@ public class FilariasisRegistryFragment extends Fragment {
         if (currentRecordId != -1) {
             loadRecordData();
         } else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Automatically set the current date for a new record
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN, Locale.US);
             etDateOfRegistration.setText(sdf.format(new Date()));
         }
         return view;
@@ -221,8 +221,9 @@ public class FilariasisRegistryFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
+                        // Profile DOB may be legacy yyyy-MM-dd or MM-dd-yyyy; normalize for display.
                         // Triggers age calculation instantly via text watcher hooks
+                        etDateOfBirth.setText(toDisplayDate(profile.dob));
                     }
                 });
             }
@@ -246,21 +247,13 @@ public class FilariasisRegistryFragment extends Fragment {
     }
 
     private void setupListeners() {
-        // Setup Start Icon Click Listeners
-        if (tilDateOfRegistration != null) tilDateOfRegistration.setStartIconOnClickListener(v -> showDatePicker(etDateOfRegistration));
-        if (tilDateOfBirth != null) tilDateOfBirth.setStartIconOnClickListener(v -> showDatePicker(etDateOfBirth));
-        if (tilDateNbeRdt != null) tilDateNbeRdt.setStartIconOnClickListener(v -> showDatePicker(etDateNbeRdt));
-        if (tilAlbendazoleDateGiven != null) tilAlbendazoleDateGiven.setStartIconOnClickListener(v -> showDatePicker(etAlbendazoleDateGiven));
-        if (tilDecDateGiven != null) tilDecDateGiven.setStartIconOnClickListener(v -> showDatePicker(etDecDateGiven));
-        if (tilIvermectinDateGiven != null) tilIvermectinDateGiven.setStartIconOnClickListener(v -> showDatePicker(etIvermectinDateGiven));
-
-        // Setup EditText Click Listeners for seamless UX
-        etDateOfRegistration.setOnClickListener(v -> showDatePicker(etDateOfRegistration));
-        etDateOfBirth.setOnClickListener(v -> showDatePicker(etDateOfBirth));
-        etDateNbeRdt.setOnClickListener(v -> showDatePicker(etDateNbeRdt));
-        etAlbendazoleDateGiven.setOnClickListener(v -> showDatePicker(etAlbendazoleDateGiven));
-        etDecDateGiven.setOnClickListener(v -> showDatePicker(etDecDateGiven));
-        etIvermectinDateGiven.setOnClickListener(v -> showDatePicker(etIvermectinDateGiven));
+        // Calendar opens only from the end icon; the fields themselves accept typed input.
+        if (tilDateOfRegistration != null) tilDateOfRegistration.setEndIconOnClickListener(v -> showDatePicker(etDateOfRegistration));
+        if (tilDateOfBirth != null) tilDateOfBirth.setEndIconOnClickListener(v -> showDatePicker(etDateOfBirth));
+        if (tilDateNbeRdt != null) tilDateNbeRdt.setEndIconOnClickListener(v -> showDatePicker(etDateNbeRdt));
+        if (tilAlbendazoleDateGiven != null) tilAlbendazoleDateGiven.setEndIconOnClickListener(v -> showDatePicker(etAlbendazoleDateGiven));
+        if (tilDecDateGiven != null) tilDecDateGiven.setEndIconOnClickListener(v -> showDatePicker(etDecDateGiven));
+        if (tilIvermectinDateGiven != null) tilIvermectinDateGiven.setEndIconOnClickListener(v -> showDatePicker(etIvermectinDateGiven));
 
         // Dynamic typing formatters
         etDateOfRegistration.addTextChangedListener(new DateFormattingWatcher(etDateOfRegistration));
@@ -284,6 +277,14 @@ public class FilariasisRegistryFragment extends Fragment {
         btnSave.setOnClickListener(v -> saveOrUpdateData());
     }
 
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
     private void showDatePicker(EditText editText) {
         DatePickerDialog.OnDateSetListener listener = (view, year, month, dayOfMonth) -> {
             calendar.set(Calendar.YEAR, year);
@@ -303,6 +304,7 @@ public class FilariasisRegistryFragment extends Fragment {
     private void calculateAgeFromBirthDate(String dobText) {
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN, Locale.US);
+            sdf.setLenient(false); // reject impossible dates like 13-45-2020
             Calendar dob = Calendar.getInstance();
             dob.setTime(sdf.parse(dobText));
             Calendar now = Calendar.getInstance();
@@ -337,7 +339,7 @@ public class FilariasisRegistryFragment extends Fragment {
     }
 
     private boolean isValidDateFormat(String date) {
-        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+        return date.matches("(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\\d{4}");
     }
 
     private boolean validateFields() {
@@ -351,7 +353,7 @@ public class FilariasisRegistryFragment extends Fragment {
             return false;
         }
         if (!isValidDateFormat(etDateOfRegistration.getText().toString().trim())) {
-            etDateOfRegistration.setError("Invalid format. Use YYYY-MM-DD");
+            etDateOfRegistration.setError("Invalid format. Use MM-DD-YYYY");
             return false;
         }
 
@@ -365,31 +367,31 @@ public class FilariasisRegistryFragment extends Fragment {
             return false;
         }
         if (!isValidDateFormat(etDateOfBirth.getText().toString().trim())) {
-            etDateOfBirth.setError("Invalid format. Use YYYY-MM-DD");
+            etDateOfBirth.setError("Invalid format. Use MM-DD-YYYY");
             return false;
         }
 
         String nbeRdtStr = etDateNbeRdt.getText().toString().trim();
         if (!nbeRdtStr.isEmpty() && !isValidDateFormat(nbeRdtStr)) {
-            etDateNbeRdt.setError("Invalid format. Use YYYY-MM-DD");
+            etDateNbeRdt.setError("Invalid format. Use MM-DD-YYYY");
             return false;
         }
 
         String albStr = etAlbendazoleDateGiven.getText().toString().trim();
         if (!albStr.isEmpty() && !isValidDateFormat(albStr)) {
-            etAlbendazoleDateGiven.setError("Invalid format. Use YYYY-MM-DD");
+            etAlbendazoleDateGiven.setError("Invalid format. Use MM-DD-YYYY");
             return false;
         }
 
         String decStr = etDecDateGiven.getText().toString().trim();
         if (!decStr.isEmpty() && !isValidDateFormat(decStr)) {
-            etDecDateGiven.setError("Invalid format. Use YYYY-MM-DD");
+            etDecDateGiven.setError("Invalid format. Use MM-DD-YYYY");
             return false;
         }
 
         String ivmStr = etIvermectinDateGiven.getText().toString().trim();
         if (!ivmStr.isEmpty() && !isValidDateFormat(ivmStr)) {
-            etIvermectinDateGiven.setError("Invalid format. Use YYYY-MM-DD");
+            etIvermectinDateGiven.setError("Invalid format. Use MM-DD-YYYY");
             return false;
         }
 
@@ -410,14 +412,14 @@ public class FilariasisRegistryFragment extends Fragment {
         // ---> LOAD PROFILE ID <---
         selectedProfileId = record.getProfileId();
 
-        etDateOfRegistration.setText(record.getDateOfRegistration());
+        etDateOfRegistration.setText(toDisplayDate(record.getDateOfRegistration()));
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
 
         // Populate the autocomplete without showing popup filtering UI immediately
         etName.setText(record.getName(), false);
 
         etAddress.setText(record.getAddress());
-        etDateOfBirth.setText(record.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(record.getDateOfBirth()));
         etAge.setText(String.valueOf(record.getAge()));
 
         if (record.getAgeGroup() != null && spinnerAgeGroup.getAdapter() != null) {
@@ -431,7 +433,7 @@ public class FilariasisRegistryFragment extends Fragment {
 
         cbNbePerformed.setChecked(record.isNbePerformed());
         cbRdtPerformed.setChecked(record.isRdtPerformed());
-        etDateNbeRdt.setText(record.getDateNbeRdt());
+        etDateNbeRdt.setText(toDisplayDate(record.getDateNbeRdt()));
 
         if ("1".equals(record.getBloodTestResult())) rgBloodTestResult.check(R.id.rbResultPositive);
         else if ("2".equals(record.getBloodTestResult())) rgBloodTestResult.check(R.id.rbResultNegative);
@@ -451,9 +453,9 @@ public class FilariasisRegistryFragment extends Fragment {
         }
         cbHydrocelePresent.setChecked(record.isHasHydrocele());
 
-        etAlbendazoleDateGiven.setText(record.getAlbendazoleDateGiven());
-        etDecDateGiven.setText(record.getDecDateGiven());
-        etIvermectinDateGiven.setText(record.getIvermectinDateGiven());
+        etAlbendazoleDateGiven.setText(toDisplayDate(record.getAlbendazoleDateGiven()));
+        etDecDateGiven.setText(toDisplayDate(record.getDecDateGiven()));
+        etIvermectinDateGiven.setText(toDisplayDate(record.getIvermectinDateGiven()));
         etRemarks.setText(record.getRemarks());
     }
 
@@ -555,7 +557,7 @@ public class FilariasisRegistryFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -569,7 +571,7 @@ public class FilariasisRegistryFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

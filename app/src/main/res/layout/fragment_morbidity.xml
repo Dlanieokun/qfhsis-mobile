@@ -79,14 +79,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
+                    android:hint="Select Disease"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
 
                     <AutoCompleteTextView
                         android:id="@+id/spinner_disease"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Select Disease"
-                        android:inputType="none"
+                        android:inputType="textPersonName"
+                        android:completionThreshold="1"
+                        android:textColor="#1F2937"
                         android:textSize="14sp" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -208,38 +210,63 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Barangay">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_barangay"
+                    android:hint="Region"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                    <AutoCompleteTextView
+                        android:id="@+id/et_region"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp" />
+                        android:completionThreshold="1"
+                        android:textSize="14sp"
+                        android:inputType="textPersonName"
+                        android:textColor="#1F2937"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Municipality / City">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_municipality"
+                    android:hint="Province"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                    <AutoCompleteTextView
+                        android:id="@+id/et_province"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp" />
+                        android:completionThreshold="1"
+                        android:textSize="14sp"
+                        android:inputType="textPersonName"
+                        android:textColor="#1F2937"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                    android:hint="Province">
-                    <com.google.android.material.textfield.TextInputEditText
-                        android:id="@+id/et_province"
+                    android:layout_marginBottom="8dp"
+                    android:hint="Municipality / City"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                    <AutoCompleteTextView
+                        android:id="@+id/et_municipality"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:textSize="14sp" />
+                        android:completionThreshold="1"
+                        android:textSize="14sp"
+                        android:inputType="textPersonName"
+                        android:textColor="#1F2937"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Barangay"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                    <AutoCompleteTextView
+                        android:id="@+id/et_barangay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:completionThreshold="1"
+                        android:textSize="14sp"
+                        android:inputType="textPersonName"
+                        android:textColor="#1F2937"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>

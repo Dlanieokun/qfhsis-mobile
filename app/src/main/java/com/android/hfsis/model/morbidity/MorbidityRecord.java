@@ -9,11 +9,12 @@ public class MorbidityRecord {
 
     @PrimaryKey(autoGenerate = true)
     public int id;
+    public String userId;
 
-    public String householdId;
-    public String barangay;
-    public String municipality;
+    public String region;
     public String province;
+    public String municipality;
+    public String barangay;
     public String reportMonth;
     public String reportYear;
 
@@ -122,17 +123,20 @@ public class MorbidityRecord {
     public int getId() { return id; }
     public void setId(int id) { this.id = id; }
 
-    public String getHouseholdId() { return householdId; }
-    public void setHouseholdId(String householdId) { this.householdId = householdId; }
+    public String getUserId() { return userId; }
+    public void setUserId(String userId) { this.userId = userId; }
 
-    public String getBarangay() { return barangay; }
-    public void setBarangay(String barangay) { this.barangay = barangay; }
+    public String getRegion() { return region; }
+    public void setRegion(String region) { this.region = region; }
+
+    public String getProvince() { return province; }
+    public void setProvince(String province) { this.province = province; }
 
     public String getMunicipality() { return municipality; }
     public void setMunicipality(String municipality) { this.municipality = municipality; }
 
-    public String getProvince() { return province; }
-    public void setProvince(String province) { this.province = province; }
+    public String getBarangay() { return barangay; }
+    public void setBarangay(String barangay) { this.barangay = barangay; }
 
     public String getReportMonth() { return reportMonth; }
     public void setReportMonth(String reportMonth) { this.reportMonth = reportMonth; }

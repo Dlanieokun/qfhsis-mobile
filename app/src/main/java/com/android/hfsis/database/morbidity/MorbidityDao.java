@@ -29,8 +29,8 @@ public interface MorbidityDao {
     @Query("SELECT * FROM morbidity_records WHERE id = :id LIMIT 1")
     MorbidityRecord getRecordById(int id);
 
-    @Query("SELECT * FROM morbidity_records WHERE householdId = :householdId ORDER BY createdAt DESC")
-    List<MorbidityRecord> getRecordsByHousehold(String householdId);
+//    @Query("SELECT * FROM morbidity_records WHERE householdId = :householdId ORDER BY createdAt DESC")
+//    List<MorbidityRecord> getRecordsByHousehold(String householdId);
 
     @Query("SELECT * FROM morbidity_records WHERE reportYear = :year AND reportMonth = :month ORDER BY diseaseName ASC")
     List<MorbidityRecord> getRecordsByPeriod(String year, String month);

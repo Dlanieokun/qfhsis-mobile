@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollOralHealthRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F0F4F8"
+    android:clipToPadding="false"
+    android:scrollbars="none"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="32dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -93,9 +99,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:hint="Date of Visit (YYYY-MM-DD)"
-                    app:startIconDrawable="@drawable/ic_calendar"
-                    app:startIconTint="#1565C0">
+                    android:hint="Date of Visit (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDateOfVisit"
                         android:layout_width="match_parent"
@@ -167,18 +173,16 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:hint="Date of Birth (YYYY-MM-DD)"
-                    app:startIconDrawable="@drawable/ic_calendar"
-                    app:startIconTint="#1565C0">
+                    android:hint="Date of Birth (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDateOfBirth"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:inputType="date"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="false"
-                        android:cursorVisible="false"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"
                         android:maxLength="10" />
                 </com.google.android.material.textfield.TextInputLayout>
 
@@ -487,18 +491,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_marginBottom="14dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilOralScreening1st"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:hint="1st Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="1st Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etOralScreening1st"
                             android:layout_width="match_parent"
@@ -507,14 +510,14 @@
                             android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilOralScreening2nd"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="2nd Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="2nd Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etOralScreening2nd"
                             android:layout_width="match_parent"
@@ -535,18 +538,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_marginBottom="14dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilRiskAssessment1st"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:hint="1st Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="1st Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etRiskAssessment1st"
                             android:layout_width="match_parent"
@@ -555,14 +557,14 @@
                             android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilRiskAssessment2nd"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="2nd Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="2nd Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etRiskAssessment2nd"
                             android:layout_width="match_parent"
@@ -583,18 +585,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_marginBottom="14dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilOralProphylaxis1st"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:hint="1st Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="1st Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etOralProphylaxis1st"
                             android:layout_width="match_parent"
@@ -603,14 +604,14 @@
                             android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilOralProphylaxis2nd"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="2nd Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="2nd Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etOralProphylaxis2nd"
                             android:layout_width="match_parent"
@@ -631,18 +632,17 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_marginBottom="14dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilFluorideVarnish1st"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:hint="1st Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="1st Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etFluorideVarnish1st"
                             android:layout_width="match_parent"
@@ -651,14 +651,14 @@
                             android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilFluorideVarnish2nd"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="2nd Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="2nd Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etFluorideVarnish2nd"
                             android:layout_width="match_parent"
@@ -679,17 +679,16 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilCounseling1st"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:hint="1st Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="1st Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etCounseling1st"
                             android:layout_width="match_parent"
@@ -698,14 +697,14 @@
                             android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilCounseling2nd"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="2nd Visit (YYYY-MM-DD)"
-                        app:startIconDrawable="@drawable/ic_calendar"
-                        app:startIconTint="#6A1B9A">
+                        android:hint="2nd Visit (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etCounseling2nd"
                             android:layout_width="match_parent"

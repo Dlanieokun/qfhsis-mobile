@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollChildImmunizationSchoolRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="32dp"
+    android:clipToPadding="false"
+    android:scrollbars="none"
     android:fillViewport="true">
 
     <LinearLayout
@@ -48,7 +54,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date of Registration (yyyy-MM-dd)"
+                    android:hint="Date of Registration (MM-DD-YYYY)"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -56,9 +62,9 @@
                         android:id="@+id/etRegDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="date"
                         android:focusable="true"
-                        android:clickable="true"
-                        android:inputType="date" />
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -97,7 +103,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date of Birth (yyyy-MM-dd)"
+                    android:hint="Date of Birth (MM-DD-YYYY)"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -105,11 +111,9 @@
                         android:id="@+id/etDob"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="false"
-                        android:cursorVisible="false"
-                        android:inputType="date" />
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -236,7 +240,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Tetanus-diphtheria (Td)"
+                    android:hint="Tetanus-diphtheria (Td) (MM-DD-YYYY)"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -244,9 +248,9 @@
                         android:id="@+id/etTdDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="date"
                         android:focusable="true"
-                        android:clickable="true"
-                        android:inputType="date" />
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -254,7 +258,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Measles-Rubella (MR)"
+                    android:hint="Measles-Rubella (MR) (MM-DD-YYYY)"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -262,9 +266,9 @@
                         android:id="@+id/etMrDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="date"
                         android:focusable="true"
-                        android:clickable="true"
-                        android:inputType="date" />
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -272,7 +276,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="HPV Vaccine 1st Dose (SBI)"
+                    android:hint="HPV Vaccine 1st Dose (SBI) (MM-DD-YYYY)"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -280,9 +284,9 @@
                         android:id="@+id/etHpv1SbiDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="date"
                         android:focusable="true"
-                        android:clickable="true"
-                        android:inputType="date" />
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -300,7 +304,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="HPV Vaccine 1st Dose (CBI)"
+                    android:hint="HPV Vaccine 1st Dose (CBI) (MM-DD-YYYY)"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -308,9 +312,9 @@
                         android:id="@+id/etHpv1CbiDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="date"
                         android:focusable="true"
-                        android:clickable="true"
-                        android:inputType="date" />
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -318,7 +322,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="HPV Vaccine 2nd Dose (CBI)"
+                    android:hint="HPV Vaccine 2nd Dose (CBI) (MM-DD-YYYY)"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -326,9 +330,9 @@
                         android:id="@+id/etHpv2CbiDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="date"
                         android:focusable="true"
-                        android:clickable="true"
-                        android:inputType="date" />
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
@@ -365,7 +369,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date Fully Immunized (HPV)"
+                    android:hint="Date Fully Immunized (HPV) (MM-DD-YYYY)"
                     android:visibility="gone"
                     android:layout_marginBottom="12dp"
                     app:endIconMode="custom"
@@ -374,9 +378,9 @@
                         android:id="@+id/etHpvCompletedDate"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="date"
                         android:focusable="true"
-                        android:clickable="true"
-                        android:inputType="date" />
+                        android:focusableInTouchMode="true" />
                 </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>

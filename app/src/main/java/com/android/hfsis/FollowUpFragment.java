@@ -2,6 +2,8 @@ package com.android.hfsis;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -18,6 +20,8 @@ import androidx.fragment.app.Fragment;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.FollowUpEntity;
 import com.android.hfsis.model.HouseholdProfile;
+
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 import java.util.HashMap;
@@ -86,9 +90,16 @@ public class FollowUpFragment extends Fragment {
 
             tvLabel.setText(month);
 
-            // Attach interactive date picker dialog operations
-            etScheduled.setOnClickListener(v -> showDatePicker(etScheduled));
-            etActual.setOnClickListener(v -> showDatePicker(etActual));
+            TextInputLayout tilScheduled = monthRow.findViewById(R.id.tilScheduledDate);
+            TextInputLayout tilActual = monthRow.findViewById(R.id.tilActualDate);
+
+            // Formats keyboard inputs while typing manually
+            etScheduled.addTextChangedListener(new DateFormattingWatcher(etScheduled));
+            etActual.addTextChangedListener(new DateFormattingWatcher(etActual));
+
+            // Opens calendar date picker only when clicking the end icon
+            tilScheduled.setEndIconOnClickListener(v -> showDatePicker(etScheduled));
+            tilActual.setEndIconOnClickListener(v -> showDatePicker(etActual));
 
             // Store entry layout references mapped under month keys
             scheduledInputsMap.put(month, etScheduled);
@@ -98,12 +109,20 @@ public class FollowUpFragment extends Fragment {
         }
     }
 
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
     private void showDatePicker(EditText targetField) {
         if (getContext() == null) return;
         final Calendar c = Calendar.getInstance();
 
         DatePickerDialog dialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-            String formattedDate = String.format(Locale.US, "%04d-%02d-%02d", year, (month + 1), dayOfMonth);
+            String formattedDate = String.format(Locale.US, "%02d-%02d-%04d", (month + 1), dayOfMonth, year);
             targetField.setText(formattedDate);
         }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
 
@@ -143,8 +162,8 @@ public class FollowUpFragment extends Fragment {
                         EditText etSched = scheduledInputsMap.get(entity.monthName);
                         EditText etAct = actualInputsMap.get(entity.monthName);
 
-                        if (etSched != null) etSched.setText(entity.scheduledDate);
-                        if (etAct != null) etAct.setText(entity.actualDate);
+                        if (etSched != null) etSched.setText(toDisplayDate(entity.scheduledDate));
+                        if (etAct != null) etAct.setText(toDisplayDate(entity.actualDate));
                     }
                 });
             }
@@ -195,5 +214,50 @@ public class FollowUpFragment extends Fragment {
                 });
             }
         });
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

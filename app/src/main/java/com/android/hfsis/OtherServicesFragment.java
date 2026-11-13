@@ -17,6 +17,7 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
 
 import com.android.hfsis.child.ChildCareServicesFragment;
 import com.android.hfsis.database.DatabaseHelper;
@@ -61,6 +62,8 @@ import com.android.hfsis.model.morbidity.MorbidityRecord;
 
 import java.util.List;
 
+import retrofit2.Call;
+import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 
@@ -132,29 +135,29 @@ public class OtherServicesFragment extends Fragment {
 
         // Pull (Server -> Android) Trigger
         if (btnPull != null) {
-            btnPull.setOnClickListener(v -> {
+            btnPull.setOnClickListener(v -> verifyAccountThen(() -> {
                 progressOverlay.setVisibility(View.VISIBLE);
                 syncProgressBar.setProgress(0);
                 tvProgressPercent.setText("Pulling: 0%\nStarting Pull Session...");
                 triggerDatabasePull();
-            });
+            }));
         }
 
         // Upload Trigger
         if (btnUpload != null) {
-            btnUpload.setOnClickListener(v -> {
+            btnUpload.setOnClickListener(v -> verifyAccountThen(() -> {
                 progressOverlay.setVisibility(View.VISIBLE);
                 syncProgressBar.setProgress(0);
                 tvProgressPercent.setText("Uploading: 0%\nStarting Upload Session...");
                 triggerUpload();
-            });
+            }));
         }
 
         // Active Transactions
         btnProfiling.setOnClickListener(v -> {
             if (getActivity() != null) {
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ViewHouseholdProfileFragment())
+                        .replace(R.id.fragment_container, new ViewHouseholdListFragment())
                         .addToBackStack(null).commit();
             }
         });
@@ -887,5 +890,114 @@ public class OtherServicesFragment extends Fragment {
                 tvProgressPercent.setText(percent + "% — " + message);
             }
         });
+    }
+
+    // ---------------------------------------------------------------------
+    // Account status check (used before Pull and Upload)
+    // ---------------------------------------------------------------------
+
+    /**
+     * Checks the user's account status on the server first.
+     * - Active            -> runs onActive (the pull / upload)
+     * - Inactive / 404    -> logs the user out and redirects to LoginFragment
+     * - Network failure   -> runs onActive anyway; the pull/upload itself will
+     *                        report the network error to the user
+     */
+    private void verifyAccountThen(Runnable onActive) {
+        if (getActivity() == null) return;
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        int userId = prefs.getInt("user_id", -1);
+        String baseUrl = prefs.getString(KEY_API_BASE_URL, DEFAULT_BASE_URL);
+
+        if (userId == -1) {
+            forceLogout("Session expired. Please log in again.");
+            return;
+        }
+
+        // Show the overlay while verifying
+        progressOverlay.setVisibility(View.VISIBLE);
+        syncProgressBar.setProgress(0);
+        tvProgressPercent.setText("Verifying account...");
+        if (btnPull != null) btnPull.setEnabled(false);
+        if (btnUpload != null) btnUpload.setEnabled(false);
+
+        ApiService apiService = RetrofitClient.getClient(baseUrl).create(ApiService.class);
+        apiService.checkUserStatus(userId).enqueue(new Callback<UserStatusResponse>() {
+            @Override
+            public void onResponse(@NonNull Call<UserStatusResponse> call,
+                                   @NonNull Response<UserStatusResponse> response) {
+                if (!isAdded()) return;
+                restoreSyncButtons();
+
+                if (response.isSuccessful() && response.body() != null) {
+                    if (response.body().isInactive()) {
+                        progressOverlay.setVisibility(View.GONE);
+                        forceLogout("Your account is currently suspended or inactive.");
+                    } else {
+                        onActive.run();
+                    }
+                } else if (response.code() == 404) {
+                    progressOverlay.setVisibility(View.GONE);
+                    forceLogout("Your account could not be found. Please contact your administrator.");
+                } else {
+                    progressOverlay.setVisibility(View.GONE);
+                    Toast.makeText(getContext(),
+                            "Unable to verify account status. Please try again.",
+                            Toast.LENGTH_SHORT).show();
+                }
+            }
+
+            @Override
+            public void onFailure(@NonNull Call<UserStatusResponse> call, @NonNull Throwable t) {
+                if (!isAdded()) return;
+                restoreSyncButtons();
+
+                // Offline: let the pull/upload run; it will show its own network error.
+                onActive.run();
+            }
+        });
+    }
+
+    private void restoreSyncButtons() {
+        if (btnPull != null) btnPull.setEnabled(true);
+        if (btnUpload != null) btnUpload.setEnabled(true);
+    }
+
+    /**
+     * Clears the saved session (keeps api_base_url and last_synced_at) and
+     * returns to LoginFragment with an empty back stack.
+     */
+    private void forceLogout(String message) {
+        if (getActivity() == null) return;
+
+        SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = prefs.edit();
+
+        editor.remove("auth_bearer_token");
+        editor.remove("user_id");
+        editor.remove("user_name");
+        editor.remove("user_username");
+        editor.remove("user_email");
+        editor.remove("user_role");
+        editor.remove("user_status");
+        editor.remove("user_assigned_facility");
+        editor.remove("user_barangay");
+        editor.remove("user_barangay_codes");
+        editor.remove("user_municipality");
+        editor.remove("user_province");
+        editor.remove("user_region");
+        editor.remove("user_municipality_code");
+        editor.remove("user_province_code");
+        editor.remove("user_region_code");
+        editor.apply();
+
+        Toast.makeText(getActivity(), message, Toast.LENGTH_LONG).show();
+
+        FragmentManager fm = getActivity().getSupportFragmentManager();
+        fm.popBackStack(null, FragmentManager.POP_BACK_STACK_INCLUSIVE);
+        fm.beginTransaction()
+                .replace(R.id.fragment_container, new LoginFragment())
+                .commit();
     }
 }

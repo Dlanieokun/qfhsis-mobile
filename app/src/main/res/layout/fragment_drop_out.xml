@@ -59,26 +59,24 @@
                 android:orientation="vertical"
                 android:padding="16dp">
 
-                <!-- Date Input Column Field -->
-                <TextView
+                <!-- DATE FIELD CONTAINER WITH END ICON INTERACTION -->
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDropOutDate"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Date of Drop-Out (mm/dd/yy)"
-                    android:textColor="#374151"
-                    android:textStyle="bold"
-                    android:textSize="14sp"
-                    android:layout_marginBottom="6dp"/>
-
-                <EditText
-                    android:id="@+id/etDropOutDate"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:hint="Select Date"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:paddingHorizontal="12dp"
-                    android:background="@android:drawable/editbox_background_normal"
-                    android:layout_marginBottom="16dp"/>
+                    android:layout_marginBottom="16dp"
+                    android:hint="Date of Drop-Out (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDropOutDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <!-- Reason Selection Code Dropdown Field -->
                 <TextView

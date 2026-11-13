@@ -90,7 +90,7 @@ public class CervicalCancerScreeningEntity {
     private boolean newInsert = false;
 
     @ColumnInfo(name = "updated_at")
-    @SerializedName("updated_at")
+    @SerializedName("updatedAt")          // matches the DB column name in the migration
     private long updatedAt = System.currentTimeMillis();
 
     // Getters and Setters...

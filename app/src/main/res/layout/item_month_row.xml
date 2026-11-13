@@ -3,58 +3,62 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
-    android:layout_marginBottom="8dp"
-    app:cardCornerRadius="8dp"
-    app:cardElevation="1dp">
+    android:layout_marginBottom="12dp"
+    app:cardCornerRadius="12dp"
+    app:cardElevation="2dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:padding="10dp"
-        android:gravity="center_vertical">
+        android:orientation="vertical"
+        android:padding="12dp">
 
-        <!-- Month Label -->
         <TextView
             android:id="@+id/tvMonthLabel"
-            android:layout_width="65dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Jan"
-            android:textColor="#1F2937"
-            android:textSize="15sp"
+            android:layout_marginBottom="8dp"
+            android:text="Month"
+            android:textColor="#0369A1"
+            android:textSize="14sp"
             android:textStyle="bold" />
 
-        <!-- Double Input Split Fields (Upper & Lower Space concept) -->
-        <LinearLayout
-            android:layout_width="0dp"
+        <!-- DATE FIELD CONTAINER WITH END ICON INTERACTION -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilScheduledDate"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="vertical">
-
-            <!-- Upper Space: Scheduled Next Visit -->
-            <EditText
+            android:layout_marginBottom="8dp"
+            android:hint="Scheduled Date (MM-DD-YYYY)"
+            app:endIconMode="custom"
+            app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etScheduledDate"
                 android:layout_width="match_parent"
-                android:layout_height="38dp"
-                android:hint="Scheduled Date"
-                android:focusable="false"
-                android:clickable="true"
-                android:textSize="12sp"
-                android:background="@android:drawable/editbox_background_normal"
-                android:paddingHorizontal="8dp"
-                android:layout_marginBottom="4dp"/>
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
 
-            <!-- Lower Space: Actual Date of Visit -->
-            <EditText
+        <!-- DATE FIELD CONTAINER WITH END ICON INTERACTION -->
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/tilActualDate"
+            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:hint="Actual Date (MM-DD-YYYY)"
+            app:endIconMode="custom"
+            app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
+            <com.google.android.material.textfield.TextInputEditText
                 android:id="@+id/etActualDate"
                 android:layout_width="match_parent"
-                android:layout_height="38dp"
-                android:hint="Actual Date of Visit"
-                android:focusable="false"
-                android:clickable="true"
-                android:textSize="12sp"
-                android:background="@android:drawable/editbox_background_normal"
-                android:paddingHorizontal="8dp"/>
-        </LinearLayout>
+                android:layout_height="wrap_content"
+                android:inputType="date"
+                android:focusable="true"
+                android:focusableInTouchMode="true"/>
+        </com.google.android.material.textfield.TextInputLayout>
+
     </LinearLayout>
 </androidx.cardview.widget.CardView>

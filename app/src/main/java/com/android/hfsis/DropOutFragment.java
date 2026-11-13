@@ -2,6 +2,8 @@ package com.android.hfsis;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -20,6 +22,8 @@ import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.DropOutEntity;
 import com.android.hfsis.model.HouseholdProfile;
 
+import com.google.android.material.textfield.TextInputLayout;
+
 import java.util.Calendar;
 import java.util.Locale;
 import java.util.concurrent.Executors;
@@ -30,6 +34,7 @@ public class DropOutFragment extends Fragment {
     private long profileId = -1;
 
     private TextView tvDropOutClientName;
+    private TextInputLayout tilDropOutDate;
     private EditText etDropOutDate;
     private Spinner spinnerDropOutReason;
     private EditText etDropOutRemarks;
@@ -69,6 +74,7 @@ public class DropOutFragment extends Fragment {
         super.onViewCreated(view, savedInstanceState);
 
         tvDropOutClientName = view.findViewById(R.id.tvDropOutClientName);
+        tilDropOutDate = view.findViewById(R.id.tilDropOutDate);
         etDropOutDate = view.findViewById(R.id.etDropOutDate);
         spinnerDropOutReason = view.findViewById(R.id.spinnerDropOutReason);
         etDropOutRemarks = view.findViewById(R.id.etDropOutRemarks);
@@ -84,7 +90,11 @@ public class DropOutFragment extends Fragment {
         loadClientDemographicsSummary();
         loadExistingDropOutRecordData();
 
-        etDropOutDate.setOnClickListener(v -> showDatePickerDialog());
+        // Formats keyboard inputs while typing manually
+        etDropOutDate.addTextChangedListener(new DateFormattingWatcher(etDropOutDate));
+
+        // Opens calendar date picker only when clicking the end icon
+        tilDropOutDate.setEndIconOnClickListener(v -> showDatePickerDialog());
         btnSaveDropOut.setOnClickListener(v -> saveDropOutFormDetailsToDatabase());
     }
 
@@ -95,12 +105,20 @@ public class DropOutFragment extends Fragment {
         spinnerDropOutReason.setAdapter(adapter);
     }
 
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
     private void showDatePickerDialog() {
         if (getContext() == null) return;
         final Calendar calendar = Calendar.getInstance();
 
         DatePickerDialog dialog = new DatePickerDialog(getContext(), (view, year, month, dayOfMonth) -> {
-            String formattedDate = String.format(Locale.US, "%04d-%02d-%02d", year, (month + 1), dayOfMonth);
+            String formattedDate = String.format(Locale.US, "%02d-%02d-%04d", (month + 1), dayOfMonth, year);
             etDropOutDate.setText(formattedDate);
             etDropOutDate.setError(null);
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
@@ -136,7 +154,7 @@ public class DropOutFragment extends Fragment {
 
             if (savedEntity != null && getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    etDropOutDate.setText(savedEntity.dropOutDate);
+                    etDropOutDate.setText(toDisplayDate(savedEntity.dropOutDate));
                     etDropOutRemarks.setText(savedEntity.remarks);
 
                     // Re-select spinner positional values mapping back matching prefix strings configuration
@@ -193,5 +211,50 @@ public class DropOutFragment extends Fragment {
                 });
             }
         });
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

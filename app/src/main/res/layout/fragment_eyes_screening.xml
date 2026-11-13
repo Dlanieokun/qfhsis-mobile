@@ -69,8 +69,9 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:hint="Date of Screening (YYYY-MM-DD)"
-                    app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    android:hint="Date of Screening (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <EditText
                         android:id="@+id/etDateScreening"
@@ -133,36 +134,32 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:baselineAligned="false"
                     android:layout_marginBottom="16dp">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="12dp"
                         android:id="@+id/tilDateOfBirth"
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginEnd="8dp"
-                        android:hint="Date of Birth (YYYY-MM-DD)"
-                        app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+                        android:hint="Date of Birth (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                         <EditText
                             android:id="@+id/etDateOfBirth"
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
                             android:inputType="date"
-                            android:focusable="false"
-                            android:focusableInTouchMode="false"
-                            android:clickable="false"
-                            android:cursorVisible="false"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"
                             android:maxLength="10" />
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
-                        android:layout_width="0dp"
+                        android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:layout_marginStart="8dp"
                         android:hint="Age (in years)"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                         <EditText
@@ -280,8 +277,9 @@
                     android:id="@+id/tilDateReferred"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date Referred (YYYY-MM-DD if applicable)"
-                    app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    android:hint="Date Referred (MM-DD-YYYY, if applicable)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
                     <EditText
                         android:id="@+id/etDateReferred"

@@ -106,8 +106,8 @@ public class CervicalCancerScreeningFragment extends Fragment {
         if (currentScreeningId > 0) {
             loadExistingRecordData(currentScreeningId);
         }else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Automatically set the current date for a new record (MM-dd-yyyy)
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etDateAssessment.setText(sdf.format(new Date()));
         }
     }
@@ -202,18 +202,8 @@ public class CervicalCancerScreeningFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
-                        try {
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1;
-                                int day = Integer.parseInt(dobParts[2]);
-                                calculateAge(year, month, day);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        // Setting the text also triggers the DOB watcher, which computes the age
+                        etDateOfBirth.setText(toDisplayDate(profile.dob));
                     }
                 });
             }
@@ -255,18 +245,40 @@ public class CervicalCancerScreeningFragment extends Fragment {
     }
 
     private void setupDatePickersAndFormatters() {
-        tilDateAssessment.setStartIconOnClickListener(v -> showDatePickerDialog(etDateAssessment));
-        tilDateOfBirth.setStartIconOnClickListener(v -> showDatePickerDialog(etDateOfBirth));
+        bindDatePicker(tilDateAssessment, etDateAssessment);
+        bindDatePicker(tilDateOfBirth, etDateOfBirth);
 
-        etDateAssessment.addTextChangedListener(new DateFormattingWatcher(etDateAssessment));
-        etDateOfBirth.addTextChangedListener(new DateFormattingWatcher(etDateOfBirth));
+        // Auto-compute age while the DOB is typed manually
+        etDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                if (s.length() == 10) {
+                    Date d = parseDate(s.toString());
+                    if (d != null) {
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(d);
+                        calculateAge(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                    }
+                } else if (s.length() == 0) {
+                    etAge.setText("");
+                }
+            }
+        });
+    }
+
+    // Formats keyboard input as MM-dd-yyyy while typing, and opens the
+    // calendar dialog from the end icon (same behavior as ProfilingFragment).
+    private void bindDatePicker(TextInputLayout layout, EditText editText) {
+        editText.addTextChangedListener(new DateFormattingWatcher(editText));
+        layout.setEndIconOnClickListener(v -> showDatePickerDialog(editText));
     }
 
     private void showDatePickerDialog(EditText targetEditText) {
+        // Start on the date already in the field (if valid), otherwise today
         final Calendar calendar = Calendar.getInstance();
-        int year = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH);
-        int day = calendar.get(Calendar.DAY_OF_MONTH);
+        Date existing = parseDate(targetEditText.getText().toString().trim());
+        if (existing != null) calendar.setTime(existing);
 
         DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view, selYear, selMonth, selDay) -> {
             Calendar selCalendar = Calendar.getInstance();
@@ -274,12 +286,33 @@ public class CervicalCancerScreeningFragment extends Fragment {
             selCalendar.set(Calendar.MONTH, selMonth);
             selCalendar.set(Calendar.DAY_OF_MONTH, selDay);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             targetEditText.setText(sdf.format(selCalendar.getTime()));
             targetEditText.setError(null);
-        }, year, month, day);
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
 
+        dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         dialog.show();
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
+    // Strict MM-dd-yyyy parser; returns null if the text is not a real date
+    private Date parseDate(String text) {
+        if (text == null || !text.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            return sdf.parse(text);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void setupSubmitButton() {
@@ -317,11 +350,11 @@ public class CervicalCancerScreeningFragment extends Fragment {
 
     private void populateFormFields(CervicalCancerScreeningEntity entity) {
         selectedProfileId = entity.getProfileId(); // Restore matched tracking state identity
-        etDateAssessment.setText(entity.getDateAssessment());
+        etDateAssessment.setText(toDisplayDate(entity.getDateAssessment()));
         etFamilySerial.setText(entity.getFamilySerial());
         etName.setText(entity.getName(), false); // Dropdown format protection parameter insertion
         etAddress.setText(entity.getAddress());
-        etDateOfBirth.setText(entity.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(entity.getDateOfBirth()));
         etAge.setText(entity.getAge());
         etRemarks.setText(entity.getRemarks());
 
@@ -361,16 +394,28 @@ public class CervicalCancerScreeningFragment extends Fragment {
             return false;
         }
 
+        // selectedProfileId is only set when the user picks a name from the
+        // autocomplete dropdown (i.e. a real household member was matched).
+        // If it's still 0 the user typed a name manually or cleared the field —
+        // there's no household_profiles row to link to, and the server will
+        // reject the record with a foreign key violation.
+        if (selectedProfileId <= 0) {
+            tilName.setError("Please select a name from the dropdown list");
+            etName.requestFocus();
+            return false;
+        }
+        tilName.setError(null);
+
         String assessmentDate = etDateAssessment.getText().toString().trim();
-        if (!isValidDateFormat(assessmentDate)) {
-            etDateAssessment.setError("Required format is YYYY-MM-DD");
+        if (!isValidDate(assessmentDate)) {
+            etDateAssessment.setError("Enter a valid date (MM-DD-YYYY)");
             etDateAssessment.requestFocus();
             return false;
         }
 
         String dobDate = etDateOfBirth.getText().toString().trim();
-        if (!dobDate.isEmpty() && !isValidDateFormat(dobDate)) {
-            etDateOfBirth.setError("Invalid date format (YYYY-MM-DD)");
+        if (!dobDate.isEmpty() && !isValidDate(dobDate)) {
+            etDateOfBirth.setError("Enter a valid date (MM-DD-YYYY)");
             etDateOfBirth.requestFocus();
             return false;
         }
@@ -395,8 +440,10 @@ public class CervicalCancerScreeningFragment extends Fragment {
         return true;
     }
 
-    private boolean isValidDateFormat(String date) {
-        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+    // A date is valid when it is a real MM-dd-yyyy date that is not in the future
+    private boolean isValidDate(String date) {
+        Date d = parseDate(date);
+        return d != null && !d.after(new Date());
     }
 
     private CervicalCancerScreeningData collectFormData() {
@@ -437,6 +484,13 @@ public class CervicalCancerScreeningFragment extends Fragment {
 
     private void onScreeningSubmitted(CervicalCancerScreeningData data) {
         CervicalCancerScreeningEntity entity = CancerDataMapper.toEntity(data);
+        // Explicitly set profileId and userId here after mapping.
+        // CancerDataMapper.toEntity() does not wire these fields, so both
+        // default to 0 if not set here:
+        //   - profileId = 0 → FK violation on the server (no household_profiles row with id 0)
+        //   - userId = 0    → record is saved with no owning user, breaks audit / ownership queries
+        entity.setProfileId(data.profileId);
+        entity.setUserId(data.userId);
 
         new Thread(() -> {
             try {
@@ -513,7 +567,7 @@ public class CervicalCancerScreeningFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -527,7 +581,7 @@ public class CervicalCancerScreeningFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

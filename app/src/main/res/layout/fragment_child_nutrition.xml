@@ -1,16 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollChildNutritionRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F0F4F8"
+    android:clipToPadding="false"
+    android:scrollbars="none"
     android:fillViewport="true">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="12dp">
+        android:paddingStart="12dp"
+        android:paddingEnd="12dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="32dp">
 
         <androidx.cardview.widget.CardView
             android:layout_width="match_parent"
@@ -93,12 +99,15 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:hint="Date of Registration (mm/dd/yy)"
-                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#1565C0">
+                    android:hint="Date of Registration (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDateRegistration"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -135,17 +144,16 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginBottom="12dp"
-                    android:hint="Date of Birth (mm/dd/yy)"
-                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#1565C0">
+                    android:hint="Date of Birth (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etDateOfBirth"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:focusable="false"
-                        android:focusableInTouchMode="false"
-                        android:clickable="false"
-                        android:cursorVisible="false"
-                        android:inputType="none"/>
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
@@ -291,12 +299,15 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
                     android:layout_marginBottom="8dp"
-                    android:hint="Breastfeeding initiated within 1 hr after birth (mm/dd/yy)"
-                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#00695C">
+                    android:hint="Breastfeeding initiated within 1 hr after birth (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etBreastfeedingDate"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -340,50 +351,59 @@
                         android:textColor="#5D4037" android:textSize="13sp" android:textStyle="bold"/>
                 </LinearLayout>
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:text="Date given (mm/dd/yy) per month of supplementation"
+                    android:text="Date given (MM-DD-YYYY) per month of supplementation"
                     android:textColor="#757575" android:textSize="11sp"
                     android:layout_marginBottom="14dp"/>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="12dp">
+                    android:orientation="vertical" android:layout_marginBottom="12dp">
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilIron1Month"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="6dp"
-                        android:hint="1 Month"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="1 Month (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etIron1Month"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilIron2Months"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="6dp"
-                        android:hint="2 Months"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="2 Months (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etIron2Months"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
 
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilIron3Months"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="3 Months"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="3 Months (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etIron3Months"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -408,13 +428,16 @@
                     android:id="@+id/tilIronCompletedDate"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:hint="Date Completed (mm/dd/yy)"
+                    android:hint="Date Completed (MM-DD-YYYY)"
                     android:visibility="gone"
-                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#5D4037">
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etIronCompletedDate"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -453,12 +476,15 @@
                     android:id="@+id/tilVitaA6to11"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:layout_marginBottom="16dp" android:hint="Date Given (mm/dd/yy)"
-                    app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                    android:layout_marginBottom="16dp" android:hint="Date Given (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
                         android:id="@+id/etVitaA6to11"
                         android:layout_width="match_parent" android:layout_height="wrap_content"
-                        android:clickable="true" android:focusable="false" android:inputType="none"/>
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
@@ -466,29 +492,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="16dp">
+                    android:orientation="vertical" android:layout_marginBottom="16dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y1D1"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="1st Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="1st Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y1D1"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y1D2"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="2nd Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y1D2"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -497,29 +529,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="16dp">
+                    android:orientation="vertical" android:layout_marginBottom="16dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y2D1"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="1st Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="1st Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y2D1"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y2D2"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="2nd Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y2D2"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -528,29 +566,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="16dp">
+                    android:orientation="vertical" android:layout_marginBottom="16dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y3D1"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="1st Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="1st Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y3D1"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y3D2"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="2nd Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y3D2"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
@@ -559,29 +603,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal">
+                    android:orientation="vertical">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y4D1"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="1st Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="1st Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y4D1"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilVitaA200Y4D2"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="2nd Dose (mm/dd/yy)"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#2E7D32">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="2nd Dose (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etVitaA200Y4D2"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
             </LinearLayout>
@@ -617,29 +667,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    android:orientation="vertical" android:layout_marginBottom="8dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilMnp6to11Provided"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="Date Provided"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="Date Provided (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMnp6to11Provided"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilMnp6to11Completed"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="Date Completed"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Date Completed (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMnp6to11Completed"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -658,29 +714,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    android:orientation="vertical" android:layout_marginBottom="8dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilMnp12to23Provided"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="Date Provided"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="Date Provided (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMnp12to23Provided"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilMnp12to23Completed"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="Date Completed"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#6A1B9A">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Date Completed (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMnp12to23Completed"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -726,29 +788,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    android:orientation="vertical" android:layout_marginBottom="8dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilLns6to11Provided"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="Date Provided"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="Date Provided (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etLns6to11Provided"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilLns6to11Completed"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="Date Completed"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Date Completed (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etLns6to11Completed"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
                 <com.google.android.material.textfield.TextInputLayout
@@ -767,29 +835,35 @@
                     android:textColor="#424242" android:textSize="13sp" android:textStyle="bold"
                     android:paddingBottom="8dp"/>
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content"
-                    android:orientation="horizontal" android:layout_marginBottom="8dp">
+                    android:orientation="vertical" android:layout_marginBottom="8dp">
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilLns12to23Provided"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:layout_marginEnd="8dp"
-                        android:hint="Date Provided"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        android:layout_width="match_parent" android:layout_height="wrap_content"
+                        android:hint="Date Provided (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etLns12to23Provided"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                     <com.google.android.material.textfield.TextInputLayout
+                        android:layout_marginBottom="8dp"
                         android:id="@+id/tilLns12to23Completed"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
-                        android:layout_width="0dp" android:layout_height="wrap_content"
-                        android:layout_weight="1" android:hint="Date Completed"
-                        app:startIconDrawable="@drawable/ic_calendar" app:startIconTint="#283593">
+                        android:layout_width="match_parent" android:layout_height="wrap_content" android:hint="Date Completed (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etLns12to23Completed"
                             android:layout_width="match_parent" android:layout_height="wrap_content"
-                            android:clickable="true" android:focusable="false" android:inputType="none"/>
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
                     </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
                 <com.google.android.material.textfield.TextInputLayout

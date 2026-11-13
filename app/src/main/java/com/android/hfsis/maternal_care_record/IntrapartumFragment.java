@@ -3,24 +3,32 @@ package com.android.hfsis.maternal_care_record;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.maternal_care_record.IntrapartumEntity;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -41,7 +49,9 @@ public class IntrapartumFragment extends Fragment {
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_intrapartum, container, false);
 
-        // 1. Retrieve the Maternal ID passed from the List Fragment
+        setupKeyboardInsets(view);
+
+        // Retrieve the Maternal ID passed from the list fragment
         if (getArguments() != null) {
             maternalRecordId = getArguments().getInt("MATERNAL_RECORD_ID", -1);
         }
@@ -50,7 +60,7 @@ public class IntrapartumFragment extends Fragment {
         setupSpinners();
         setupDateTimePickers();
 
-        // 2. Load data if record exists for this ID
+        // Load data if a record exists for this ID
         if (maternalRecordId != -1) {
             loadExistingData();
         }
@@ -58,6 +68,51 @@ public class IntrapartumFragment extends Fragment {
         btnSave.setOnClickListener(v -> saveOrUpdateData());
 
         return view;
+    }
+
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
     }
 
     private void initializeViews(View view) {
@@ -81,11 +136,12 @@ public class IntrapartumFragment extends Fragment {
 
             if (existing != null && getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
+                    if (!isAdded()) return;
+
                     etWeight.setText(existing.birthWeight);
                     etDate.setText(existing.deliveryDate);
                     etTime.setText(existing.deliveryTime);
                     etRemarks.setText(existing.remarks);
-                    // Add spinner logic here to set selection based on existing strings
 
                     setSpinnerSelection(spinnerOutcome, existing.deliveryOutcome);
                     setSpinnerSelection(spinnerType, existing.deliveryType);
@@ -95,15 +151,17 @@ public class IntrapartumFragment extends Fragment {
 
                     if (existing.sex != null) {
                         if (existing.sex.equals("M - Male")) {
-                            rgSex.check(R.id.rb_male); // ID from your XML
+                            rgSex.check(R.id.rb_male);
                         } else if (existing.sex.equals("F - Female")) {
-                            rgSex.check(R.id.rb_female); // ID from your XML
+                            rgSex.check(R.id.rb_female);
                         }
                     }
                 });
             }
         });
     }
+
+    @SuppressWarnings("unchecked")
     private void setSpinnerSelection(Spinner spinner, String value) {
         if (value == null || value.isEmpty()) return;
 
@@ -122,43 +180,65 @@ public class IntrapartumFragment extends Fragment {
             return;
         }
 
+        // Read all UI values on the main thread
+        final String sexValue;
+        int selectedId = rgSex.getCheckedRadioButtonId();
+        if (selectedId != -1) {
+            RadioButton selectedButton = getView().findViewById(selectedId);
+            sexValue = selectedButton.getText().toString();
+        } else {
+            sexValue = "";
+        }
+
+        final String weightValue = etWeight.getText().toString();
+        final String dateValue = etDate.getText().toString();
+        final String timeValue = etTime.getText().toString();
+        final String remarksValue = etRemarks.getText().toString();
+        final String outcomeValue = spinnerOutcome.getSelectedItem().toString();
+        final String typeValue = spinnerType.getSelectedItem().toString();
+        final String placeValue = spinnerPlace.getSelectedItem().toString();
+        final String attendantValue = spinnerAttendant.getSelectedItem().toString();
+        final String weightClassValue = spinnerWeightClass.getSelectedItem().toString();
+
         Executors.newSingleThreadExecutor().execute(() -> {
-            DatabaseHelper db = DatabaseHelper.getInstance(getContext());
-            IntrapartumEntity existing = db.intrapartumDao().getRecordByMaternalId(maternalRecordId);
+            try {
+                DatabaseHelper db = DatabaseHelper.getInstance(getContext());
+                IntrapartumEntity existing = db.intrapartumDao().getRecordByMaternalId(maternalRecordId);
 
-            // Map data
-            IntrapartumEntity entity = (existing != null) ? existing : new IntrapartumEntity();
-            int selectedId = rgSex.getCheckedRadioButtonId();
-            if (selectedId != -1) {
-                RadioButton selectedButton = getView().findViewById(selectedId);
-                entity.sex = selectedButton.getText().toString();
-            } else {
-                entity.sex = ""; // Or handle as null/default
-            }
-            entity.maternalRecordId = maternalRecordId;
-            entity.birthWeight = etWeight.getText().toString();
-            entity.deliveryDate = etDate.getText().toString();
-            entity.deliveryTime = etTime.getText().toString();
-            entity.remarks = etRemarks.getText().toString();
-            entity.deliveryOutcome = spinnerOutcome.getSelectedItem().toString();
-            entity.deliveryType = spinnerType.getSelectedItem().toString();
-            entity.placeOfDelivery = spinnerPlace.getSelectedItem().toString();
-            entity.attendantAtBirth = spinnerAttendant.getSelectedItem().toString();
-            entity.weightClassification = spinnerWeightClass.getSelectedItem().toString();
+                IntrapartumEntity entity = (existing != null) ? existing : new IntrapartumEntity();
+                entity.maternalRecordId = maternalRecordId;
+                entity.sex = sexValue;
+                entity.birthWeight = weightValue;
+                entity.deliveryDate = dateValue;
+                entity.deliveryTime = timeValue;
+                entity.remarks = remarksValue;
+                entity.deliveryOutcome = outcomeValue;
+                entity.deliveryType = typeValue;
+                entity.placeOfDelivery = placeValue;
+                entity.attendantAtBirth = attendantValue;
+                entity.weightClassification = weightClassValue;
+                entity.isSynced = false; // mark dirty so Upload picks it up
+                entity.updatedAt = System.currentTimeMillis();
 
+                if (existing == null) {
+                    entity.newInsert = true;
+                    db.intrapartumDao().insertIntrapartum(entity);
+                } else {
+                    db.intrapartumDao().updateIntrapartum(entity);
+                }
 
-            // Insert if null, Update if found
-            if (existing == null) {
-                entity.newInsert = true;
-                db.intrapartumDao().insertIntrapartum(entity);
-            } else {
-                db.intrapartumDao().updateIntrapartum(entity);
-            }
-
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() ->
-                        Toast.makeText(getContext(), existing == null ? "Saved" : "Updated", Toast.LENGTH_SHORT).show()
-                );
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        Toast.makeText(getContext(), existing == null ? "Saved" : "Updated", Toast.LENGTH_SHORT).show();
+                        getParentFragmentManager().popBackStack();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() ->
+                            Toast.makeText(getContext(), "Save failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }
             }
         });
     }
@@ -171,7 +251,6 @@ public class IntrapartumFragment extends Fragment {
         setupSpinnerAdapter(spinnerWeightClass, new String[]{"A - Normal (>2500g)", "B - Low (<2500g)", "C - Unknown"});
         setupSpinnerAdapter(spinnerPlace, new String[]{"Public Facility", "Private Facility", "Home", "Others"});
         setupSpinnerAdapter(spinnerAttendant, new String[]{"MD - Doctor", "RN - Nurse", "MW - Midwife", "O - Others"});
-
     }
 
     private void setupSpinnerAdapter(Spinner spinner, String[] data) {
@@ -180,13 +259,30 @@ public class IntrapartumFragment extends Fragment {
         spinner.setAdapter(adapter);
     }
 
+    private TextInputLayout findParentTextInputLayout(View child) {
+        ViewParent parent = child.getParent();
+        while (parent != null) {
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
     private void setupDateTimePickers() {
-        etDate.setOnClickListener(v -> {
-            Calendar c = Calendar.getInstance();
-            new DatePickerDialog(requireContext(), (view, y, m, d) ->
-                    etDate.setText(String.format(Locale.US, "%02d/%02d/%02d", m + 1, d, y % 100)),
-                    c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
-        });
+        // Formats keyboard inputs while typing manually
+        etDate.addTextChangedListener(new DateFormattingWatcher(etDate));
+
+        // Opens calendar date picker only when clicking the end icon
+        TextInputLayout tilDate = findParentTextInputLayout(etDate);
+        if (tilDate != null) {
+            tilDate.setEndIconOnClickListener(v -> {
+                Calendar c = Calendar.getInstance();
+                new DatePickerDialog(requireContext(), (view, y, m, d) -> {
+                    etDate.setText(String.format(Locale.US, "%02d-%02d-%04d", m + 1, d, y));
+                    etDate.setError(null);
+                }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)).show();
+            });
+        }
 
         etTime.setOnClickListener(v -> {
             Calendar c = Calendar.getInstance();
@@ -194,5 +290,50 @@ public class IntrapartumFragment extends Fragment {
                     etTime.setText(String.format(Locale.US, "%02d:%02d", h, m)),
                     c.get(Calendar.HOUR_OF_DAY), c.get(Calendar.MINUTE), true).show();
         });
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

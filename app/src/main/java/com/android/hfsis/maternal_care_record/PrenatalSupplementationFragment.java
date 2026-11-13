@@ -2,22 +2,31 @@ package com.android.hfsis.maternal_care_record;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.maternal_care_record.PrenatalSupplementationEntity;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -29,10 +38,7 @@ public class PrenatalSupplementationFragment extends Fragment {
     private int profileId = -1;
     private String patientName = "";
 
-    // Database core configuration status properties
     private DatabaseHelper db;
-    private boolean isEditMode = false;
-    private int existingRecordId = -1;
 
     private TextView tvSuppPatientHeader;
     private Button btnSaveSupplementationForm;
@@ -40,7 +46,7 @@ public class PrenatalSupplementationFragment extends Fragment {
     // Checkboxes
     private CheckBox cbReceivedDeworming, cbCompletedIfa, cbCompletedMm, cbCompletedCc;
 
-    // Dates & Values text inputs matching system layout parameters
+    // Dates
     private TextInputEditText etDewormingDate, etIfaCompletedDate, etMmCompletedDate, etCcCompletedDate;
 
     // IFA inputs
@@ -74,29 +80,68 @@ public class PrenatalSupplementationFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_prenatal_supplementation, container, false);
     }
 
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Instantiation database connection sequence helper
+        setupKeyboardInsets(view);
+
         db = DatabaseHelper.getInstance(requireContext());
 
-        // Header view injection
         tvSuppPatientHeader = view.findViewById(R.id.tvSuppPatientHeader);
         if (patientName != null && !patientName.isEmpty()) {
             tvSuppPatientHeader.setText("Patient: " + patientName + " (Maternal ID: " + maternalRecordId + ")");
         }
 
-        // Initialize UI Elements mappings properties
         initializeFormFields(view);
-
-        // Bind interactive date picker triggers
         setupDatePickers();
-
-        // Check background store to fetch pre-filled historical values if any exist
         loadExistingSupplementationData();
 
-        // Submission click workflow pipeline task execution
         btnSaveSupplementationForm.setOnClickListener(v -> executeSaveOrUpdatePipeline());
     }
 
@@ -107,13 +152,13 @@ public class PrenatalSupplementationFragment extends Fragment {
         cbCompletedMm = view.findViewById(R.id.cbCompletedMm);
         cbCompletedCc = view.findViewById(R.id.cbCompletedCc);
 
-        // Master Date Completed Inputs
+        // Master dates
         etDewormingDate = view.findViewById(R.id.etDewormingDate);
         etIfaCompletedDate = view.findViewById(R.id.etIfaCompletedDate);
         etMmCompletedDate = view.findViewById(R.id.etMmCompletedDate);
         etCcCompletedDate = view.findViewById(R.id.etCcCompletedDate);
 
-        // IFA Group
+        // IFA
         etIfaV1Num = view.findViewById(R.id.etIfaV1Num);
         etIfaV1Date = view.findViewById(R.id.etIfaV1Date);
         etIfaV2Num = view.findViewById(R.id.etIfaV2Num);
@@ -127,7 +172,7 @@ public class PrenatalSupplementationFragment extends Fragment {
         etIfaV6Num = view.findViewById(R.id.etIfaV6Num);
         etIfaV6Date = view.findViewById(R.id.etIfaV6Date);
 
-        // MM Group
+        // MM
         etMmV1Num = view.findViewById(R.id.etMmV1Num);
         etMmV1Date = view.findViewById(R.id.etMmV1Date);
         etMmV2Num = view.findViewById(R.id.etMmV2Num);
@@ -141,7 +186,7 @@ public class PrenatalSupplementationFragment extends Fragment {
         etMmV6Num = view.findViewById(R.id.etMmV6Num);
         etMmV6Date = view.findViewById(R.id.etMmV6Date);
 
-        // CC Group
+        // CC
         etCcV2Num = view.findViewById(R.id.etCcV2Num);
         etCcV2Date = view.findViewById(R.id.etCcV2Date);
         etCcV3Num = view.findViewById(R.id.etCcV3Num);
@@ -169,40 +214,57 @@ public class PrenatalSupplementationFragment extends Fragment {
 
     private void bindDatePicker(TextInputEditText editText) {
         if (editText == null) return;
-        editText.setFocusable(false);
-        editText.setClickable(true);
-        editText.setOnClickListener(v -> {
-            Calendar c = Calendar.getInstance();
-            DatePickerDialog picker = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
-                String selectedDate = String.format(Locale.US, "%02d/%02d/%04d", month + 1, dayOfMonth, year);
-                editText.setText(selectedDate);
-            }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
-            picker.show();
-        });
+
+        // Formats keyboard inputs while typing manually
+        editText.addTextChangedListener(new DateFormattingWatcher(editText));
+
+        // Opens calendar date picker only when clicking the end icon
+        TextInputLayout til = findParentTextInputLayout(editText);
+        if (til != null) {
+            til.setEndIconOnClickListener(v -> showDatePickerDialog(editText));
+        }
+    }
+
+    private TextInputLayout findParentTextInputLayout(View child) {
+        ViewParent parent = child.getParent();
+        while (parent != null) {
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+    private void showDatePickerDialog(TextInputEditText editText) {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog picker = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+            String selectedDate = String.format(Locale.US, "%02d-%02d-%04d", month + 1, dayOfMonth, year);
+            editText.setText(selectedDate);
+            editText.setError(null);
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        picker.show();
     }
 
     private void loadExistingSupplementationData() {
+        if (maternalRecordId == -1) return;
+
         Executors.newSingleThreadExecutor().execute(() -> {
             PrenatalSupplementationEntity record = db.prenatalSupplementationDao().getRecordByMaternalId(maternalRecordId);
             if (record != null && getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    isEditMode = true;
-                    existingRecordId = record.id;
+                    if (!isAdded()) return;
+
                     btnSaveSupplementationForm.setText("Update Supplementation Log");
 
-                    // Restore checkbox flags
                     cbReceivedDeworming.setChecked(record.receivedDeworming);
                     cbCompletedIfa.setChecked(record.completedIfa);
                     cbCompletedMm.setChecked(record.completedMm);
                     cbCompletedCc.setChecked(record.completedCc);
 
-                    // Restore structural dates
                     etDewormingDate.setText(record.dewormingDate);
                     etIfaCompletedDate.setText(record.ifaCompletedDate);
                     etMmCompletedDate.setText(record.mmCompletedDate);
                     etCcCompletedDate.setText(record.ccCompletedDate);
 
-                    // Restore IFA fields
                     etIfaV1Num.setText(record.ifaV1Num); etIfaV1Date.setText(record.ifaV1Date);
                     etIfaV2Num.setText(record.ifaV2Num); etIfaV2Date.setText(record.ifaV2Date);
                     etIfaV3Num.setText(record.ifaV3Num); etIfaV3Date.setText(record.ifaV3Date);
@@ -210,7 +272,6 @@ public class PrenatalSupplementationFragment extends Fragment {
                     etIfaV5Num.setText(record.ifaV5Num); etIfaV5Date.setText(record.ifaV5Date);
                     etIfaV6Num.setText(record.ifaV6Num); etIfaV6Date.setText(record.ifaV6Date);
 
-                    // Restore MM fields
                     etMmV1Num.setText(record.mmV1Num); etMmV1Date.setText(record.mmV1Date);
                     etMmV2Num.setText(record.mmV2Num); etMmV2Date.setText(record.mmV2Date);
                     etMmV3Num.setText(record.mmV3Num); etMmV3Date.setText(record.mmV3Date);
@@ -218,7 +279,6 @@ public class PrenatalSupplementationFragment extends Fragment {
                     etMmV5Num.setText(record.mmV5Num); etMmV5Date.setText(record.mmV5Date);
                     etMmV6Num.setText(record.mmV6Num); etMmV6Date.setText(record.mmV6Date);
 
-                    // Restore CC fields
                     etCcV2Num.setText(record.ccV2Num); etCcV2Date.setText(record.ccV2Date);
                     etCcV3Num.setText(record.ccV3Num); etCcV3Date.setText(record.ccV3Date);
                     etCcV4Num.setText(record.ccV4Num); etCcV4Date.setText(record.ccV4Date);
@@ -228,16 +288,20 @@ public class PrenatalSupplementationFragment extends Fragment {
     }
 
     private void executeSaveOrUpdatePipeline() {
-        PrenatalSupplementationEntity data = new PrenatalSupplementationEntity();
+        if (maternalRecordId == -1) {
+            Toast.makeText(getContext(), "Error: Missing Maternal ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
+
+        // Read all UI values on the main thread
+        final PrenatalSupplementationEntity data = new PrenatalSupplementationEntity();
         data.maternalRecordId = maternalRecordId;
 
-        // Grab current check states parameters
         data.receivedDeworming = cbReceivedDeworming.isChecked();
         data.completedIfa = cbCompletedIfa.isChecked();
         data.completedMm = cbCompletedMm.isChecked();
         data.completedCc = cbCompletedCc.isChecked();
 
-        // Extract text parameters values cleanly
         data.dewormingDate = etDewormingDate.getText().toString().trim();
         data.ifaCompletedDate = etIfaCompletedDate.getText().toString().trim();
         data.mmCompletedDate = etMmCompletedDate.getText().toString().trim();
@@ -264,22 +328,86 @@ public class PrenatalSupplementationFragment extends Fragment {
         data.ccV3Num = etCcV3Num.getText().toString().trim(); data.ccV3Date = etCcV3Date.getText().toString().trim();
         data.ccV4Num = etCcV4Num.getText().toString().trim(); data.ccV4Date = etCcV4Date.getText().toString().trim();
 
-        Executors.newSingleThreadExecutor().execute(() -> {
-            if (isEditMode) {
-                data.id = existingRecordId;
-                db.prenatalSupplementationDao().updateSupplementationRecord(data);
-            } else {
-                data.newInsert = true;
-                db.prenatalSupplementationDao().insertSupplementationRecord(data);
-            }
+        data.isSynced = false;
+        data.updatedAt = System.currentTimeMillis();
 
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    String msg = isEditMode ? "Supplementation log updated successfully!" : "Supplementation log saved successfully!";
-                    Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
-                    getParentFragmentManager().popBackStack();
-                });
+        Executors.newSingleThreadExecutor().execute(() -> {
+            try {
+                // Decide insert vs update from the DB itself
+                PrenatalSupplementationEntity existing =
+                        db.prenatalSupplementationDao().getRecordByMaternalId(maternalRecordId);
+                final boolean isUpdate = existing != null;
+
+                if (isUpdate) {
+                    data.id = existing.id;
+                    data.newInsert = existing.newInsert; // keep "never uploaded" state
+                    db.prenatalSupplementationDao().updateSupplementationRecord(data);
+                } else {
+                    data.newInsert = true;
+                    db.prenatalSupplementationDao().insertSupplementationRecord(data);
+                }
+
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        String msg = isUpdate
+                                ? "Supplementation log updated successfully!"
+                                : "Supplementation log saved successfully!";
+                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                        getParentFragmentManager().popBackStack();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() ->
+                            Toast.makeText(getContext(), "Save failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }
             }
         });
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

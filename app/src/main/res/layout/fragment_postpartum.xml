@@ -2,16 +2,23 @@
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/scrollPostpartumRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="#F8F9FA"
+    android:clipToPadding="false"
+    android:fillViewport="true"
+    android:scrollbars="none"
     tools:context=".maternal_care_record.PostpartumFragment">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:padding="16dp">
+        android:paddingStart="16dp"
+        android:paddingEnd="16dp"
+        android:paddingTop="16dp"
+        android:paddingBottom="32dp">
 
         <TextView
             android:layout_width="wrap_content"
@@ -62,17 +69,22 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp"/>
 
-                <EditText
-                    android:id="@+id/etPostpartumVisit24h"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="@android:drawable/editbox_background"
-                    android:hint="Date of Visit (MM/DD/YY)"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:paddingHorizontal="12dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:textSize="14sp"/>
+                    android:hint="Date of Visit (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPostpartumVisit24h"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -112,17 +124,22 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp"/>
 
-                <EditText
-                    android:id="@+id/etPostpartumVisit1w"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="@android:drawable/editbox_background"
-                    android:hint="Date of Visit (MM/DD/YY)"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:paddingHorizontal="12dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:textSize="14sp"/>
+                    android:hint="Date of Visit (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPostpartumVisit1w"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -142,17 +159,22 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp"/>
 
-                <EditText
-                    android:id="@+id/etPostpartumVisit2_4w"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="@android:drawable/editbox_background"
-                    android:hint="Date of Visit (MM/DD/YY)"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:paddingHorizontal="12dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:textSize="14sp"/>
+                    android:hint="Date of Visit (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPostpartumVisit2_4w"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal" android:layout_marginBottom="16dp">
                     <EditText android:id="@+id/etPostpartumBpSys2_4w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="Systolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
@@ -168,17 +190,22 @@
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp"/>
 
-                <EditText
-                    android:id="@+id/etPostpartumVisit4_6w"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="@android:drawable/editbox_background"
-                    android:hint="Date of Visit (MM/DD/YY)"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:paddingHorizontal="12dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:textSize="14sp"/>
+                    android:hint="Date of Visit (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPostpartumVisit4_6w"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout android:layout_width="match_parent" android:layout_height="wrap_content" android:orientation="horizontal">
                     <EditText android:id="@+id/etPostpartumBpSys4_6w" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="Systolic" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
@@ -304,17 +331,23 @@
                     </RadioGroup>
                 </LinearLayout>
 
-                <EditText
-                    android:id="@+id/etReferralDateGeneral"
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilReferralDateGeneral"
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="@android:drawable/editbox_background"
-                    android:hint="Referral Date d: (mm/dd/yy)"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:paddingHorizontal="12dp"
+                    android:layout_height="wrap_content"
                     android:visibility="gone"
-                    android:textSize="13sp"/>
+                    android:hint="Referral Date (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etReferralDateGeneral"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView
                     android:layout_width="wrap_content"
@@ -340,17 +373,22 @@
                     android:textSize="12sp"
                     android:textStyle="bold"
                     android:layout_marginBottom="4dp"/>
-                <EditText
-                    android:id="@+id/etClassificationDate"
+                <com.google.android.material.textfield.TextInputLayout
                     android:layout_width="match_parent"
-                    android:layout_height="46dp"
-                    android:background="@android:drawable/editbox_background"
-                    android:hint="Select Date (MM/DD/YY)"
-                    android:focusable="false"
-                    android:clickable="true"
-                    android:paddingHorizontal="12dp"
+                    android:layout_height="wrap_content"
                     android:layout_marginBottom="6dp"
-                    android:textSize="13sp"/>
+                    android:hint="Action Date (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etClassificationDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>
@@ -389,28 +427,103 @@
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_marginBottom="8dp">
-                    <EditText android:id="@+id/etIronTabs1st" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="1st Visit (#)" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
-                    <EditText android:id="@+id/etIronDate1st" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1.2" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="1st Visit Date d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:hint="1st Visit (#)"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIronTabs1st"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="1st Visit Date (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIronDate1st"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_marginBottom="8dp">
-                    <EditText android:id="@+id/etIronTabs2nd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="2nd Visit (#)" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
-                    <EditText android:id="@+id/etIronDate2nd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1.2" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="2nd Visit Date d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:hint="2nd Visit (#)"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIronTabs2nd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="2nd Visit Date (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIronDate2nd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:orientation="horizontal"
+                    android:orientation="vertical"
                     android:layout_marginBottom="16dp">
-                    <EditText android:id="@+id/etIronTabs3rd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1" android:layout_marginEnd="4dp" android:background="@android:drawable/editbox_background" android:hint="3rd Visit (#)" android:inputType="number" android:paddingHorizontal="12dp" android:textSize="13sp"/>
-                    <EditText android:id="@+id/etIronDate3rd" android:layout_width="0dp" android:layout_height="46dp" android:layout_weight="1.2" android:layout_marginStart="4dp" android:background="@android:drawable/editbox_background" android:hint="3rd Visit Date d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="13sp"/>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_marginBottom="8dp"
+                        android:hint="3rd Visit (#)"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIronTabs3rd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="number"/>
+                    </com.google.android.material.textfield.TextInputLayout>
+                    <com.google.android.material.textfield.TextInputLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:hint="3rd Visit Date (MM-DD-YYYY)"
+                        app:endIconMode="custom"
+                        app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                        style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                        <com.google.android.material.textfield.TextInputEditText
+                            android:id="@+id/etIronDate3rd"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:inputType="date"
+                            android:focusable="true"
+                            android:focusableInTouchMode="true"/>
+                    </com.google.android.material.textfield.TextInputLayout>
                 </LinearLayout>
 
                 <LinearLayout
@@ -436,7 +549,24 @@
                     </RadioGroup>
                 </LinearLayout>
 
-                <EditText android:id="@+id/etIfaCompletionDate" android:layout_width="match_parent" android:layout_height="46dp" android:background="@android:drawable/editbox_background" android:hint="Date Completed d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:visibility="gone" android:layout_marginBottom="16dp" android:textSize="13sp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilIfaCompletionDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone"
+                    android:hint="Date Completed (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etIfaCompletionDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <LinearLayout
                     android:layout_width="match_parent"
@@ -461,10 +591,41 @@
                     </RadioGroup>
                 </LinearLayout>
 
-                <EditText android:id="@+id/etVitACompletionDate" android:layout_width="match_parent" android:layout_height="46dp" android:background="@android:drawable/editbox_background" android:hint="Date Completed d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:visibility="gone" android:layout_marginBottom="16dp" android:textSize="13sp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilVitACompletionDate"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:visibility="gone"
+                    android:hint="Date Completed (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etVitACompletionDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
                 <TextView android:layout_width="wrap_content" android:layout_height="wrap_content" android:text="Exclusive Breastfeeding" android:textColor="#374151" android:textSize="12sp" android:textStyle="bold" android:layout_marginBottom="4dp"/>
-                <EditText android:id="@+id/etPostpartumBreastfeedingDate" android:layout_width="match_parent" android:layout_height="48dp" android:background="@android:drawable/editbox_background" android:hint="Date Initiated d: (mm/dd/yy)" android:focusable="false" android:clickable="true" android:paddingHorizontal="12dp" android:textSize="14sp"/>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Date Initiated (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etPostpartumBreastfeedingDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:focusable="true"
+                        android:focusableInTouchMode="true"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
         </androidx.cardview.widget.CardView>

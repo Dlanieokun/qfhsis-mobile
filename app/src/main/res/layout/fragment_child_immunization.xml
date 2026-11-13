@@ -1,9 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scrollChildImmunizationRoot"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:padding="16dp"
+    android:paddingStart="16dp"
+    android:paddingEnd="16dp"
+    android:paddingTop="16dp"
+    android:paddingBottom="32dp"
+    android:clipToPadding="false"
+    android:scrollbars="none"
     android:fillViewport="true">
 
     <LinearLayout
@@ -38,7 +44,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date of Registration (yyyy-MM-dd)"
+                    android:hint="Date of Registration (MM-DD-YYYY)"
                     android:layout_marginBottom="8dp"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -86,7 +92,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="8dp">
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -94,8 +100,8 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1.2"
-                        android:hint="Date of Birth (yyyy-MM-dd)"
+                        android:layout_weight="3"
+                        android:hint="Date of Birth"
                         android:layout_marginEnd="8dp"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -114,8 +120,8 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="0.8"
-                        android:hint="Age (Months)">
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etAgeMonths"
                             android:layout_width="match_parent"
@@ -219,11 +225,50 @@
                     android:text="Td2 given to mother 1 month prior to delivery (first pregnancy)"
                     android:layout_marginBottom="4dp" />
 
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilTd2MotherDate"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Date given (MM-DD-YYYY)"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginBottom="12dp"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTd2MotherDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="date" />
+                </com.google.android.material.textfield.TextInputLayout>
+
                 <CheckBox
                     android:id="@+id/cbTd3To5Mother"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="Td3 to Td5 (or Td1–Td5) given anytime prior to delivery" />
+                    android:text="Td3 to Td5 (or Td1–Td5) given anytime prior to delivery"
+                    android:layout_marginBottom="4dp" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilTd3To5MotherDate"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Date given (MM-DD-YYYY)"
+                    android:layout_marginStart="32dp"
+                    android:layout_marginBottom="0dp"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etTd3To5MotherDate"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="true"
+                        android:clickable="true"
+                        android:inputType="date" />
+                </com.google.android.material.textfield.TextInputLayout>
 
             </LinearLayout>
         </com.google.android.material.card.MaterialCardView>
@@ -262,15 +307,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months &amp; weeks)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo. &amp; wk.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etBcgWithin24hAge"
@@ -284,8 +329,8 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Date (yyyy-MM-dd)"
+                        android:layout_weight="3"
+                        android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                         <com.google.android.material.textfield.TextInputEditText
@@ -310,14 +355,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months &amp; weeks)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo. &amp; wk.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etBcgLateAge"
@@ -331,7 +376,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -381,15 +426,15 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months &amp; weeks)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo. &amp; wk.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etHepaBWithin24hAge"
@@ -403,7 +448,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -429,14 +474,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
 
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months &amp; weeks)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo. &amp; wk.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etHepaBLateAge"
@@ -450,7 +495,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -499,14 +544,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etDpt1Age"
@@ -519,7 +564,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -544,14 +589,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etDpt2Age"
@@ -564,7 +609,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -589,13 +634,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etDpt3Age"
@@ -608,7 +653,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -657,14 +702,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etOpv1Age"
@@ -677,7 +722,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -702,14 +747,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etOpv2Age"
@@ -722,7 +767,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -747,13 +792,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etOpv3Age"
@@ -766,7 +811,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -815,14 +860,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etIpv1Age"
@@ -835,7 +880,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -860,13 +905,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etIpv2Age"
@@ -879,7 +924,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -928,14 +973,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPcv1Age"
@@ -948,7 +993,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -973,14 +1018,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPcv2Age"
@@ -993,7 +1038,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -1018,13 +1063,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etPcv3Age"
@@ -1037,7 +1082,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -1086,14 +1131,14 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2"
+                    android:weightSum="5"
                     android:layout_marginBottom="12dp">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMmr1Age"
@@ -1106,7 +1151,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -1131,13 +1176,13 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:weightSum="2">
+                    android:weightSum="5">
                     <com.google.android.material.textfield.TextInputLayout
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:hint="Age (months)"
+                        android:layout_weight="2"
+                        android:hint="Age (mo.)"
                         android:layout_marginEnd="8dp">
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/etMmr2Age"
@@ -1150,7 +1195,7 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_weight="3"
                         android:hint="Date"
                         app:endIconMode="custom"
                         app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
@@ -1205,7 +1250,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date Fully Immunized"
+                    android:hint="Date Fully Immunized (MM-DD-YYYY)"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText
@@ -1258,7 +1303,7 @@
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date Completely Immunized"
+                    android:hint="Date Completely Immunized (MM-DD-YYYY)"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar">
                     <com.google.android.material.textfield.TextInputEditText

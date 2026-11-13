@@ -43,13 +43,13 @@ import java.util.concurrent.Executors;
  * PhilPENRiskAssessmentFragment
  *
  * Captures all fields from the PhilPEN Risk Assessment (TCL_PhilPEN).
- * Supports full manual date input with real-time formatting (YYYY-MM-DD) as well as DatePicker dialogs.
+ * Supports full manual date input with real-time formatting (MM-DD-YYYY) as well as DatePicker dialogs.
  */
 public class PhilPENRiskAssessmentFragment extends Fragment {
 
     // ── Client Information ──────────────────────────────────────────────────
     private EditText etDateAssessment, etFamilySerialNumber, etAddress, etDateOfBirth, etAge;
-    private TextInputLayout tilName;
+    private TextInputLayout tilName, tilDateAssessment, tilDateOfBirth;
     private AutoCompleteTextView etName;
     private Spinner  spinnerAgeGroup;
     private RadioGroup rgSex;
@@ -65,8 +65,9 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
     private Spinner spinnerUnhealthyDiet;
     private Spinner spinnerBMI;
 
-    // ── Hypertension Screening (TCL_PhilPEN: columns U–AY) ───────────────────
+    // ── Hypertension Screening (TCL_PhilPEN: columns U–BH) ───────────────────
     private EditText etScreeningDate1, etScreeningDate2;
+    private TextInputLayout tilScreeningDate1, tilScreeningDate2;
     private EditText etBpSystolic1, etBpDiastolic1, etBpSystolic2, etBpDiastolic2;
     private Spinner  spinnerHypertensionResult;
     private EditText etMedsInitial, etMedsChanged;
@@ -82,15 +83,16 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
     private int selectedProfileId = 0;
     private DatabaseHelper dbHelper;
 
-    // Hypertension monthly medicine grid covers January–September per TCL_PhilPEN
+    // Hypertension monthly medicine grid covers all 12 months per TCL_PhilPEN (columns Y–BH)
     private static final String[] HYPERTENSION_MONTHS = {
-            "January", "February", "March", "April", "May",
-            "June", "July", "August", "September"
+            "January", "February", "March", "April", "May", "June",
+            "July", "August", "September", "October", "November", "December"
     };
     private final int[] hypertensionMonthRowIds = {
             R.id.rowJanuary, R.id.rowFebruary, R.id.rowMarch,
             R.id.rowApril,   R.id.rowMay,      R.id.rowJune,
-            R.id.rowJuly,    R.id.rowAugust,   R.id.rowSeptember
+            R.id.rowJuly,    R.id.rowAugust,   R.id.rowSeptember,
+            R.id.rowOctober, R.id.rowNovember, R.id.rowDecember
     };
 
     // Diabetes monthly medicine grid covers all 12 months per TCL_PhilPEN
@@ -137,13 +139,17 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
             long recordId = getArguments().getLong("EDIT_RECORD_ID");
             loadExistingRecordFromDb(recordId);
         }else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Automatically set the current date for a new record (MM-dd-yyyy)
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etDateAssessment.setText(sdf.format(new Date()));
         }
     }
 
     private void bindViews(View v) {
+        tilDateAssessment      = v.findViewById(R.id.tilDateAssessment);
+        tilDateOfBirth         = v.findViewById(R.id.tilDateOfBirth);
+        tilScreeningDate1      = v.findViewById(R.id.tilScreeningDate1);
+        tilScreeningDate2      = v.findViewById(R.id.tilScreeningDate2);
         etDateAssessment       = v.findViewById(R.id.etDateAssessment);
         etFamilySerialNumber   = v.findViewById(R.id.etFamilySerialNumber);
         tilName                = v.findViewById(R.id.tilName);
@@ -256,19 +262,8 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
-                        try {
-                            // Updated profile parsing split configuration to accommodate YYYY-MM-DD layout
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1;
-                                int day = Integer.parseInt(dobParts[2]);
-                                calculateAgeYears(year, month, day);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        // Setting the text also triggers the DOB watcher, which computes the age
+                        etDateOfBirth.setText(toDisplayDate(profile.dob));
                     }
                 });
             }
@@ -282,7 +277,7 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
 
         int years = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
         int months = today.get(Calendar.MONTH) - dob.get(Calendar.MONTH);
-        if (months < 0) { years--; }
+        if (months < 0 || (months == 0 && today.get(Calendar.DAY_OF_MONTH) < dob.get(Calendar.DAY_OF_MONTH))) { years--; }
 
         int totalYears = Math.max(0, years);
         etAge.setText(String.valueOf(totalYears));
@@ -297,32 +292,42 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
     }
 
     private void setupDatePickers() {
-        etDateAssessment.addTextChangedListener(new DateFormattingWatcher(etDateAssessment));
-        etDateOfBirth.addTextChangedListener(new DateFormattingWatcher(etDateOfBirth));
-        etScreeningDate1.addTextChangedListener(new DateFormattingWatcher(etScreeningDate1));
-        etScreeningDate2.addTextChangedListener(new DateFormattingWatcher(etScreeningDate2));
+        bindDatePicker(tilDateAssessment, etDateAssessment);
+        bindDatePicker(tilDateOfBirth, etDateOfBirth);
+        bindDatePicker(tilScreeningDate1, etScreeningDate1);
+        bindDatePicker(tilScreeningDate2, etScreeningDate2);
 
-        setupDatePickerField(etDateAssessment);
-        setupDatePickerField(etDateOfBirth);
-        setupDatePickerField(etScreeningDate1);
-        setupDatePickerField(etScreeningDate2);
-    }
-
-    private void setupDatePickerField(final EditText editText) {
-        View.OnClickListener clickListener = v -> showCalendarDialog(editText);
-        editText.setOnClickListener(clickListener);
-        editText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                showCalendarDialog(editText);
+        // Auto-compute age while the DOB is typed manually
+        etDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                if (s.length() == 10) {
+                    Date d = parseDate(s.toString());
+                    if (d != null) {
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(d);
+                        calculateAgeYears(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                    }
+                } else if (s.length() == 0) {
+                    etAge.setText("");
+                }
             }
         });
     }
 
+    // Formats keyboard input as MM-dd-yyyy while typing, and opens the
+    // calendar dialog from the end icon (same behavior as ProfilingFragment).
+    private void bindDatePicker(TextInputLayout layout, EditText editText) {
+        editText.addTextChangedListener(new DateFormattingWatcher(editText));
+        layout.setEndIconOnClickListener(v -> showCalendarDialog(editText));
+    }
+
     private void showCalendarDialog(final EditText editText) {
+        // Start on the date already in the field (if valid), otherwise today
         final Calendar c = Calendar.getInstance();
-        int year = c.get(Calendar.YEAR);
-        int month = c.get(Calendar.MONTH);
-        int day = c.get(Calendar.DAY_OF_MONTH);
+        Date existing = parseDate(editText.getText().toString().trim());
+        if (existing != null) c.setTime(existing);
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
                 requireContext(),
@@ -332,7 +337,7 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
                     selCalendar.set(Calendar.MONTH, selectedMonth);
                     selCalendar.set(Calendar.DAY_OF_MONTH, selectedDay);
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
                     editText.setText(sdf.format(selCalendar.getTime()));
                     editText.setError(null);
 
@@ -340,9 +345,36 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
                         calculateAgeYears(selectedYear, selectedMonth, selectedDay);
                     }
                 },
-                year, month, day
+                c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH)
         );
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
         datePickerDialog.show();
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
+    // Strict MM-dd-yyyy parser; returns null if the text is not a real date
+    private Date parseDate(String text) {
+        if (text == null || !text.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            return sdf.parse(text);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // A date is valid when it is a real MM-dd-yyyy date that is not in the future
+    private boolean isValidDate(String text) {
+        Date d = parseDate(text);
+        return d != null && !d.after(new Date());
     }
 
     private void setupSpinners() {
@@ -421,12 +453,9 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
     }
 
     private boolean validateForm() {
-        // Regex expression matches YYYY-MM-DD structures
-        String dateRegex = "\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])";
-
         String dateAssess = etDateAssessment.getText().toString().trim();
-        if (dateAssess.isEmpty() || !dateAssess.matches(dateRegex)) {
-            etDateAssessment.setError("Valid assessment date is required (YYYY-MM-DD)");
+        if (dateAssess.isEmpty() || !isValidDate(dateAssess)) {
+            etDateAssessment.setError("Valid assessment date is required (MM-DD-YYYY)");
             etDateAssessment.requestFocus();
             return false;
         }
@@ -440,22 +469,22 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
         }
 
         String dob = etDateOfBirth.getText().toString().trim();
-        if (!dob.isEmpty() && !dob.matches(dateRegex)) {
-            etDateOfBirth.setError("Please match required date format (YYYY-MM-DD)");
+        if (!dob.isEmpty() && !isValidDate(dob)) {
+            etDateOfBirth.setError("Please enter a valid date (MM-DD-YYYY)");
             etDateOfBirth.requestFocus();
             return false;
         }
 
         String scr1 = etScreeningDate1.getText().toString().trim();
-        if (!scr1.isEmpty() && !scr1.matches(dateRegex)) {
-            etScreeningDate1.setError("Please match required date format (YYYY-MM-DD)");
+        if (!scr1.isEmpty() && !isValidDate(scr1)) {
+            etScreeningDate1.setError("Please enter a valid date (MM-DD-YYYY)");
             etScreeningDate1.requestFocus();
             return false;
         }
 
         String scr2 = etScreeningDate2.getText().toString().trim();
-        if (!scr2.isEmpty() && !scr2.matches(dateRegex)) {
-            etScreeningDate2.setError("Please match required date format (YYYY-MM-DD)");
+        if (!scr2.isEmpty() && !isValidDate(scr2)) {
+            etScreeningDate2.setError("Please enter a valid date (MM-DD-YYYY)");
             etScreeningDate2.requestFocus();
             return false;
         }
@@ -595,11 +624,11 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
         this.selectedProfileId = editingEntity.profileId; // Re-populate tracked profile mapping id
 
         // 1. Text Fields & Dropdown Autocomplete
-        etDateAssessment.setText(editingEntity.dateAssessment);
+        etDateAssessment.setText(toDisplayDate(editingEntity.dateAssessment));
         etFamilySerialNumber.setText(editingEntity.familySerial);
         etName.setText(editingEntity.name, false);
         etAddress.setText(editingEntity.address);
-        etDateOfBirth.setText(editingEntity.dateOfBirth);
+        etDateOfBirth.setText(toDisplayDate(editingEntity.dateOfBirth));
         etAge.setText(editingEntity.age);
 
         // 2. Age Group Spinner Mapping
@@ -628,8 +657,8 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
         spinnerBMI.setSelection(editingEntity.bmiCategory + 1);
 
         // 5. Hypertension Screenings Fields
-        etScreeningDate1.setText(editingEntity.screeningDate1);
-        etScreeningDate2.setText(editingEntity.screeningDate2);
+        etScreeningDate1.setText(toDisplayDate(editingEntity.screeningDate1));
+        etScreeningDate2.setText(toDisplayDate(editingEntity.screeningDate2));
         populateNumericEditText(etBpSystolic1, editingEntity.bpSystolic1);
         populateNumericEditText(etBpDiastolic1, editingEntity.bpDiastolic1);
         populateNumericEditText(etBpSystolic2, editingEntity.bpSystolic2);
@@ -722,7 +751,7 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -736,8 +765,8 @@ public class PhilPENRiskAssessmentFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                // Automatically injects hyphens dynamically after index 3 (YYYY-) and index 5 (YYYY-MM-)
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                // Automatically injects hyphens after the month (MM-) and the day (MM-DD-)
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

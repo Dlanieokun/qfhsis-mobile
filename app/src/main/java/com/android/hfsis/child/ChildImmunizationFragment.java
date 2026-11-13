@@ -1,15 +1,15 @@
 package com.android.hfsis.child;
 
-import android.annotation.SuppressLint;
+import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.LayoutInflater;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
@@ -19,20 +19,23 @@ import android.widget.RadioButton;
 import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
+import androidx.core.widget.NestedScrollView;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.HouseholdProfile;
 import com.android.hfsis.model.child.ChildImmunizationRecord;
-import com.google.android.material.datepicker.MaterialDatePicker;
+import com.google.android.material.textfield.TextInputLayout;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
-import java.util.TimeZone;
 import java.util.concurrent.Executors;
 
 public class ChildImmunizationFragment extends Fragment {
@@ -47,6 +50,7 @@ public class ChildImmunizationFragment extends Fragment {
     private AutoCompleteTextView etChildName;
     private RadioButton rbMale, rbFemale;
     private CheckBox cbTd2Mother, cbTd3To5Mother;
+    private EditText etTd2MotherDate, etTd3To5MotherDate;
 
     // BCG
     private EditText etBcgWithin24hAge, etBcgWithin24hDate, etBcgLateAge, etBcgLateDate;
@@ -85,6 +89,7 @@ public class ChildImmunizationFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_immunization, container, false);
+        setupKeyboardInsets(view);
         database = DatabaseHelper.getInstance(getContext());
         initViews(view);
         setupDatePickers();
@@ -99,12 +104,57 @@ public class ChildImmunizationFragment extends Fragment {
             loadRecordForEditing(editingRecordId);
         }else {
             // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etRegDate.setText(sdf.format(new Date()));
         }
 
         btnSave.setOnClickListener(v -> saveImmunizationRecord());
         return view;
+    }
+
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof NestedScrollView) || !isAdded()) return;
+        NestedScrollView scroll = (NestedScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
     }
 
     private void initViews(View v) {
@@ -120,6 +170,8 @@ public class ChildImmunizationFragment extends Fragment {
 
         cbTd2Mother = v.findViewById(R.id.cbTd2Mother);
         cbTd3To5Mother = v.findViewById(R.id.cbTd3To5Mother);
+        etTd2MotherDate = v.findViewById(R.id.etTd2MotherDate);
+        etTd3To5MotherDate = v.findViewById(R.id.etTd3To5MotherDate);
 
         etBcgWithin24hAge = v.findViewById(R.id.etBcgWithin24hAge);
         etBcgWithin24hDate = v.findViewById(R.id.etBcgWithin24hDate);
@@ -181,6 +233,8 @@ public class ChildImmunizationFragment extends Fragment {
     private void setupDatePickers() {
         bindDatePickerAndWatcher(etRegDate);
         bindDatePickerAndWatcher(etDob);
+        bindDatePickerAndWatcher(etTd2MotherDate);
+        bindDatePickerAndWatcher(etTd3To5MotherDate);
         bindDatePickerAndWatcher(etBcgWithin24hDate);
         bindDatePickerAndWatcher(etBcgLateDate);
         bindDatePickerAndWatcher(etHepaBWithin24hDate);
@@ -202,45 +256,49 @@ public class ChildImmunizationFragment extends Fragment {
         bindDatePickerAndWatcher(etCicDate);
     }
 
-    @SuppressLint("ClickableViewAccessibility")
     private void bindDatePickerAndWatcher(EditText editText) {
         if (editText == null) return;
 
         // Formats keyboard inputs automatically while typing manually
         editText.addTextChangedListener(new DateFormattingWatcher(editText));
 
-        // Tracks touch specifically on the end calendar icon (drawableRight / drawableEnd)
-        editText.setOnTouchListener((v, event) -> {
-            if (event.getAction() == MotionEvent.ACTION_UP) {
-                // Check if touch is within the bounds of the end drawable icon
-                if (editText.getCompoundDrawables()[2] != null) {
-                    int iconWidth = editText.getCompoundDrawables()[2].getBounds().width();
-                    if (event.getRawX() >= (editText.getRight() - iconWidth - editText.getPaddingEnd())) {
+        // Opens calendar date picker only when clicking the end icon
+        TextInputLayout til = findParentTextInputLayout(editText);
+        if (til != null) {
+            til.setEndIconOnClickListener(v -> showDatePickerDialog(editText));
+        }
+    }
 
-                        MaterialDatePicker<Long> datePicker = MaterialDatePicker.Builder.datePicker()
-                                .setTitleText("Select Date")
-                                .setSelection(MaterialDatePicker.todayInUtcMilliseconds())
-                                .build();
+    private TextInputLayout findParentTextInputLayout(View child) {
+        ViewParent parent = child.getParent();
+        while (parent != null) {
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
 
-                        datePicker.addOnPositiveButtonClickListener(selection -> {
-                            // FIX: Added UTC bounds synchronization to stop local shifts from changing the date day selection
-                            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-                            sdf.setTimeZone(TimeZone.getTimeZone("UTC"));
-                            String formattedDate = sdf.format(new Date(selection));
-                            editText.setText(formattedDate);
+    private void showDatePickerDialog(EditText editText) {
+        Calendar c = Calendar.getInstance();
+        DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view, year, month, day) -> {
+            String formattedDate = String.format(Locale.US, "%02d-%02d-%04d", month + 1, day, year);
+            editText.setText(formattedDate);
+            editText.setError(null);
 
-                            if (editText.getId() == R.id.etDob) {
-                                calculateAgeInMonths(formattedDate);
-                            }
-                        });
-
-                        datePicker.show(getParentFragmentManager(), "DATE_PICKER_" + editText.getId());
-                        return true; // Consume touch event so field doesn't gain text focus immediately
-                    }
-                }
+            if (editText.getId() == R.id.etDob) {
+                calculateAgeInMonths(formattedDate);
             }
-            return false;
-        });
+        }, c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+        dialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+        dialog.show();
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
     }
 
     private void loadHouseholdProfilesAutocomplete() {
@@ -277,7 +335,7 @@ public class ChildImmunizationFragment extends Fragment {
                                         etFamilySerialNumber.setText(profile.hhNumber);
                                     }
                                     if (etDob != null) {
-                                        etDob.setText(profile.dob);
+                                        etDob.setText(toDisplayDate(profile.dob));
                                         calculateAgeInMonths(profile.dob);
                                     }
 
@@ -324,8 +382,9 @@ public class ChildImmunizationFragment extends Fragment {
     private void calculateAgeInMonths(String dobString) {
         if (dobString == null || dobString.isEmpty() || etAgeMonths == null) return;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date birthDate = sdf.parse(dobString);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            Date birthDate = sdf.parse(toDisplayDate(dobString));
             if (birthDate != null) {
                 Calendar birth = Calendar.getInstance();
                 birth.setTime(birthDate);
@@ -347,10 +406,10 @@ public class ChildImmunizationFragment extends Fragment {
                     getActivity().runOnUiThread(() -> {
                         selectedProfileId = record.getProfileId();
 
-                        if (etRegDate != null) etRegDate.setText(record.getRegistrationDate());
+                        if (etRegDate != null) etRegDate.setText(toDisplayDate(record.getRegistrationDate()));
                         if (etFamilySerialNumber != null) etFamilySerialNumber.setText(record.getFamilySerialNumber());
                         if (etChildName != null) etChildName.setText(record.getChildName());
-                        if (etDob != null) etDob.setText(record.getDateOfBirth());
+                        if (etDob != null) etDob.setText(toDisplayDate(record.getDateOfBirth()));
                         if (etAgeMonths != null) etAgeMonths.setText(record.getAgeMonths());
                         if (etMotherName != null) etMotherName.setText(record.getMotherName());
                         if (etAddress != null) etAddress.setText(record.getAddress());
@@ -362,59 +421,61 @@ public class ChildImmunizationFragment extends Fragment {
 
                         if (cbTd2Mother != null) cbTd2Mother.setChecked(record.isTd2Mother());
                         if (cbTd3To5Mother != null) cbTd3To5Mother.setChecked(record.isTd3To5Mother());
+                        if (etTd2MotherDate != null) etTd2MotherDate.setText(toDisplayDate(record.getTd2MotherDate()));
+                        if (etTd3To5MotherDate != null) etTd3To5MotherDate.setText(toDisplayDate(record.getTd3To5MotherDate()));
 
                         if (etBcgWithin24hAge != null) etBcgWithin24hAge.setText(record.getBcgWithin24hAge());
-                        if (etBcgWithin24hDate != null) etBcgWithin24hDate.setText(record.getBcgWithin24hDate());
+                        if (etBcgWithin24hDate != null) etBcgWithin24hDate.setText(toDisplayDate(record.getBcgWithin24hDate()));
                         if (etBcgLateAge != null) etBcgLateAge.setText(record.getBcgLateAge());
-                        if (etBcgLateDate != null) etBcgLateDate.setText(record.getBcgLateDate());
+                        if (etBcgLateDate != null) etBcgLateDate.setText(toDisplayDate(record.getBcgLateDate()));
 
                         if (etHepaBWithin24hAge != null) etHepaBWithin24hAge.setText(record.getHepaBWithin24hAge());
-                        if (etHepaBWithin24hDate != null) etHepaBWithin24hDate.setText(record.getHepaBWithin24hDate());
+                        if (etHepaBWithin24hDate != null) etHepaBWithin24hDate.setText(toDisplayDate(record.getHepaBWithin24hDate()));
                         if (etHepaBLateAge != null) etHepaBLateAge.setText(record.getHepaBLateAge());
-                        if (etHepaBLateDate != null) etHepaBLateDate.setText(record.getHepaBLateDate());
+                        if (etHepaBLateDate != null) etHepaBLateDate.setText(toDisplayDate(record.getHepaBLateDate()));
 
                         if (etDpt1Age != null) etDpt1Age.setText(record.getDpt1Age());
-                        if (etDpt1Date != null) etDpt1Date.setText(record.getDpt1Date());
+                        if (etDpt1Date != null) etDpt1Date.setText(toDisplayDate(record.getDpt1Date()));
                         if (etDpt2Age != null) etDpt2Age.setText(record.getDpt2Age());
-                        if (etDpt2Date != null) etDpt2Date.setText(record.getDpt2Date());
+                        if (etDpt2Date != null) etDpt2Date.setText(toDisplayDate(record.getDpt2Date()));
                         if (etDpt3Age != null) etDpt3Age.setText(record.getDpt3Age());
-                        if (etDpt3Date != null) etDpt3Date.setText(record.getDpt3Date());
+                        if (etDpt3Date != null) etDpt3Date.setText(toDisplayDate(record.getDpt3Date()));
 
                         if (etOpv1Age != null) etOpv1Age.setText(record.getOpv1Age());
-                        if (etOpv1Date != null) etOpv1Date.setText(record.getOpv1Date());
+                        if (etOpv1Date != null) etOpv1Date.setText(toDisplayDate(record.getOpv1Date()));
                         if (etOpv2Age != null) etOpv2Age.setText(record.getOpv2Age());
-                        if (etOpv2Date != null) etOpv2Date.setText(record.getOpv2Date());
+                        if (etOpv2Date != null) etOpv2Date.setText(toDisplayDate(record.getOpv2Date()));
                         if (etOpv3Age != null) etOpv3Age.setText(record.getOpv3Age());
-                        if (etOpv3Date != null) etOpv3Date.setText(record.getOpv3Date());
+                        if (etOpv3Date != null) etOpv3Date.setText(toDisplayDate(record.getOpv3Date()));
 
                         if (etIpv1Age != null) etIpv1Age.setText(record.getIpv1Age());
-                        if (etIpv1Date != null) etIpv1Date.setText(record.getIpv1Date());
+                        if (etIpv1Date != null) etIpv1Date.setText(toDisplayDate(record.getIpv1Date()));
                         if (etIpv2Age != null) etIpv2Age.setText(record.getIpv2Age());
-                        if (etIpv2Date != null) etIpv2Date.setText(record.getIpv2Date());
+                        if (etIpv2Date != null) etIpv2Date.setText(toDisplayDate(record.getIpv2Date()));
 
                         if (etPcv1Age != null) etPcv1Age.setText(record.getPcv1Age());
-                        if (etPcv1Date != null) etPcv1Date.setText(record.getPcv1Date());
+                        if (etPcv1Date != null) etPcv1Date.setText(toDisplayDate(record.getPcv1Date()));
                         if (etPcv2Age != null) etPcv2Age.setText(record.getPcv2Age());
-                        if (etPcv2Date != null) etPcv2Date.setText(record.getPcv2Date());
+                        if (etPcv2Date != null) etPcv2Date.setText(toDisplayDate(record.getPcv2Date()));
                         if (etPcv3Age != null) etPcv3Age.setText(record.getPcv3Age());
-                        if (etPcv3Date != null) etPcv3Date.setText(record.getPcv3Date());
+                        if (etPcv3Date != null) etPcv3Date.setText(toDisplayDate(record.getPcv3Date()));
 
                         if (etMmr1Age != null) etMmr1Age.setText(record.getMmr1Age());
-                        if (etMmr1Date != null) etMmr1Date.setText(record.getMmr1Date());
+                        if (etMmr1Date != null) etMmr1Date.setText(toDisplayDate(record.getMmr1Date()));
                         if (etMmr2Age != null) etMmr2Age.setText(record.getMmr2Age());
-                        if (etMmr2Date != null) etMmr2Date.setText(record.getMmr2Date());
+                        if (etMmr2Date != null) etMmr2Date.setText(toDisplayDate(record.getMmr2Date()));
 
                         if (cbFicBcg != null) cbFicBcg.setChecked(record.isFicBcg());
                         if (cbFicDpt3 != null) cbFicDpt3.setChecked(record.isFicDpt3());
                         if (cbFicOpv3 != null) cbFicOpv3.setChecked(record.isFicOpv3());
                         if (cbFicMmr2 != null) cbFicMmr2.setChecked(record.isFicMmr2());
-                        if (etFicDate != null) etFicDate.setText(record.getFicDate());
+                        if (etFicDate != null) etFicDate.setText(toDisplayDate(record.getFicDate()));
 
                         if (cbCicBcg != null) cbCicBcg.setChecked(record.isCicBcg());
                         if (cbCicDpt3 != null) cbCicDpt3.setChecked(record.isCicDpt3());
                         if (cbCicOpv3 != null) cbCicOpv3.setChecked(record.isCicOpv3());
                         if (cbCicMmr2 != null) cbCicMmr2.setChecked(record.isCicMmr2());
-                        if (etCicDate != null) etCicDate.setText(record.getCicDate());
+                        if (etCicDate != null) etCicDate.setText(toDisplayDate(record.getCicDate()));
 
                         if (etRemarks != null) etRemarks.setText(record.getRemarks());
                     });
@@ -458,6 +519,8 @@ public class ChildImmunizationFragment extends Fragment {
 
             record.setTd2Mother(cbTd2Mother != null && cbTd2Mother.isChecked());
             record.setTd3To5Mother(cbTd3To5Mother != null && cbTd3To5Mother.isChecked());
+            record.setTd2MotherDate(getTextOrEmpty(etTd2MotherDate));
+            record.setTd3To5MotherDate(getTextOrEmpty(etTd3To5MotherDate));
 
             record.setBcgWithin24hAge(getTextOrEmpty(etBcgWithin24hAge));
             record.setBcgWithin24hDate(getTextOrEmpty(etBcgWithin24hDate));
@@ -523,7 +586,7 @@ public class ChildImmunizationFragment extends Fragment {
         return (et != null && et.getText() != null) ? et.getText().toString().trim() : "";
     }
 
-    // Static nested class to format user text input to standard ISO date structure (yyyy-MM-dd)
+    // Static nested class to format user text input as MM-DD-YYYY while typing
     private static class DateFormattingWatcher implements TextWatcher {
         private final EditText editText;
         private boolean isDeleting = false;
@@ -543,7 +606,7 @@ public class ChildImmunizationFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -557,7 +620,7 @@ public class ChildImmunizationFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

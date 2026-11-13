@@ -70,8 +70,9 @@
                         android:id="@+id/etRegion"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
                         android:completionThreshold="1"
-                        android:inputType="none"/>
+                        android:textColor="#1F2937"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -84,8 +85,9 @@
                         android:id="@+id/etProvince"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
                         android:completionThreshold="1"
-                        android:inputType="none"/>
+                        android:textColor="#1F2937"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -98,8 +100,9 @@
                         android:id="@+id/etMunicipality"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
                         android:completionThreshold="1"
-                        android:inputType="none"/>
+                        android:textColor="#1F2937"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -112,8 +115,9 @@
                         android:id="@+id/etBarangay"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
                         android:completionThreshold="1"
-                        android:inputType="none"/>
+                        android:textColor="#1F2937"/>
                 </com.google.android.material.textfield.TextInputLayout>
 
                 <com.google.android.material.textfield.TextInputLayout
@@ -303,7 +307,7 @@
                     android:id="@+id/tilDOB"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:hint="Date of Birth (YYYY-MM-DD)"
+                    android:hint="Date of Birth (MM-DD-YYYY)"
                     app:endIconMode="custom"
                     app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
                     style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">

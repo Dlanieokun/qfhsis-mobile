@@ -6,7 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ProgressBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -24,12 +23,18 @@ import java.util.concurrent.Executors;
 
 public class ViewHouseholdProfileFragment extends Fragment {
 
+    private static final String ARG_SELECTED_PROFILE = "household_profile";
+
     private RecyclerView rvProfiles;
     private ProgressBar progressBar;
     private TextView tvEmptyMessage;
     private FloatingActionButton fabAddProfile;
     private SearchView searchViewProfiles;
     private HouseholdProfileAdapter adapter;
+
+    /** The profile that was tapped on the previous screen, if any. Used to
+     *  scroll to / highlight the matching row once the list has loaded. */
+    private HouseholdProfile selectedProfile;
 
     public ViewHouseholdProfileFragment() {
         // Required empty public constructor
@@ -43,6 +48,10 @@ public class ViewHouseholdProfileFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        if (getArguments() != null) {
+            selectedProfile = (HouseholdProfile) getArguments().getSerializable(ARG_SELECTED_PROFILE);
+        }
 
         rvProfiles = view.findViewById(R.id.rvProfiles);
         progressBar = view.findViewById(R.id.progressBar);
@@ -105,8 +114,20 @@ public class ViewHouseholdProfileFragment extends Fragment {
 
         fabAddProfile.setOnClickListener(v -> {
             if (getActivity() != null) {
+                ProfilingFragment addFragment = new ProfilingFragment();
+
+                if (selectedProfile != null) {
+                    // Adding a member to an already-known household: carry its
+                    // Location & Demographics details over so ProfilingFragment
+                    // can pre-fill and lock those fields instead of asking the
+                    // user to re-enter them for every member.
+                    Bundle prefillArgs = new Bundle();
+                    prefillArgs.putSerializable("PREFILL_HOUSEHOLD", selectedProfile);
+                    addFragment.setArguments(prefillArgs);
+                }
+
                 getActivity().getSupportFragmentManager().beginTransaction()
-                        .replace(R.id.fragment_container, new ProfilingFragment())
+                        .replace(R.id.fragment_container, addFragment)
                         .addToBackStack(null)
                         .commit();
             }
@@ -123,7 +144,18 @@ public class ViewHouseholdProfileFragment extends Fragment {
 
         Executors.newSingleThreadExecutor().execute(() -> {
             DatabaseHelper db = DatabaseHelper.getDatabase(getContext().getApplicationContext());
-            List<HouseholdProfile> profileList = db.householdProfileDao().getAllProfiles();
+
+            List<HouseholdProfile> profileList;
+            if (selectedProfile != null && selectedProfile.hhNumber != null) {
+                // Show only the members of the household that was tapped,
+                // sorted by family number.
+                profileList = db.householdProfileDao()
+                        .getHouseholdMemberSortedByFamily(selectedProfile.hhNumber);
+            } else {
+                // No specific household was passed in — show everyone,
+                // grouped by household and sorted by family number.
+                profileList = db.householdProfileDao().getAllProfilesSorted();
+            }
 
             if (getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
@@ -139,10 +171,46 @@ public class ViewHouseholdProfileFragment extends Fragment {
                     } else {
                         tvEmptyMessage.setVisibility(View.GONE);
                         adapter.setProfiles(profileList);
+                        scrollToSelectedProfile();
                     }
                 });
             }
         });
+    }
+
+    /**
+     * If the user arrived here by tapping a specific household (i.e. a
+     * profile was passed in via arguments), scroll that row into view and
+     * give it a brief highlight pulse so it's easy to spot in the full list.
+     */
+    private void scrollToSelectedProfile() {
+        if (selectedProfile == null || rvProfiles == null) return;
+
+        int position = adapter.getPositionForId(selectedProfile.id);
+        if (position < 0) return; // not found (e.g. hidden by an active search filter)
+
+        rvProfiles.post(() -> {
+            rvProfiles.smoothScrollToPosition(position);
+            rvProfiles.postDelayed(() -> {
+                RecyclerView.ViewHolder holder = rvProfiles.findViewHolderForAdapterPosition(position);
+                if (holder != null) {
+                    pulseHighlight(holder.itemView);
+                }
+            }, 300);
+        });
+    }
+
+    private void pulseHighlight(View itemView) {
+        itemView.animate()
+                .scaleX(1.03f)
+                .scaleY(1.03f)
+                .setDuration(180)
+                .withEndAction(() -> itemView.animate()
+                        .scaleX(1f)
+                        .scaleY(1f)
+                        .setDuration(180)
+                        .start())
+                .start();
     }
 
     @Override

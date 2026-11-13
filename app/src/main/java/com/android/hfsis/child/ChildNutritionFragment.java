@@ -4,6 +4,8 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,11 +15,15 @@ import android.widget.AutoCompleteTextView;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
@@ -93,6 +99,7 @@ public class ChildNutritionFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_child_nutrition, container, false);
+        setupKeyboardInsets(view);
         database = DatabaseHelper.getInstance(requireContext().getApplicationContext());
 
         initViews(view);
@@ -112,8 +119,8 @@ public class ChildNutritionFragment extends Fragment {
                 loadExistingRecord(editingRecordId);
             }
         }else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Automatically set the current date for a new record (MM-dd-yyyy)
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etDateRegistration.setText(sdf.format(new Date()));
         }
 
@@ -121,6 +128,51 @@ public class ChildNutritionFragment extends Fragment {
         btnClear.setOnClickListener(v -> clearAllFields());
 
         return view;
+    }
+
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
     }
 
     private void initViews(View view) {
@@ -277,8 +329,9 @@ public class ChildNutritionFragment extends Fragment {
 
                                         // Auto-fill DOB and auto-calculate Age
                                         if (TextUtils.isEmpty(getText(etDateOfBirth)) && !TextUtils.isEmpty(profile.dob)) {
-                                            etDateOfBirth.setText(profile.dob);
-                                            calculateAgeInMonths(profile.dob);
+                                            String dobDisplay = toDisplayDate(profile.dob);
+                                            etDateOfBirth.setText(dobDisplay);
+                                            calculateAgeInMonths(dobDisplay);
                                         }
 
                                         if (rgSex.getCheckedRadioButtonId() == -1 && !TextUtils.isEmpty(profile.sex)) {
@@ -307,55 +360,154 @@ public class ChildNutritionFragment extends Fragment {
     }
 
     private void setupDatePickers() {
-        View.OnClickListener dateClick = v -> {
-            final EditText target = (EditText) v;
-            final Calendar c = Calendar.getInstance();
-            int year = c.get(Calendar.YEAR);
-            int month = c.get(Calendar.MONTH);
-            int day = c.get(Calendar.DAY_OF_MONTH);
+        bindDatePicker(tilDateRegistration, etDateRegistration);
+        bindDatePicker(tilDateOfBirth, etDateOfBirth);
+        bindDatePicker(tilBreastfeedingDate, etBreastfeedingDate);
+        bindDatePicker(tilIron1Month, etIron1Month);
+        bindDatePicker(tilIron2Months, etIron2Months);
+        bindDatePicker(tilIron3Months, etIron3Months);
+        bindDatePicker(tilIronCompletedDate, etIronCompletedDate);
+        bindDatePicker(tilVitaA6to11, etVitaA6to11);
+        bindDatePicker(tilVitaA200Y1D1, etVitaA200Y1D1);
+        bindDatePicker(tilVitaA200Y1D2, etVitaA200Y1D2);
+        bindDatePicker(tilVitaA200Y2D1, etVitaA200Y2D1);
+        bindDatePicker(tilVitaA200Y2D2, etVitaA200Y2D2);
+        bindDatePicker(tilVitaA200Y3D1, etVitaA200Y3D1);
+        bindDatePicker(tilVitaA200Y3D2, etVitaA200Y3D2);
+        bindDatePicker(tilVitaA200Y4D1, etVitaA200Y4D1);
+        bindDatePicker(tilVitaA200Y4D2, etVitaA200Y4D2);
+        bindDatePicker(tilMnp6to11Provided, etMnp6to11Provided);
+        bindDatePicker(tilMnp6to11Completed, etMnp6to11Completed);
+        bindDatePicker(tilMnp12to23Provided, etMnp12to23Provided);
+        bindDatePicker(tilMnp12to23Completed, etMnp12to23Completed);
+        bindDatePicker(tilLns6to11Provided, etLns6to11Provided);
+        bindDatePicker(tilLns6to11Completed, etLns6to11Completed);
+        bindDatePicker(tilLns12to23Provided, etLns12to23Provided);
+        bindDatePicker(tilLns12to23Completed, etLns12to23Completed);
 
-            new DatePickerDialog(requireContext(), (view, year1, month1, dayOfMonth) -> {
-                String formattedDate = String.format(Locale.getDefault(), "%04d-%02d-%02d", year1, month1 + 1, dayOfMonth);
-                target.setText(formattedDate);
-
-                // Instantly calculate age if the target field is Date of Birth
-                if (target.getId() == R.id.etDateOfBirth) {
-                    calculateAgeInMonths(formattedDate);
+        // Auto-compute age (in months) while the DOB is typed manually
+        etDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                if (s.length() == 10) {
+                    calculateAgeInMonths(s.toString());
+                } else if (s.length() == 0) {
+                    etAge.setText("");
                 }
-            }, year, month, day).show();
-        };
+            }
+        });
+    }
 
-        etDateRegistration.setOnClickListener(dateClick);
-        etDateOfBirth.setOnClickListener(dateClick);
-        etBreastfeedingDate.setOnClickListener(dateClick);
-        etIronCompletedDate.setOnClickListener(dateClick);
-        etIron1Month.setOnClickListener(dateClick);
-        etIron2Months.setOnClickListener(dateClick);
-        etIron3Months.setOnClickListener(dateClick);
-        etVitaA6to11.setOnClickListener(dateClick);
-        etVitaA200Y1D1.setOnClickListener(dateClick);
-        etVitaA200Y1D2.setOnClickListener(dateClick);
-        etVitaA200Y2D1.setOnClickListener(dateClick);
-        etVitaA200Y2D2.setOnClickListener(dateClick);
-        etVitaA200Y3D1.setOnClickListener(dateClick);
-        etVitaA200Y3D2.setOnClickListener(dateClick);
-        etVitaA200Y4D1.setOnClickListener(dateClick);
-        etVitaA200Y4D2.setOnClickListener(dateClick);
-        etMnp6to11Provided.setOnClickListener(dateClick);
-        etMnp6to11Completed.setOnClickListener(dateClick);
-        etMnp12to23Provided.setOnClickListener(dateClick);
-        etMnp12to23Completed.setOnClickListener(dateClick);
-        etLns6to11Provided.setOnClickListener(dateClick);
-        etLns6to11Completed.setOnClickListener(dateClick);
-        etLns12to23Provided.setOnClickListener(dateClick);
-        etLns12to23Completed.setOnClickListener(dateClick);
+    // Formats keyboard input as MM-dd-yyyy while typing, and opens the
+    // calendar dialog from the end icon (same behavior as ProfilingFragment).
+    private void bindDatePicker(TextInputLayout layout, EditText editText) {
+        if (layout == null || editText == null) return;
+
+        editText.addTextChangedListener(new DateFormattingWatcher(editText));
+        layout.setEndIconOnClickListener(v -> showDatePickerDialog(editText));
+    }
+
+    private void showDatePickerDialog(EditText targetEditText) {
+        if (getContext() == null) return;
+
+        // Start on the date already in the field (if valid), otherwise today
+        Calendar calendar = Calendar.getInstance();
+        Date existing = parseDate(getText(targetEditText));
+        if (existing != null) calendar.setTime(existing);
+
+        DatePickerDialog datePickerDialog = new DatePickerDialog(getContext(),
+                (view, selYear, selMonth, selDay) -> {
+                    Calendar selCalendar = Calendar.getInstance();
+                    selCalendar.set(Calendar.YEAR, selYear);
+                    selCalendar.set(Calendar.MONTH, selMonth);
+                    selCalendar.set(Calendar.DAY_OF_MONTH, selDay);
+
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+                    String formattedDate = sdf.format(selCalendar.getTime());
+                    targetEditText.setText(formattedDate);
+                    targetEditText.setError(null);
+
+                    // Instantly calculate age if the target field is Date of Birth
+                    if (targetEditText.getId() == R.id.etDateOfBirth) {
+                        calculateAgeInMonths(formattedDate);
+                    }
+                },
+                calendar.get(Calendar.YEAR),
+                calendar.get(Calendar.MONTH),
+                calendar.get(Calendar.DAY_OF_MONTH));
+
+        datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+        datePickerDialog.show();
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
+    // Strict MM-dd-yyyy parser; returns null if the text is not a real date
+    private Date parseDate(String text) {
+        if (text == null || !text.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            return sdf.parse(text);
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Returns true when every visible, non-empty date field holds a valid, non-future date
+    private boolean validateDateFields() {
+        EditText[] fields = new EditText[]{
+                etDateRegistration,
+                etDateOfBirth,
+                etBreastfeedingDate,
+                etIron1Month,
+                etIron2Months,
+                etIron3Months,
+                etIronCompletedDate,
+                etVitaA6to11,
+                etVitaA200Y1D1,
+                etVitaA200Y1D2,
+                etVitaA200Y2D1,
+                etVitaA200Y2D2,
+                etVitaA200Y3D1,
+                etVitaA200Y3D2,
+                etVitaA200Y4D1,
+                etVitaA200Y4D2,
+                etMnp6to11Provided,
+                etMnp6to11Completed,
+                etMnp12to23Provided,
+                etMnp12to23Completed,
+                etLns6to11Provided,
+                etLns6to11Completed,
+                etLns12to23Provided,
+                etLns12to23Completed
+        };
+        Date now = new Date();
+        for (EditText f : fields) {
+            if (f == null || !f.isShown()) continue;
+            String text = getText(f);
+            if (text.isEmpty()) continue;
+            Date d = parseDate(text);
+            if (d == null || d.after(now)) {
+                f.setError("Enter a valid date (MM-DD-YYYY)");
+                f.requestFocus();
+                return false;
+            }
+        }
+        return true;
     }
 
     private void calculateAgeInMonths(String dobString) {
         if (TextUtils.isEmpty(dobString)) return;
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault());
-            Date birthDate = sdf.parse(dobString);
+            Date birthDate = parseDate(toDisplayDate(dobString));
             if (birthDate != null) {
                 Calendar birth = Calendar.getInstance();
                 birth.setTime(birthDate);
@@ -382,10 +534,10 @@ public class ChildNutritionFragment extends Fragment {
             if (record != null && isAdded() && getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     selectedProfileId = record.getProfileId();
-                    etDateRegistration.setText(record.getDateRegistration());
+                    etDateRegistration.setText(toDisplayDate(record.getDateRegistration()));
                     etFamilySerialNumber.setText(record.getFamilySerialNumber());
                     etChildName.setText(record.getChildName());
-                    etDateOfBirth.setText(record.getDateOfBirth());
+                    etDateOfBirth.setText(toDisplayDate(record.getDateOfBirth()));
                     etAge.setText(record.getAgeMonths());
                     etMotherName.setText(record.getMotherName());
                     etAddress.setText(record.getAddress());
@@ -403,37 +555,37 @@ public class ChildNutritionFragment extends Fragment {
                         else if ("U".equalsIgnoreCase(bwStatus)) etBirthWeightStatus.setText("U — Unknown", false);
                     }
 
-                    etBreastfeedingDate.setText(record.getBreastfeedingDate());
+                    etBreastfeedingDate.setText(toDisplayDate(record.getBreastfeedingDate()));
                     etPlaceOfDelivery.setText(record.getPlaceOfDelivery());
 
-                    etIron1Month.setText(record.getIron1Month());
-                    etIron2Months.setText(record.getIron2Months());
-                    etIron3Months.setText(record.getIron3Months());
+                    etIron1Month.setText(toDisplayDate(record.getIron1Month()));
+                    etIron2Months.setText(toDisplayDate(record.getIron2Months()));
+                    etIron3Months.setText(toDisplayDate(record.getIron3Months()));
                     setRadioValue(rgIronCompleted, record.getIronCompleted());
-                    etIronCompletedDate.setText(record.getIronCompletedDate());
+                    etIronCompletedDate.setText(toDisplayDate(record.getIronCompletedDate()));
 
-                    etVitaA6to11.setText(record.getVitaA6to11());
-                    etVitaA200Y1D1.setText(record.getVitaA200Y1D1());
-                    etVitaA200Y1D2.setText(record.getVitaA200Y1D2());
-                    etVitaA200Y2D1.setText(record.getVitaA200Y2D1());
-                    etVitaA200Y2D2.setText(record.getVitaA200Y2D2());
-                    etVitaA200Y3D1.setText(record.getVitaA200Y3D1());
-                    etVitaA200Y3D2.setText(record.getVitaA200Y3D2());
-                    etVitaA200Y4D1.setText(record.getVitaA200Y4D1());
-                    etVitaA200Y4D2.setText(record.getVitaA200Y4D2());
+                    etVitaA6to11.setText(toDisplayDate(record.getVitaA6to11()));
+                    etVitaA200Y1D1.setText(toDisplayDate(record.getVitaA200Y1D1()));
+                    etVitaA200Y1D2.setText(toDisplayDate(record.getVitaA200Y1D2()));
+                    etVitaA200Y2D1.setText(toDisplayDate(record.getVitaA200Y2D1()));
+                    etVitaA200Y2D2.setText(toDisplayDate(record.getVitaA200Y2D2()));
+                    etVitaA200Y3D1.setText(toDisplayDate(record.getVitaA200Y3D1()));
+                    etVitaA200Y3D2.setText(toDisplayDate(record.getVitaA200Y3D2()));
+                    etVitaA200Y4D1.setText(toDisplayDate(record.getVitaA200Y4D1()));
+                    etVitaA200Y4D2.setText(toDisplayDate(record.getVitaA200Y4D2()));
 
-                    etMnp6to11Provided.setText(record.getMnp6to11Provided());
-                    etMnp6to11Completed.setText(record.getMnp6to11Completed());
+                    etMnp6to11Provided.setText(toDisplayDate(record.getMnp6to11Provided()));
+                    etMnp6to11Completed.setText(toDisplayDate(record.getMnp6to11Completed()));
                     etMnp6to11Remarks.setText(record.getMnp6to11Remarks());
-                    etMnp12to23Provided.setText(record.getMnp12to23Provided());
-                    etMnp12to23Completed.setText(record.getMnp12to23Completed());
+                    etMnp12to23Provided.setText(toDisplayDate(record.getMnp12to23Provided()));
+                    etMnp12to23Completed.setText(toDisplayDate(record.getMnp12to23Completed()));
                     etMnp12to23Remarks.setText(record.getMnp12to23Remarks());
 
-                    etLns6to11Provided.setText(record.getLns6to11Provided());
-                    etLns6to11Completed.setText(record.getLns6to11Completed());
+                    etLns6to11Provided.setText(toDisplayDate(record.getLns6to11Provided()));
+                    etLns6to11Completed.setText(toDisplayDate(record.getLns6to11Completed()));
                     etLns6to11Remarks.setText(record.getLns6to11Remarks());
-                    etLns12to23Provided.setText(record.getLns12to23Provided());
-                    etLns12to23Completed.setText(record.getLns12to23Completed());
+                    etLns12to23Provided.setText(toDisplayDate(record.getLns12to23Provided()));
+                    etLns12to23Completed.setText(toDisplayDate(record.getLns12to23Completed()));
                     etLns12to23Remarks.setText(record.getLns12to23Remarks());
 
                     setRadioValue(rgMamIdentified, record.getMamIdentified());
@@ -462,6 +614,11 @@ public class ChildNutritionFragment extends Fragment {
             return;
         }
         tilChildName.setError(null);
+
+        if (!validateDateFields()) {
+            Toast.makeText(getContext(), "Please check the highlighted date", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         Executors.newSingleThreadExecutor().execute(() -> {
             ChildNutritionRecord record = new ChildNutritionRecord();
@@ -659,5 +816,51 @@ public class ChildNutritionFragment extends Fragment {
     private String getBirthWeightCode(String displayText) {
         if (displayText == null || displayText.isEmpty()) return "";
         return String.valueOf(displayText.charAt(0));
+    }
+
+    // Same auto-formatting watcher used in ProfilingFragment (types as MM-dd-yyyy)
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

@@ -2,24 +2,34 @@ package com.android.hfsis.maternal_care_record;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.CheckBox;
+import android.widget.Filter;
+import android.widget.ScrollView;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.maternal_care_record.Prenatal8AncEntity;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -31,10 +41,7 @@ public class Prenatal8AncFormFragment extends Fragment {
     private int profileId = -1;
     private String patientName = "";
 
-    // Component configurations and tracking states
     private DatabaseHelper db;
-    private boolean isEditMode = false;
-    private int existingRecordId = -1;
 
     // Header View
     private TextView tvFormPatientHeader;
@@ -53,8 +60,6 @@ public class Prenatal8AncFormFragment extends Fragment {
     private CheckBox cbCompleted8Anc, cbHighBp, cbDangerSigns, cbHighBpReferred;
     private TextInputEditText etDangerSignsDetail, etDateReferred;
     private AutoCompleteTextView actvClassification;
-
-    // Integrated Variable
     private TextInputEditText etClassificationDate;
 
     private Button btnSave8AncForm;
@@ -79,34 +84,75 @@ public class Prenatal8AncFormFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_prenatal8_anc_form, container, false);
     }
 
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
+        setupKeyboardInsets(view);
+
         db = DatabaseHelper.getDatabase(requireContext());
 
-        // Initialize Form Views
         initFormViews(view);
 
-        // Bind patient baseline header text metadata
         if (patientName != null && !patientName.isEmpty()) {
             tvFormPatientHeader.setText("Patient: " + patientName + " (Maternal ID: " + maternalRecordId + ")");
         }
 
         setupClassificationDropdown();
         setupAllDatePickers();
-
-        // Pull down existing sub-record entries if already captured
         checkAndLoadExistingData();
 
-        // Bind form operational submission flow execution
         btnSave8AncForm.setOnClickListener(v -> saveOrUpdateFormInput());
     }
 
     private void initFormViews(View view) {
         tvFormPatientHeader = view.findViewById(R.id.tvFormPatientHeader);
 
-        // Map Visit Inputs
         etVisit1Date = view.findViewById(R.id.etVisit1Date);
         etVisit1Bp = view.findViewById(R.id.etVisit1Bp);
         etVisit2Date = view.findViewById(R.id.etVisit2Date);
@@ -124,7 +170,6 @@ public class Prenatal8AncFormFragment extends Fragment {
         etVisit8Date = view.findViewById(R.id.etVisit8Date);
         etVisit8Bp = view.findViewById(R.id.etVisit8Bp);
 
-        // Map Checkboxes and evaluation strings
         cbCompleted8Anc = view.findViewById(R.id.cbCompleted8Anc);
         cbHighBp = view.findViewById(R.id.cbHighBp);
         cbDangerSigns = view.findViewById(R.id.cbDangerSigns);
@@ -132,11 +177,41 @@ public class Prenatal8AncFormFragment extends Fragment {
         cbHighBpReferred = view.findViewById(R.id.cbHighBpReferred);
         etDateReferred = view.findViewById(R.id.etDateReferred);
         actvClassification = view.findViewById(R.id.actvClassification);
-
-        // Connect the layout id reference field
         etClassificationDate = view.findViewById(R.id.etClassificationDate);
 
         btnSave8AncForm = view.findViewById(R.id.btnSave8AncForm);
+    }
+
+    /**
+     * ArrayAdapter that never filters by the current text, so after an existing
+     * classification is loaded the user can still pick any other option.
+     */
+    private static class NoFilterAdapter extends ArrayAdapter<String> {
+        private final String[] items;
+
+        NoFilterAdapter(android.content.Context context, String[] items) {
+            super(context, android.R.layout.simple_dropdown_item_1line, items);
+            this.items = items;
+        }
+
+        @NonNull
+        @Override
+        public Filter getFilter() {
+            return new Filter() {
+                @Override
+                protected FilterResults performFiltering(CharSequence constraint) {
+                    FilterResults results = new FilterResults();
+                    results.values = items;
+                    results.count = items.length;
+                    return results;
+                }
+
+                @Override
+                protected void publishResults(CharSequence constraint, FilterResults results) {
+                    notifyDataSetChanged();
+                }
+            };
+        }
     }
 
     private void setupClassificationDropdown() {
@@ -145,9 +220,8 @@ public class Prenatal8AncFormFragment extends Fragment {
                 "B - Trans In",
                 "C - Trans Out before receiving 8ANC"
         };
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(requireContext(),
-                android.R.layout.simple_dropdown_item_1line, classificationOptions);
-        actvClassification.setAdapter(adapter);
+        actvClassification.setAdapter(new NoFilterAdapter(requireContext(), classificationOptions));
+        actvClassification.setOnClickListener(v -> actvClassification.showDropDown());
     }
 
     private void setupAllDatePickers() {
@@ -160,33 +234,52 @@ public class Prenatal8AncFormFragment extends Fragment {
         bindDatePickerDialog(etVisit7Date);
         bindDatePickerDialog(etVisit8Date);
         bindDatePickerDialog(etDateReferred);
-        bindDatePickerDialog(etClassificationDate); // Bind popup dialogue behavior to the target field
+        bindDatePickerDialog(etClassificationDate);
     }
 
     private void bindDatePickerDialog(TextInputEditText field) {
         if (field == null) return;
-        field.setFocusable(false);
-        field.setClickable(true);
-        field.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-            DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view1, year, month, dayOfMonth) -> {
-                String selectedDate = String.format(Locale.US, "%02d/%02d/%04d", month + 1, dayOfMonth, year);
-                field.setText(selectedDate);
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-            dialog.show();
-        });
+
+        // Formats keyboard inputs while typing manually
+        field.addTextChangedListener(new DateFormattingWatcher(field));
+
+        // Opens calendar date picker only when clicking the end icon
+        TextInputLayout til = findParentTextInputLayout(field);
+        if (til != null) {
+            til.setEndIconOnClickListener(v -> showDatePickerDialog(field));
+        }
+    }
+
+    private TextInputLayout findParentTextInputLayout(View child) {
+        ViewParent parent = child.getParent();
+        while (parent != null) {
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+    private void showDatePickerDialog(TextInputEditText field) {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view1, year, month, dayOfMonth) -> {
+            String selectedDate = String.format(Locale.US, "%02d-%02d-%04d", month + 1, dayOfMonth, year);
+            field.setText(selectedDate);
+            field.setError(null);
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        dialog.show();
     }
 
     private void checkAndLoadExistingData() {
+        if (maternalRecordId == -1) return;
+
         Executors.newSingleThreadExecutor().execute(() -> {
             Prenatal8AncEntity record = db.prenatal8AncDao().getRecordByMaternalId(maternalRecordId);
             if (record != null && getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    isEditMode = true;
-                    existingRecordId = record.id;
+                    if (!isAdded()) return;
+
                     btnSave8AncForm.setText("Update Record");
 
-                    // Populate fields cleanly
                     etVisit1Date.setText(record.visit1Date);
                     etVisit1Bp.setText(record.visit1Bp);
                     etVisit2Date.setText(record.visit2Date);
@@ -214,8 +307,6 @@ public class Prenatal8AncFormFragment extends Fragment {
                     if (record.classificationStatus != null) {
                         actvClassification.setText(record.classificationStatus, false);
                     }
-
-                    // Pre-fill classification date if editing
                     etClassificationDate.setText(record.classificationDate);
                 });
             }
@@ -223,81 +314,120 @@ public class Prenatal8AncFormFragment extends Fragment {
     }
 
     private void saveOrUpdateFormInput() {
-        // Collect standard form inputs
-        String v1Date = etVisit1Date.getText().toString().trim();
-        String v1Bp = etVisit1Bp.getText().toString().trim();
-        String v2Date = etVisit2Date.getText().toString().trim();
-        String v2Bp = etVisit2Bp.getText().toString().trim();
-        String v3Date = etVisit3Date.getText().toString().trim();
-        String v3Bp = etVisit3Bp.getText().toString().trim();
-        String v4Date = etVisit4Date.getText().toString().trim();
-        String v4Bp = etVisit4Bp.getText().toString().trim();
-        String v5Date = etVisit5Date.getText().toString().trim();
-        String v5Bp = etVisit5Bp.getText().toString().trim();
-        String v6Date = etVisit6Date.getText().toString().trim();
-        String v6Bp = etVisit6Bp.getText().toString().trim();
-        String v7Date = etVisit7Date.getText().toString().trim();
-        String v7Bp = etVisit7Bp.getText().toString().trim();
-        String v8Date = etVisit8Date.getText().toString().trim();
-        String v8Bp = etVisit8Bp.getText().toString().trim();
+        if (maternalRecordId == -1) {
+            Toast.makeText(getContext(), "Error: Missing Maternal ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        boolean comp8Anc = cbCompleted8Anc.isChecked();
-        boolean hBp = cbHighBp.isChecked();
-        boolean dSigns = cbDangerSigns.isChecked();
-        String dSignsDetail = etDangerSignsDetail.getText().toString().trim();
-        boolean hBpReferred = cbHighBpReferred.isChecked();
-        String dReferred = etDateReferred.getText().toString().trim();
-        String classStatus = actvClassification.getText().toString().trim();
+        // Read all UI values on the main thread
+        final Prenatal8AncEntity record = new Prenatal8AncEntity();
+        record.maternalRecordId = maternalRecordId;
 
-        // Extract string value from layout input field
-        String classDate = etClassificationDate.getText().toString().trim();
+        record.visit1Date = etVisit1Date.getText().toString().trim();
+        record.visit1Bp = etVisit1Bp.getText().toString().trim();
+        record.visit2Date = etVisit2Date.getText().toString().trim();
+        record.visit2Bp = etVisit2Bp.getText().toString().trim();
+        record.visit3Date = etVisit3Date.getText().toString().trim();
+        record.visit3Bp = etVisit3Bp.getText().toString().trim();
+        record.visit4Date = etVisit4Date.getText().toString().trim();
+        record.visit4Bp = etVisit4Bp.getText().toString().trim();
+        record.visit5Date = etVisit5Date.getText().toString().trim();
+        record.visit5Bp = etVisit5Bp.getText().toString().trim();
+        record.visit6Date = etVisit6Date.getText().toString().trim();
+        record.visit6Bp = etVisit6Bp.getText().toString().trim();
+        record.visit7Date = etVisit7Date.getText().toString().trim();
+        record.visit7Bp = etVisit7Bp.getText().toString().trim();
+        record.visit8Date = etVisit8Date.getText().toString().trim();
+        record.visit8Bp = etVisit8Bp.getText().toString().trim();
+
+        record.completed8Anc = cbCompleted8Anc.isChecked();
+        record.highBp = cbHighBp.isChecked();
+        record.dangerSigns = cbDangerSigns.isChecked();
+        record.dangerSignsDetail = etDangerSignsDetail.getText().toString().trim();
+        record.highBpReferred = cbHighBpReferred.isChecked();
+        record.dateReferred = etDateReferred.getText().toString().trim();
+        record.classificationStatus = actvClassification.getText().toString().trim();
+        record.classificationDate = etClassificationDate.getText().toString().trim();
+
+        record.isSynced = false;
+        record.updatedAt = System.currentTimeMillis();
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            Prenatal8AncEntity record = new Prenatal8AncEntity();
-            record.maternalRecordId = maternalRecordId;
-            record.visit1Date = v1Date;
-            record.visit1Bp = v1Bp;
-            record.visit2Date = v2Date;
-            record.visit2Bp = v2Bp;
-            record.visit3Date = v3Date;
-            record.visit3Bp = v3Bp;
-            record.visit4Date = v4Date;
-            record.visit4Bp = v4Bp;
-            record.visit5Date = v5Date;
-            record.visit5Bp = v5Bp;
-            record.visit6Date = v6Date;
-            record.visit6Bp = v6Bp;
-            record.visit7Date = v7Date;
-            record.visit7Bp = v7Bp;
-            record.visit8Date = v8Date;
-            record.visit8Bp = v8Bp;
+            try {
+                // Decide insert vs update from the DB itself
+                Prenatal8AncEntity existing = db.prenatal8AncDao().getRecordByMaternalId(maternalRecordId);
+                final boolean isUpdate = existing != null;
 
-            record.completed8Anc = comp8Anc;
-            record.highBp = hBp;
-            record.dangerSigns = dSigns;
-            record.dangerSignsDetail = dSignsDetail;
-            record.highBpReferred = hBpReferred;
-            record.dateReferred = dReferred;
-            record.classificationStatus = classStatus;
+                if (isUpdate) {
+                    record.id = existing.id;
+                    record.newInsert = existing.newInsert; // keep "never uploaded" state
+                    db.prenatal8AncDao().update8AncRecord(record);
+                } else {
+                    record.newInsert = true;
+                    db.prenatal8AncDao().insert8AncRecord(record);
+                }
 
-            // Map gathered data variable string value to Entity model
-            record.classificationDate = classDate;
-
-            if (isEditMode) {
-                record.id = existingRecordId;
-                db.prenatal8AncDao().update8AncRecord(record);
-            } else {
-                record.newInsert = true;
-                db.prenatal8AncDao().insert8AncRecord(record);
-            }
-
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    String message = isEditMode ? "8ANC record updated successfully!" : "8ANC record saved successfully!";
-                    Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
-                    getParentFragmentManager().popBackStack();
-                });
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        String message = isUpdate
+                                ? "8ANC record updated successfully!"
+                                : "8ANC record saved successfully!";
+                        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+                        getParentFragmentManager().popBackStack();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() ->
+                            Toast.makeText(getContext(), "Save failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }
             }
         });
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

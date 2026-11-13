@@ -20,12 +20,36 @@ public interface HouseholdProfileDao {
     @Query("SELECT * FROM household_profiles ORDER BY id DESC")
     List<HouseholdProfile> getAllProfiles();
 
+    // NEW: all profiles grouped by household, then sorted numerically by family number.
+    // Null / empty family numbers are pushed to the end.
+    @Query("SELECT * FROM household_profiles " +
+            "ORDER BY hhNumber ASC, " +
+            "(familyNumber IS NULL OR familyNumber = '') ASC, " +
+            "CAST(familyNumber AS INTEGER) ASC, id ASC")
+    List<HouseholdProfile> getAllProfilesSorted();
+
+    @Query("SELECT * FROM household_profiles WHERE relationship = \"Head\" ORDER BY id DESC")
+    List<HouseholdProfile> getAllHousehold();
+
+    @Query("SELECT * FROM household_profiles WHERE hhNumber = " + ":hhNumber" + " ORDER BY id DESC")
+    List<HouseholdProfile> getHouseholdMember(String hhNumber);
+
+    // NEW: members of one household, sorted numerically by family number.
+    // Null / empty family numbers are pushed to the end.
+    @Query("SELECT * FROM household_profiles WHERE hhNumber = :hhNumber " +
+            "ORDER BY (familyNumber IS NULL OR familyNumber = '') ASC, " +
+            "CAST(familyNumber AS INTEGER) ASC, id ASC")
+    List<HouseholdProfile> getHouseholdMemberSortedByFamily(String hhNumber);
+
     @Query("SELECT * FROM household_profiles")
     List<HouseholdProfile> getAll();
 
     // Combines database name components into a single formatted string for dropdown view listings
     @Query("SELECT (memberLastName || ', ' || memberFirstName || ' ' || COALESCE(memberMiddleName, '')) AS calculatedFullName FROM household_profiles WHERE memberLastName IS NOT NULL AND memberFirstName IS NOT NULL ORDER BY calculatedFullName ASC")
     List<String> getAllHouseholdNames();
+
+    @Query("SELECT (memberLastName || ', ' || memberFirstName || ' ' || COALESCE(memberMiddleName, '')) AS calculatedFullName FROM household_profiles WHERE sex IN (\"Female\", \"female\") AND memberLastName IS NOT NULL AND memberFirstName IS NOT NULL ORDER BY calculatedFullName ASC")
+    List<String> getAllMothersNames();
 
     // Query tool layer matching selected autocomplete full text string structure against raw database row data tables
     @Query("SELECT * FROM household_profiles WHERE (memberLastName || ', ' || memberFirstName || ' ' || COALESCE(memberMiddleName, '')) = :fullName LIMIT 1")

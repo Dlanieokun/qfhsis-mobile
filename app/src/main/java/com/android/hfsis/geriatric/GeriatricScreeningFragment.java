@@ -42,7 +42,7 @@ import java.util.concurrent.Executors;
 public class GeriatricScreeningFragment extends Fragment {
 
     private static final String ARG_RECORD_ID = "record_id";
-    private static final String DATE_PATTERN = "yyyy-MM-dd"; // Updated from MM/dd/yyyy to ISO YYYY-MM-DD
+    private static final String DATE_PATTERN = "MM-dd-yyyy";
 
     private long existingRecordId = -1;
     private int selectedProfileId = 0; // ---> ADDED VARIABLE TO TRACK PROFILE ID
@@ -101,8 +101,8 @@ public class GeriatricScreeningFragment extends Fragment {
         if (existingRecordId != -1) {
             loadExistingRecord();
         } else {
-            // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            // Automatically set the current date for a new record
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN, Locale.US);
             etDateOfScreening.setText(sdf.format(new Date()));
         }
     }
@@ -213,7 +213,8 @@ public class GeriatricScreeningFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
+                        // Profile DOB may be legacy yyyy-MM-dd or MM-dd-yyyy; normalize for display.
+                        etDateOfBirth.setText(toDisplayDate(profile.dob));
                         calculateAge();
                     }
                 });
@@ -222,17 +223,27 @@ public class GeriatricScreeningFragment extends Fragment {
     }
 
     private void setupListeners() {
-        // Date Pickers assigned to the Start Icon of the TextInputLayout wrapper layout containers
-        if (tilDateOfScreening != null) tilDateOfScreening.setStartIconOnClickListener(v -> showDatePickerDialog(etDateOfScreening));
-        if (tilDateOfBirth != null) tilDateOfBirth.setStartIconOnClickListener(v -> showDatePickerDialog(etDateOfBirth));
-        if (tilPpvDateGiven != null) tilPpvDateGiven.setStartIconOnClickListener(v -> showDatePickerDialog(etPpvDateGiven));
-        if (tilInfluenzaDateGiven != null) tilInfluenzaDateGiven.setStartIconOnClickListener(v -> showDatePickerDialog(etInfluenzaDateGiven));
+        // Calendar opens only from the end icon; the fields themselves accept typed input.
+        if (tilDateOfScreening != null) tilDateOfScreening.setEndIconOnClickListener(v -> showDatePickerDialog(etDateOfScreening));
+        if (tilDateOfBirth != null) tilDateOfBirth.setEndIconOnClickListener(v -> showDatePickerDialog(etDateOfBirth));
+        if (tilPpvDateGiven != null) tilPpvDateGiven.setEndIconOnClickListener(v -> showDatePickerDialog(etPpvDateGiven));
+        if (tilInfluenzaDateGiven != null) tilInfluenzaDateGiven.setEndIconOnClickListener(v -> showDatePickerDialog(etInfluenzaDateGiven));
 
         // Format mask text watchers attached to the underlying edit texts
         etDateOfScreening.addTextChangedListener(new DateFormattingWatcher(etDateOfScreening));
         etDateOfBirth.addTextChangedListener(new DateFormattingWatcher(etDateOfBirth));
         etPpvDateGiven.addTextChangedListener(new DateFormattingWatcher(etPpvDateGiven));
         etInfluenzaDateGiven.addTextChangedListener(new DateFormattingWatcher(etInfluenzaDateGiven));
+
+        // DOB is now typeable, so recompute age once a full date has been entered
+        etDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 10) calculateAge();
+            }
+        });
 
         // Mutually exclusive checkbox handling for Screening Results
         cbResultNegative.setOnCheckedChangeListener((buttonView, isChecked) -> {
@@ -244,6 +255,14 @@ public class GeriatricScreeningFragment extends Fragment {
         });
 
         btnSave.setOnClickListener(v -> saveRecord());
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
     }
 
     private void showDatePickerDialog(EditText editText) {
@@ -272,6 +291,7 @@ public class GeriatricScreeningFragment extends Fragment {
 
         try {
             SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN, Locale.US);
+            sdf.setLenient(false); // reject impossible dates like 13-45-2020
             Calendar dob = Calendar.getInstance();
             dob.setTime(sdf.parse(dobStr));
             Calendar today = Calendar.getInstance();
@@ -310,11 +330,11 @@ public class GeriatricScreeningFragment extends Fragment {
         // ---> LOAD PROFILE ID <---
         selectedProfileId = record.getProfileId();
 
-        etDateOfScreening.setText(record.getDateOfScreening());
+        etDateOfScreening.setText(toDisplayDate(record.getDateOfScreening()));
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
         etName.setText(record.getName(), false);
         etAddress.setText(record.getAddress());
-        etDateOfBirth.setText(record.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(record.getDateOfBirth()));
         etAge.setText(String.valueOf(record.getAge()));
 
         if ("M".equals(record.getSex())) {
@@ -341,8 +361,8 @@ public class GeriatricScreeningFragment extends Fragment {
 
         switchCarePlanProvided.setChecked(record.isCarePlanProvided());
         switchPpvReceived.setChecked(record.isPpvReceivedAt60());
-        etPpvDateGiven.setText(record.getPpvDateGiven());
-        etInfluenzaDateGiven.setText(record.getInfluenzaDateGiven());
+        etPpvDateGiven.setText(toDisplayDate(record.getPpvDateGiven()));
+        etInfluenzaDateGiven.setText(toDisplayDate(record.getInfluenzaDateGiven()));
         etRemarks.setText(record.getRemarks());
 
         btnSave.setText("Update Record");
@@ -421,7 +441,7 @@ public class GeriatricScreeningFragment extends Fragment {
     }
 
     private boolean isValidDateFormat(String date) {
-        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+        return date.matches("(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\\d{4}");
     }
 
     private boolean validateForm() {
@@ -431,7 +451,7 @@ public class GeriatricScreeningFragment extends Fragment {
             return false;
         }
         if (!isValidDateFormat(screeningDate)) {
-            etDateOfScreening.setError("Invalid format. Use YYYY-MM-DD");
+            etDateOfScreening.setError("Invalid format. Use MM-DD-YYYY");
             etDateOfScreening.requestFocus();
             return false;
         }
@@ -451,21 +471,21 @@ public class GeriatricScreeningFragment extends Fragment {
             return false;
         }
         if (!isValidDateFormat(dobDate)) {
-            etDateOfBirth.setError("Invalid format. Use YYYY-MM-DD");
+            etDateOfBirth.setError("Invalid format. Use MM-DD-YYYY");
             etDateOfBirth.requestFocus();
             return false;
         }
 
         String ppvDate = etPpvDateGiven.getText().toString().trim();
         if (!ppvDate.isEmpty() && !isValidDateFormat(ppvDate)) {
-            etPpvDateGiven.setError("Invalid format. Use YYYY-MM-DD");
+            etPpvDateGiven.setError("Invalid format. Use MM-DD-YYYY");
             etPpvDateGiven.requestFocus();
             return false;
         }
 
         String fluDate = etInfluenzaDateGiven.getText().toString().trim();
         if (!fluDate.isEmpty() && !isValidDateFormat(fluDate)) {
-            etInfluenzaDateGiven.setError("Invalid format. Use YYYY-MM-DD");
+            etInfluenzaDateGiven.setError("Invalid format. Use MM-DD-YYYY");
             etInfluenzaDateGiven.requestFocus();
             return false;
         }
@@ -488,7 +508,7 @@ public class GeriatricScreeningFragment extends Fragment {
         return true;
     }
 
-    // Fixed Watcher implementation optimized to automatically inject hyphens for YYYY-MM-DD strings
+    // Watcher that automatically injects hyphens for MM-DD-YYYY strings while typing
     private static class DateFormattingWatcher implements TextWatcher {
         private final EditText editText;
         private boolean isDeleting = false;
@@ -508,7 +528,7 @@ public class GeriatricScreeningFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -522,7 +542,7 @@ public class GeriatricScreeningFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

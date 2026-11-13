@@ -4,10 +4,13 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.AutoCompleteTextView;
@@ -27,6 +30,7 @@ import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.HouseholdProfile;
 import com.android.hfsis.model.idpcs.leprosy.LeprosyRegistryRecord;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -38,7 +42,7 @@ import java.util.concurrent.Executors;
 
 public class LeprosyRegistryFragment extends Fragment {
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String DATE_PATTERN = "MM-dd-yyyy";
     private static final String ARG_RECORD_ID = "record_id";
 
     private long existingRecordId = -1;
@@ -114,7 +118,7 @@ public class LeprosyRegistryFragment extends Fragment {
             loadExistingRecord();
         } else {
             // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etDateOfRegistration.setText(sdf.format(new Date()));
         }
     }
@@ -204,21 +208,11 @@ public class LeprosyRegistryFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
-                        try {
-                            // Updated split logic to parse YYYY-MM-DD
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1;
-                                int day = Integer.parseInt(dobParts[2]);
-
-                                Calendar selectedDob = Calendar.getInstance();
-                                selectedDob.set(year, month, day);
-                                updateAgeFromDateOfBirth(selectedDob);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        String dobDisplay = toDisplayDate(profile.dob);
+                        etDateOfBirth.setText(dobDisplay);
+                        Calendar selectedDob = parseDate(dobDisplay);
+                        if (selectedDob != null) {
+                            updateAgeFromDateOfBirth(selectedDob);
                         }
                     }
                 });
@@ -261,13 +255,72 @@ public class LeprosyRegistryFragment extends Fragment {
     }
 
     private void setupDatePickers() {
-        etDateOfRegistration.setOnClickListener(v -> showDatePicker(etDateOfRegistration));
-        etDateOfBirth.setOnClickListener(v -> showDatePicker(etDateOfBirth));
-        etDateOfDiagnosis.setOnClickListener(v -> showDatePicker(etDateOfDiagnosis));
-        etTreatmentStartDate.setOnClickListener(v -> showDatePicker(etTreatmentStartDate));
-        etDateOfReclassification.setOnClickListener(v -> showDatePicker(etDateOfReclassification));
-        etFixedMdtCompletedDate.setOnClickListener(v -> showDatePicker(etFixedMdtCompletedDate));
-        etBeyondFixedMdtCompletedDate.setOnClickListener(v -> showDatePicker(etBeyondFixedMdtCompletedDate));
+        bindDateField(etDateOfRegistration);
+        bindDateField(etDateOfBirth);
+        bindDateField(etDateOfDiagnosis);
+        bindDateField(etTreatmentStartDate);
+        bindDateField(etDateOfReclassification);
+        bindDateField(etFixedMdtCompletedDate);
+        bindDateField(etBeyondFixedMdtCompletedDate);
+
+        // Re-evaluate age whenever a complete, valid date of birth is entered
+        etDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                String input = s.toString();
+                if (input.matches("(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\\d{4}")) {
+                    Calendar dob = parseDate(input);
+                    if (dob != null) {
+                        updateAgeFromDateOfBirth(dob);
+                    }
+                }
+            }
+        });
+    }
+
+    private void bindDateField(EditText field) {
+        // Formats keyboard inputs while typing manually
+        field.addTextChangedListener(new DateFormattingWatcher(field));
+
+        // Opens calendar date picker only when clicking the end icon
+        TextInputLayout til = findParentTextInputLayout(field);
+        if (til != null) {
+            til.setEndIconOnClickListener(v -> showDatePicker(field));
+        }
+    }
+
+    private TextInputLayout findParentTextInputLayout(View child) {
+        ViewParent parent = child.getParent();
+        while (parent != null) {
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+    // Parses MM-dd-yyyy into a Calendar; returns null if the value is not a real date
+    private Calendar parseDate(String date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN, Locale.US);
+            sdf.setLenient(false);
+            Date parsed = sdf.parse(date);
+            if (parsed == null) return null;
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(parsed);
+            return cal;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
     }
 
     private void showDatePicker(EditText target) {
@@ -276,6 +329,7 @@ public class LeprosyRegistryFragment extends Fragment {
             Calendar selected = Calendar.getInstance();
             selected.set(year, month, dayOfMonth);
             target.setText(dateFormat.format(selected.getTime()));
+            target.setError(null);
             if (target == etDateOfBirth) {
                 updateAgeFromDateOfBirth(selected);
             }
@@ -363,10 +417,10 @@ public class LeprosyRegistryFragment extends Fragment {
     private void populateForm(LeprosyRegistryRecord record) {
         selectedProfileId = record.getProfileId(); // Restore the extracted ID here
 
-        etDateOfRegistration.setText(record.getDateOfRegistration());
+        etDateOfRegistration.setText(toDisplayDate(record.getDateOfRegistration()));
         etName.setText(record.getName());
         etAddress.setText(record.getAddress());
-        etDateOfBirth.setText(record.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(record.getDateOfBirth()));
         etAge.setText(String.valueOf(record.getAge()));
 
         if ("A".equals(record.getAgeGroup())) spinnerAgeGroup.setSelection(0);
@@ -379,7 +433,7 @@ public class LeprosyRegistryFragment extends Fragment {
         if ("1".equals(record.getConfirmedCase())) rgConfirmedCase.check(R.id.rbConfirmedCaseYes);
         else if ("0".equals(record.getConfirmedCase())) rgConfirmedCase.check(R.id.rbConfirmedCaseNo);
 
-        etDateOfDiagnosis.setText(record.getDateOfDiagnosis());
+        etDateOfDiagnosis.setText(toDisplayDate(record.getDateOfDiagnosis()));
 
         try {
             int chPos = Integer.parseInt(record.getCaseHistory());
@@ -390,13 +444,13 @@ public class LeprosyRegistryFragment extends Fragment {
         if ("1".equals(record.getClinicalClassification())) rgClinicalClassification.check(R.id.rbClassificationPb);
         else if ("2".equals(record.getClinicalClassification())) rgClinicalClassification.check(R.id.rbClassificationMb);
 
-        etTreatmentStartDate.setText(record.getTreatmentStartDate());
+        etTreatmentStartDate.setText(toDisplayDate(record.getTreatmentStartDate()));
         etMonthsTreatedPrior.setText(record.getMonthsTreatedPrior());
 
         if ("1".equals(record.getReclassified())) rgReclassified.check(R.id.rbReclassifiedYes);
         else if ("0".equals(record.getReclassified())) rgReclassified.check(R.id.rbReclassifiedNo);
 
-        etDateOfReclassification.setText(record.getDateOfReclassification());
+        etDateOfReclassification.setText(toDisplayDate(record.getDateOfReclassification()));
 
         if ("1".equals(record.getUpdatedClassification())) rgUpdatedClassification.check(R.id.rbUpdatedClassificationPb);
         else if ("2".equals(record.getUpdatedClassification())) rgUpdatedClassification.check(R.id.rbUpdatedClassificationMb);
@@ -411,12 +465,12 @@ public class LeprosyRegistryFragment extends Fragment {
         if ("1".equals(record.getCompletedFixedMdt())) rgCompletedFixedMdt.check(R.id.rbCompletedFixedMdtYes);
         else if ("0".equals(record.getCompletedFixedMdt())) rgCompletedFixedMdt.check(R.id.rbCompletedFixedMdtNo);
 
-        etFixedMdtCompletedDate.setText(record.getFixedMdtCompletedDate());
+        etFixedMdtCompletedDate.setText(toDisplayDate(record.getFixedMdtCompletedDate()));
 
         if ("1".equals(record.getBeyondFixedMdt())) rgBeyondFixedMdt.check(R.id.rbBeyondFixedMdtYes);
         else if ("0".equals(record.getBeyondFixedMdt())) rgBeyondFixedMdt.check(R.id.rbBeyondFixedMdtNo);
 
-        etBeyondFixedMdtCompletedDate.setText(record.getBeyondFixedMdtCompletedDate());
+        etBeyondFixedMdtCompletedDate.setText(toDisplayDate(record.getBeyondFixedMdtCompletedDate()));
 
         if ("1".equals(record.getGrade2Disability())) rgGrade2Disability.check(R.id.rbGrade2DisabilityYes);
         else if ("0".equals(record.getGrade2Disability())) rgGrade2Disability.check(R.id.rbGrade2DisabilityNo);
@@ -521,5 +575,51 @@ public class LeprosyRegistryFragment extends Fragment {
         rgGrade2Disability.clearCheck();
         etRemarks.setText("");
         btnSave.setText("Save Record");
+    }
+
+    // Formats typed input as MM-DD-YYYY by inserting dashes after the month and day
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

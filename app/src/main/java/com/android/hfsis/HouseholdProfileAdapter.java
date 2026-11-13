@@ -51,22 +51,44 @@ public class HouseholdProfileAdapter extends RecyclerView.Adapter<HouseholdProfi
         notifyDataSetChanged();
     }
 
+    private static String safe(String value) {
+        return value != null ? value : "";
+    }
+
     public void filter(String text) {
         profilesList.clear();
-        if (text.isEmpty()) {
+        if (text == null || text.isEmpty()) {
             profilesList.addAll(profilesListFull);
         } else {
             String filterPattern = text.toLowerCase(Locale.getDefault()).trim();
             for (HouseholdProfile item : profilesListFull) {
-                String fullName = (item.memberFirstName + " " + item.memberLastName).toLowerCase(Locale.getDefault());
-                String hhNum = item.hhNumber != null ? item.hhNumber.toLowerCase(Locale.getDefault()) : "";
+                String fullName = (safe(item.memberFirstName) + " " + safe(item.memberLastName))
+                        .toLowerCase(Locale.getDefault());
+                String hhNum = safe(item.hhNumber).toLowerCase(Locale.getDefault());
+                String famNum = safe(item.familyNumber).toLowerCase(Locale.getDefault());
 
-                if (fullName.contains(filterPattern) || hhNum.contains(filterPattern)) {
+                if (fullName.contains(filterPattern)
+                        || hhNum.contains(filterPattern)
+                        || famNum.contains(filterPattern)) {
                     profilesList.add(item);
                 }
             }
         }
         notifyDataSetChanged();
+    }
+
+    /**
+     * Finds the adapter position of the profile with the given id in the
+     * currently-displayed (filtered) list. Returns -1 if not found — e.g. if
+     * a search filter is hiding it.
+     */
+    public int getPositionForId(int profileId) {
+        for (int i = 0; i < profilesList.size(); i++) {
+            if (profilesList.get(i).id == profileId) {
+                return i;
+            }
+        }
+        return -1;
     }
 
     @NonNull
@@ -80,16 +102,21 @@ public class HouseholdProfileAdapter extends RecyclerView.Adapter<HouseholdProfi
     public void onBindViewHolder(@NonNull ProfileViewHolder holder, int position) {
         HouseholdProfile profile = profilesList.get(position);
 
-        holder.tvHHNumber.setText("HH #" + (profile.hhNumber != null ? profile.hhNumber : "N/A"));
+        // HH number + family number, e.g. "HH #0012 • Family 2"
+        String family = (profile.familyNumber != null && !profile.familyNumber.trim().isEmpty())
+                ? " • Family " + profile.familyNumber.trim()
+                : "";
+        holder.tvHHNumber.setText("HH #" + (profile.hhNumber != null ? profile.hhNumber : "N/A") + family);
 
         String location = (profile.sitio != null ? profile.sitio : "") + ", " + (profile.barangay != null ? profile.barangay : "");
         holder.tvLocation.setText(location);
 
-        String fullName = "Member: " + profile.memberLastName + ", " + profile.memberFirstName;
+        String fullName = "Member: " + safe(profile.memberLastName) + ", " + safe(profile.memberFirstName);
         holder.tvMemberName.setText(fullName);
         holder.tvRespondent.setText("Respondent: " + (profile.respondent != null ? profile.respondent : "N/A"));
 
-        String metaDetails = "Sex: " + profile.sex + " | DOB: " + profile.dob;
+        String metaDetails = "Sex: " + (profile.sex != null ? profile.sex : "N/A")
+                + " | DOB: " + (profile.dob != null ? profile.dob : "N/A");
         holder.tvDetails.setText(metaDetails);
 
         StringBuilder risks = new StringBuilder();

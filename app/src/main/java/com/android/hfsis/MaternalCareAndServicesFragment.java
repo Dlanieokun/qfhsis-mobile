@@ -12,12 +12,16 @@ import android.view.ViewGroup;
 import android.widget.AutoCompleteTextView;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
+import android.widget.ScrollView;
 import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.database.DatabaseHelper;
@@ -73,11 +77,58 @@ public class MaternalCareAndServicesFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_maternal_care_and_services, container, false);
     }
 
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
         db = DatabaseHelper.getDatabase(requireContext());
+
+        setupKeyboardInsets(view);
 
         // Bind layout views
         tilMaternalRegDate = view.findViewById(R.id.tilMaternalRegDate);
@@ -109,7 +160,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
             loadRecordForEditing();
         }else {
             // Automatically set the current date for a new maternal record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etMaternalRegDate.setText(sdf.format(new Date()));
         }
 
@@ -129,7 +180,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
         etMaternalName.setAdapter(nameAdapter);
 
         Executors.newSingleThreadExecutor().execute(() -> {
-            List<String> names = db.householdProfileDao().getAllHouseholdNames();
+            List<String> names = db.householdProfileDao().getAllMothersNames();
             if (names != null && !names.isEmpty()) {
                 patientNamesAdapterList.clear();
                 patientNamesAdapterList.addAll(names);
@@ -170,7 +221,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
                         etMaternalAddress.setText(fullAddress.toString());
 
                         if (profile.dob != null && !profile.dob.isEmpty()) {
-                            etMaternalBirthDate.setText(profile.dob);
+                            etMaternalBirthDate.setText(toDisplayDate(profile.dob));
                             calculateAgeFromBirthdate(profile.dob);
                         }
                     });
@@ -220,7 +271,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
             selCalendar.set(Calendar.MONTH, month);
             selCalendar.set(Calendar.DAY_OF_MONTH, dayOfMonth);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             String selectedDate = sdf.format(selCalendar.getTime());
             targetField.setText(selectedDate);
             targetField.setError(null);
@@ -236,22 +287,34 @@ public class MaternalCareAndServicesFragment extends Fragment {
         void onDateSelected(String dateStr);
     }
 
+    // Converts legacy formats (yyyy-MM-dd, MM/dd/yyyy) saved before the format change to MM-dd-yyyy
+    private String toDisplayDate(String date) {
+        if (date == null) return null;
+        String d = date.trim();
+        if (d.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return d.substring(5, 7) + "-" + d.substring(8, 10) + "-" + d.substring(0, 4);
+        }
+        if (d.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            return d.replace('/', '-');
+        }
+        return date;
+    }
+
+    // Parses MM-dd-yyyy (also accepts the legacy formats); returns null if invalid
+    private Date parseDate(String dateStr) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            return sdf.parse(toDisplayDate(dateStr));
+        } catch (ParseException | NullPointerException e) {
+            return null;
+        }
+    }
+
     private void calculateAgeFromBirthdate(String birthDateStr) {
         if (birthDateStr == null || birthDateStr.trim().isEmpty()) return;
 
-        Date birthDate = null;
-
-        try {
-            SimpleDateFormat dbFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            birthDate = dbFormat.parse(birthDateStr);
-        } catch (ParseException e) {
-            try {
-                SimpleDateFormat pickerFormat = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-                birthDate = pickerFormat.parse(birthDateStr);
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-            }
-        }
+        Date birthDate = parseDate(birthDateStr);
 
         if (birthDate == null) return;
 
@@ -279,18 +342,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
 
     private void calculateEddFromLmp(String lmpDateStr) {
         if (lmpDateStr == null || lmpDateStr.trim().isEmpty()) return;
-        Date lmpDate = null;
-        try {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
-            lmpDate = sdf.parse(lmpDateStr);
-        } catch (ParseException e) {
-            try {
-                SimpleDateFormat sdfLegacy = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
-                lmpDate = sdfLegacy.parse(lmpDateStr);
-            } catch (ParseException ex) {
-                ex.printStackTrace();
-            }
-        }
+        Date lmpDate = parseDate(lmpDateStr);
 
         if (lmpDate == null) return;
 
@@ -298,7 +350,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
         calendar.setTime(lmpDate);
         calendar.add(Calendar.DAY_OF_YEAR, 280);
 
-        SimpleDateFormat outputFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+        SimpleDateFormat outputFormat = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
         String eddStr = outputFormat.format(calendar.getTime());
         etMaternalEDD.setText(eddStr);
     }
@@ -352,16 +404,16 @@ public class MaternalCareAndServicesFragment extends Fragment {
             if (record != null && getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
                     selectedProfileId = record.profileId;
-                    etMaternalRegDate.setText(record.registrationDate);
+                    etMaternalRegDate.setText(toDisplayDate(record.registrationDate));
                     etMaternalSerial.setText(record.familySerialNumber);
                     etMaternalName.setText(record.patientName, false);
                     etMaternalAddress.setText(record.homeAddress);
-                    etMaternalBirthDate.setText(record.birthDate);
+                    etMaternalBirthDate.setText(toDisplayDate(record.birthDate));
                     etMaternalAge.setText(String.valueOf(record.age));
                     spinnerMaternalAgeGroup.setText(record.ageGroup, false);
-                    etMaternalLMP.setText(record.lmpDate);
+                    etMaternalLMP.setText(toDisplayDate(record.lmpDate));
                     etMaternalGP.setText(record.gravidaPara);
-                    etMaternalEDD.setText(record.eddDate);
+                    etMaternalEDD.setText(toDisplayDate(record.eddDate));
                     etMaternalWeight.setText(String.valueOf(record.weightKg));
                     etMaternalHeight.setText(String.valueOf(record.heightCm));
                     tvMaternalBmiScore.setText(record.bmiValue);
@@ -452,7 +504,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -466,7 +518,7 @@ public class MaternalCareAndServicesFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

@@ -16,11 +16,15 @@ import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
@@ -105,6 +109,7 @@ public class OralHealthCareFragment extends Fragment {
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
         View view = inflater.inflate(R.layout.fragment_oral_health_care, container, false);
+        setupKeyboardInsets(view);
 
         dbHelper = DatabaseHelper.getInstance(requireContext());
 
@@ -121,11 +126,56 @@ public class OralHealthCareFragment extends Fragment {
         if (entryId != -1) {
             loadEntryData();
         } else {
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etDateOfVisit.setText(sdf.format(new Date()));
         }
 
         return view;
+    }
+
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
     }
 
     private void initViews(View v) {
@@ -271,18 +321,8 @@ public class OralHealthCareFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
-                        try {
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1;
-                                int day = Integer.parseInt(dobParts[2]);
-                                calculateAgeMonths(year, month, day);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
+                        // Setting the text also triggers the DOB watcher, which computes the age
+                        etDateOfBirth.setText(toDisplayDate(profile.dob));
                     }
                 });
             }
@@ -300,50 +340,87 @@ public class OralHealthCareFragment extends Fragment {
     }
 
     private void setupDatePickersAndFormatters() {
-        tilDateOfVisit.setStartIconOnClickListener(v -> showDatePickerDialog(etDateOfVisit, false));
-        tilDateOfBirth.setStartIconOnClickListener(v -> showDatePickerDialog(etDateOfBirth, true));
-        tilOralScreening1st.setStartIconOnClickListener(v -> showDatePickerDialog(etOralScreening1st, false));
-        tilOralScreening2nd.setStartIconOnClickListener(v -> showDatePickerDialog(etOralScreening2nd, false));
-        tilRiskAssessment1st.setStartIconOnClickListener(v -> showDatePickerDialog(etRiskAssessment1st, false));
-        tilRiskAssessment2nd.setStartIconOnClickListener(v -> showDatePickerDialog(etRiskAssessment2nd, false));
-        tilOralProphylaxis1st.setStartIconOnClickListener(v -> showDatePickerDialog(etOralProphylaxis1st, false));
-        tilOralProphylaxis2nd.setStartIconOnClickListener(v -> showDatePickerDialog(etOralProphylaxis2nd, false));
-        tilFluorideVarnish1st.setStartIconOnClickListener(v -> showDatePickerDialog(etFluorideVarnish1st, false));
-        tilFluorideVarnish2nd.setStartIconOnClickListener(v -> showDatePickerDialog(etFluorideVarnish2nd, false));
-        tilCounseling1st.setStartIconOnClickListener(v -> showDatePickerDialog(etCounseling1st, false));
-        tilCounseling2nd.setStartIconOnClickListener(v -> showDatePickerDialog(etCounseling2nd, false));
+        bindDatePicker(tilDateOfVisit, etDateOfVisit, false);
+        bindDatePicker(tilDateOfBirth, etDateOfBirth, true);
+        bindDatePicker(tilOralScreening1st, etOralScreening1st, false);
+        bindDatePicker(tilOralScreening2nd, etOralScreening2nd, false);
+        bindDatePicker(tilRiskAssessment1st, etRiskAssessment1st, false);
+        bindDatePicker(tilRiskAssessment2nd, etRiskAssessment2nd, false);
+        bindDatePicker(tilOralProphylaxis1st, etOralProphylaxis1st, false);
+        bindDatePicker(tilOralProphylaxis2nd, etOralProphylaxis2nd, false);
+        bindDatePicker(tilFluorideVarnish1st, etFluorideVarnish1st, false);
+        bindDatePicker(tilFluorideVarnish2nd, etFluorideVarnish2nd, false);
+        bindDatePicker(tilCounseling1st, etCounseling1st, false);
+        bindDatePicker(tilCounseling2nd, etCounseling2nd, false);
 
-        etDateOfVisit.addTextChangedListener(new DateFormattingWatcher(etDateOfVisit));
-        etDateOfBirth.addTextChangedListener(new DateFormattingWatcher(etDateOfBirth));
-        etOralScreening1st.addTextChangedListener(new DateFormattingWatcher(etOralScreening1st));
-        etOralScreening2nd.addTextChangedListener(new DateFormattingWatcher(etOralScreening2nd));
-        etRiskAssessment1st.addTextChangedListener(new DateFormattingWatcher(etRiskAssessment1st));
-        etRiskAssessment2nd.addTextChangedListener(new DateFormattingWatcher(etRiskAssessment2nd));
-        etOralProphylaxis1st.addTextChangedListener(new DateFormattingWatcher(etOralProphylaxis1st));
-        etOralProphylaxis2nd.addTextChangedListener(new DateFormattingWatcher(etOralProphylaxis2nd));
-        etFluorideVarnish1st.addTextChangedListener(new DateFormattingWatcher(etFluorideVarnish1st));
-        etFluorideVarnish2nd.addTextChangedListener(new DateFormattingWatcher(etFluorideVarnish2nd));
-        etCounseling1st.addTextChangedListener(new DateFormattingWatcher(etCounseling1st));
-        etCounseling2nd.addTextChangedListener(new DateFormattingWatcher(etCounseling2nd));
+        // Auto-compute age while the DOB is typed manually
+        etDateOfBirth.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override public void afterTextChanged(Editable s) {
+                if (s.length() == 10) {
+                    Date d = parseDate(s.toString());
+                    if (d != null) {
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(d);
+                        calculateAgeMonths(c.get(Calendar.YEAR), c.get(Calendar.MONTH), c.get(Calendar.DAY_OF_MONTH));
+                    }
+                } else if (s.length() == 0) {
+                    etAgeMonths.setText("");
+                    etAgeYears.setText("");
+                }
+            }
+        });
+    }
+
+    // Formats keyboard input as MM-dd-yyyy while typing, and opens the
+    // calendar dialog from the end icon (same behavior as ProfilingFragment).
+    private void bindDatePicker(TextInputLayout layout, TextInputEditText editText, boolean isDOB) {
+        editText.addTextChangedListener(new DateFormattingWatcher(editText));
+        layout.setEndIconOnClickListener(v -> showDatePickerDialog(editText, isDOB));
     }
 
     private void showDatePickerDialog(TextInputEditText target, boolean isDOB) {
+        // Start on the date already in the field (if valid), otherwise today
         Calendar cal = Calendar.getInstance();
+        Date existing = parseDate(getText(target));
+        if (existing != null) cal.setTime(existing);
+
         DatePickerDialog dlg = new DatePickerDialog(requireContext(), (picker, year, month, day) -> {
             Calendar selCalendar = Calendar.getInstance();
             selCalendar.set(Calendar.YEAR, year);
             selCalendar.set(Calendar.MONTH, month);
             selCalendar.set(Calendar.DAY_OF_MONTH, day);
 
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             target.setText(sdf.format(selCalendar.getTime()));
             target.setError(null);
 
             if (isDOB) calculateAgeMonths(year, month, day);
         }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH));
 
-        if (isDOB) dlg.getDatePicker().setMaxDate(System.currentTimeMillis());
+        dlg.getDatePicker().setMaxDate(System.currentTimeMillis());
         dlg.show();
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
+    // Strict MM-dd-yyyy parser; returns null if the text is not a real date
+    private Date parseDate(String text) {
+        if (text == null || !text.matches("\\d{2}-\\d{2}-\\d{4}")) return null;
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
+            sdf.setLenient(false);
+            return sdf.parse(text);
+        } catch (Exception e) {
+            return null;
+        }
     }
 
     private void calculateAgeMonths(int birthYear, int birthMonth, int birthDay) {
@@ -386,11 +463,11 @@ public class OralHealthCareFragment extends Fragment {
     private void populateViews(OralHealthCareEntity entity) {
         selectedProfileId = entity.profileId; // Load back tracking profile ID
 
-        etDateOfVisit.setText(entity.dateOfVisit);
+        etDateOfVisit.setText(toDisplayDate(entity.dateOfVisit));
         etFamilySerial.setText(entity.familySerial);
         etName.setText(entity.name, false);
         etAddress.setText(entity.address);
-        etDateOfBirth.setText(entity.dateOfBirth);
+        etDateOfBirth.setText(toDisplayDate(entity.dateOfBirth));
         etAgeMonths.setText(entity.ageMonths);
 
         if ("M".equals(entity.sex)) rbMale.setChecked(true);
@@ -408,16 +485,16 @@ public class OralHealthCareFragment extends Fragment {
         setSelectedAgeGroup(actAgeGroup1st, entity.ageGroup1st);
         setSelectedAgeGroup(actAgeGroup2nd, entity.ageGroup2nd);
 
-        etOralScreening1st.setText(entity.oralScreening1st);
-        etOralScreening2nd.setText(entity.oralScreening2nd);
-        etRiskAssessment1st.setText(entity.riskAssessment1st);
-        etRiskAssessment2nd.setText(entity.riskAssessment2nd);
-        etOralProphylaxis1st.setText(entity.oralProphylaxis1st);
-        etOralProphylaxis2nd.setText(entity.oralProphylaxis2nd);
-        etFluorideVarnish1st.setText(entity.fluorideVarnish1st);
-        etFluorideVarnish2nd.setText(entity.fluorideVarnish2nd);
-        etCounseling1st.setText(entity.counseling1st);
-        etCounseling2nd.setText(entity.counseling2nd);
+        etOralScreening1st.setText(toDisplayDate(entity.oralScreening1st));
+        etOralScreening2nd.setText(toDisplayDate(entity.oralScreening2nd));
+        etRiskAssessment1st.setText(toDisplayDate(entity.riskAssessment1st));
+        etRiskAssessment2nd.setText(toDisplayDate(entity.riskAssessment2nd));
+        etOralProphylaxis1st.setText(toDisplayDate(entity.oralProphylaxis1st));
+        etOralProphylaxis2nd.setText(toDisplayDate(entity.oralProphylaxis2nd));
+        etFluorideVarnish1st.setText(toDisplayDate(entity.fluorideVarnish1st));
+        etFluorideVarnish2nd.setText(toDisplayDate(entity.fluorideVarnish2nd));
+        etCounseling1st.setText(toDisplayDate(entity.counseling1st));
+        etCounseling2nd.setText(toDisplayDate(entity.counseling2nd));
 
         setRadioGroupValue(rgCompleteRpoc1st, rbCompleteRpoc1stYes, rbCompleteRpoc1stNo, entity.completeRpoc1st);
         setRadioGroupValue(rgCompleteRpoc2nd, rbCompleteRpoc2ndYes, rbCompleteRpoc2ndNo, entity.completeRpoc2nd);
@@ -447,31 +524,53 @@ public class OralHealthCareFragment extends Fragment {
         else group.clearCheck();
     }
 
-    private boolean isValidDateFormat(String date) {
-        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+    // A date is valid when it is a real MM-dd-yyyy date that is not in the future
+    private boolean isValidDate(String date) {
+        Date d = parseDate(date);
+        return d != null && !d.after(new Date());
+    }
+
+    // Validates one date field; required fields must also be non-empty
+    private boolean checkDate(TextInputLayout til, TextInputEditText et, boolean required) {
+        String text = getText(et);
+        if (TextUtils.isEmpty(text)) {
+            if (required) { til.setError("Required"); return false; }
+            til.setError(null);
+            return true;
+        }
+        if (!isValidDate(text)) {
+            til.setError("Enter a valid date (MM-DD-YYYY)");
+            return false;
+        }
+        til.setError(null);
+        return true;
     }
 
     private boolean validateForm() {
         boolean valid = true;
 
-        if (TextUtils.isEmpty(getText(etDateOfVisit))) {
-            tilDateOfVisit.setError("Required"); valid = false;
-        } else if (!isValidDateFormat(getText(etDateOfVisit))) {
-            tilDateOfVisit.setError("Required format is YYYY-MM-DD"); valid = false;
-        } else { tilDateOfVisit.setError(null); }
+        if (!checkDate(tilDateOfVisit, etDateOfVisit, true)) valid = false;
 
         if (TextUtils.isEmpty(getText(etName))) { tilName.setError("Required"); valid = false; } else tilName.setError(null);
 
-        if (TextUtils.isEmpty(getText(etDateOfBirth))) {
-            tilDateOfBirth.setError("Required"); valid = false;
-        } else if (!isValidDateFormat(getText(etDateOfBirth))) {
-            tilDateOfBirth.setError("Required format is YYYY-MM-DD"); valid = false;
-        } else { tilDateOfBirth.setError(null); }
+        if (!checkDate(tilDateOfBirth, etDateOfBirth, true)) valid = false;
 
         if (rgSex.getCheckedRadioButtonId() == -1) { tvSexError.setVisibility(View.VISIBLE); valid = false; } else tvSexError.setVisibility(View.GONE);
         if (TextUtils.isEmpty(getText(etAddress))) { tilAddress.setError("Required"); valid = false; } else tilAddress.setError(null);
 
-        if (!TextUtils.isEmpty(getText(etOralScreening1st)) && !TextUtils.isEmpty(getText(etOralScreening2nd))) {
+        if (!checkDate(tilOralScreening1st, etOralScreening1st, false)) valid = false;
+        if (!checkDate(tilOralScreening2nd, etOralScreening2nd, false)) valid = false;
+        if (!checkDate(tilRiskAssessment1st, etRiskAssessment1st, false)) valid = false;
+        if (!checkDate(tilRiskAssessment2nd, etRiskAssessment2nd, false)) valid = false;
+        if (!checkDate(tilOralProphylaxis1st, etOralProphylaxis1st, false)) valid = false;
+        if (!checkDate(tilOralProphylaxis2nd, etOralProphylaxis2nd, false)) valid = false;
+        if (!checkDate(tilFluorideVarnish1st, etFluorideVarnish1st, false)) valid = false;
+        if (!checkDate(tilFluorideVarnish2nd, etFluorideVarnish2nd, false)) valid = false;
+        if (!checkDate(tilCounseling1st, etCounseling1st, false)) valid = false;
+        if (!checkDate(tilCounseling2nd, etCounseling2nd, false)) valid = false;
+
+        if (!TextUtils.isEmpty(getText(etOralScreening1st)) && !TextUtils.isEmpty(getText(etOralScreening2nd))
+                && isValidDate(getText(etOralScreening1st)) && isValidDate(getText(etOralScreening2nd))) {
             if (!isSecondVisitValid(getText(etOralScreening1st), getText(etOralScreening2nd))) {
                 tilOralScreening2nd.setError("Must be ≥ 4 months after 1st visit");
                 valid = false;
@@ -483,18 +582,15 @@ public class OralHealthCareFragment extends Fragment {
     }
 
     private boolean isSecondVisitValid(String first, String second) {
-        try {
-            String[] p1 = first.split("-");
-            String[] p2 = second.split("-");
-            Calendar c1 = Calendar.getInstance();
-            c1.set(Integer.parseInt(p1[0]), Integer.parseInt(p1[1]) - 1, Integer.parseInt(p1[2]));
-            Calendar c2 = Calendar.getInstance();
-            c2.set(Integer.parseInt(p2[0]), Integer.parseInt(p2[1]) - 1, Integer.parseInt(p2[2]));
-            c1.add(Calendar.MONTH, 4);
-            return !c2.before(c1);
-        } catch (Exception e) {
-            return true;
-        }
+        Date d1 = parseDate(first);
+        Date d2 = parseDate(second);
+        if (d1 == null || d2 == null) return true;
+        Calendar c1 = Calendar.getInstance();
+        c1.setTime(d1);
+        c1.add(Calendar.MONTH, 4);
+        Calendar c2 = Calendar.getInstance();
+        c2.setTime(d2);
+        return !c2.before(c1);
     }
 
     private void saveEntry() {
@@ -648,7 +744,7 @@ public class OralHealthCareFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -662,7 +758,7 @@ public class OralHealthCareFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

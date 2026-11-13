@@ -4,14 +4,15 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fillViewport="true"
-    android:background="#F8F9FA">
+    android:background="?android:attr/colorBackground"
+    android:padding="16dp">
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:orientation="vertical">
 
+        <!-- Form Title -->
         <TextView
             android:id="@+id/tvFormTitle"
             android:layout_width="match_parent"
@@ -20,369 +21,561 @@
             android:text="Filariasis Registry"
             android:textSize="20sp"
             android:textStyle="bold"
-            android:textColor="#1A237E"
+            android:textColor="?attr/colorPrimary"
             android:gravity="center" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDateOfRegistration"
+        <!-- Card 1: Registration & Patient Identification -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Date of Registration (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/etDateOfRegistration"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:maxLength="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Registration &amp; Identification"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDateOfRegistration"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Date of Registration (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    app:endIconContentDescription="Open calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDateOfRegistration"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:maxLength="10"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Name (LastName, FullName, MI)"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
+                    <AutoCompleteTextView
+                        android:id="@+id/etName"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textPersonName"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Family Serial Number"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etFamilySerialNumber"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:inputType="text"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Address"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAddress"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:focusableInTouchMode="false"
+                        android:clickable="false"
+                        android:cursorVisible="false"
+                        android:inputType="textPostalAddress"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 2: Demographics -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Family Serial Number"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <EditText
-            android:id="@+id/etFamilySerialNumber"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Enter Family Serial Number"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:inputType="text" />
+            android:layout_marginBottom="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:hint="Name (LastName, FullName, MI)"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu">
-
-            <AutoCompleteTextView
-                android:id="@+id/etName"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="textPersonName" />
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Patient Demographics"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="12dp"/>
 
-        <TextView
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDateOfBirth"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Date of Birth (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    app:endIconContentDescription="Open calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDateOfBirth"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:maxLength="10"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Age (Calculated automatically)"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAge"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:focusable="false"
+                        android:longClickable="false"
+                        android:cursorVisible="false"
+                        android:inputType="number"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Age Group"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+                <Spinner
+                    android:id="@+id/spinnerAgeGroup"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:minHeight="48dp"
+                    android:layout_marginBottom="12dp"/>
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Sex"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+                <RadioGroup
+                    android:id="@+id/rgSex"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/rbMale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:text="Male" />
+                    <RadioButton
+                        android:id="@+id/rbFemale"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Female" />
+                </RadioGroup>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 3: Laboratory & Diagnostic Tests -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Address"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <EditText
-            android:id="@+id/etAddress"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Enter Address"
-            android:focusable="false"
-            android:focusableInTouchMode="false"
-            android:clickable="false"
-            android:cursorVisible="false"
-            android:inputType="textPostalAddress" />
+            android:layout_marginBottom="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDateOfBirth"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Date of Birth (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/etDateOfBirth"
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:maxLength="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Age"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <EditText
-            android:id="@+id/etAge"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:focusable="false"
-            android:longClickable="false"
-            android:cursorVisible="false"
-            android:hint="Calculated automatically"
-            android:inputType="number" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Laboratory &amp; Diagnostics"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="12dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Age Group"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <Spinner
-            android:id="@+id/spinnerAgeGroup"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="NBE / RDT Performed"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+                <CheckBox
+                    android:id="@+id/cbNbePerformed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="NBE Performed" />
+                <CheckBox
+                    android:id="@+id/cbRdtPerformed"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:text="RDT Performed" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Sex"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <RadioGroup
-            android:id="@+id/rgSex"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rbMale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Male" />
-            <RadioButton
-                android:id="@+id/rbFemale"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Female" />
-        </RadioGroup>
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDateNbeRdt"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Date NBE / RDT (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    app:endIconContentDescription="Open calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDateNbeRdt"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:maxLength="10"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="NBE / RDT Performed"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <CheckBox
-            android:id="@+id/cbNbePerformed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="NBE Performed" />
-        <CheckBox
-            android:id="@+id/cbRdtPerformed"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:text="RDT Performed" />
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Blood Test Result"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+                <RadioGroup
+                    android:id="@+id/rgBloodTestResult"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+                    <RadioButton
+                        android:id="@+id/rbResultPositive"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:text="Positive (+)" />
+                    <RadioButton
+                        android:id="@+id/rbResultNegative"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Negative (-)" />
+                </RadioGroup>
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDateNbeRdt"
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 4: Clinical Status & Examinations -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Date NBE / RDT (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/etDateNbeRdt"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:maxLength="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Blood Test Result"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <RadioGroup
-            android:id="@+id/rgBloodTestResult"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rbResultPositive"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Positive (+)" />
-            <RadioButton
-                android:id="@+id/rbResultNegative"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Negative (-)" />
-        </RadioGroup>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Clinical Status &amp; Examinations"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="12dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Lymphedema Clinical Status"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <RadioGroup
-            android:id="@+id/rgLymphedemaExamined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rbLymphedemaExaminedYes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Examined 1st Time" />
-            <RadioButton
-                android:id="@+id/rbLymphedemaExaminedNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not Examined" />
-        </RadioGroup>
-        <CheckBox
-            android:id="@+id/cbLymphedemaPresent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:text="Lymphedema Present" />
+                <!-- Lymphedema -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Lymphedema Clinical Status"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+                <RadioGroup
+                    android:id="@+id/rgLymphedemaExamined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+                    <RadioButton
+                        android:id="@+id/rbLymphedemaExaminedYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:text="Examined 1st Time" />
+                    <RadioButton
+                        android:id="@+id/rbLymphedemaExaminedNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Not Examined" />
+                </RadioGroup>
+                <CheckBox
+                    android:id="@+id/cbLymphedemaPresent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Lymphedema Present" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Elephantiasis Clinical Status"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <RadioGroup
-            android:id="@+id/rgElephantiasisExamined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rbElephantiasisExaminedYes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Examined 1st Time" />
-            <RadioButton
-                android:id="@+id/rbElephantiasisExaminedNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not Examined" />
-        </RadioGroup>
-        <CheckBox
-            android:id="@+id/cbElephantiasisPresent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:text="Elephantiasis Present" />
+                <!-- Elephantiasis -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Elephantiasis Clinical Status"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+                <RadioGroup
+                    android:id="@+id/rgElephantiasisExamined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+                    <RadioButton
+                        android:id="@+id/rbElephantiasisExaminedYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:text="Examined 1st Time" />
+                    <RadioButton
+                        android:id="@+id/rbElephantiasisExaminedNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Not Examined" />
+                </RadioGroup>
+                <CheckBox
+                    android:id="@+id/cbElephantiasisPresent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="16dp"
+                    android:text="Elephantiasis Present" />
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Hydrocele Clinical Status"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <RadioGroup
-            android:id="@+id/rgHydroceleExamined"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="4dp"
-            android:orientation="horizontal">
-            <RadioButton
-                android:id="@+id/rbHydroceleExaminedYes"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginEnd="16dp"
-                android:text="Examined 1st Time" />
-            <RadioButton
-                android:id="@+id/rbHydroceleExaminedNo"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Not Examined" />
-        </RadioGroup>
-        <CheckBox
-            android:id="@+id/cbHydrocelePresent"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:text="Hydrocele Present" />
+                <!-- Hydrocele -->
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Hydrocele Clinical Status"
+                    android:textStyle="bold"
+                    android:textSize="12sp"
+                    android:layout_marginBottom="4dp"/>
+                <RadioGroup
+                    android:id="@+id/rgHydroceleExamined"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:layout_marginBottom="4dp">
+                    <RadioButton
+                        android:id="@+id/rbHydroceleExaminedYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginEnd="24dp"
+                        android:text="Examined 1st Time" />
+                    <RadioButton
+                        android:id="@+id/rbHydroceleExaminedNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Not Examined" />
+                </RadioGroup>
+                <CheckBox
+                    android:id="@+id/cbHydrocelePresent"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="Hydrocele Present" />
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilAlbendazoleDateGiven"
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 5: Treatment & Medication -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="Albendazole — Date Given (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/etAlbendazoleDateGiven"
+            android:layout_marginBottom="16dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:maxLength="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilDecDateGiven"
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Treatment &amp; Medication Given"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="12dp"/>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilAlbendazoleDateGiven"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="Albendazole — Date Given (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    app:endIconContentDescription="Open calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etAlbendazoleDateGiven"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:maxLength="10"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilDecDateGiven"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginBottom="12dp"
+                    android:hint="DEC — Date Given (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    app:endIconContentDescription="Open calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etDecDateGiven"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:maxLength="10"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/tilIvermectinDateGiven"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Ivermectin — Date Given (MM-DD-YYYY)"
+                    app:endIconMode="custom"
+                    app:endIconDrawable="@android:drawable/ic_menu_my_calendar"
+                    app:endIconContentDescription="Open calendar"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etIvermectinDateGiven"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="date"
+                        android:maxLength="10"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
+
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Card 6: Remarks & Save -->
+        <com.google.android.material.card.MaterialCardView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="12dp"
-            android:hint="DEC — Date Given (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/etDecDateGiven"
+            android:layout_marginBottom="24dp"
+            app:cardElevation="2dp"
+            app:cardCornerRadius="12dp"
+            app:strokeWidth="1dp"
+            app:strokeColor="?attr/colorOutlineVariant">
+
+            <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:inputType="date"
-                android:maxLength="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:orientation="vertical"
+                android:padding="16dp">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/tilIvermectinDateGiven"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:hint="Ivermectin — Date Given (YYYY-MM-DD)"
-            app:startIconDrawable="@android:drawable/ic_menu_my_calendar"
-            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
-            <EditText
-                android:id="@+id/etIvermectinDateGiven"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:inputType="date"
-                android:maxLength="10" />
-        </com.google.android.material.textfield.TextInputLayout>
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="Remarks"
+                    android:textStyle="bold"
+                    android:textSize="16sp"
+                    android:textColor="?attr/colorPrimary"
+                    android:layout_marginBottom="12dp"/>
 
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Remarks"
-            android:textStyle="bold"
-            android:layout_marginBottom="4dp" />
-        <EditText
-            android:id="@+id/etRemarks"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            android:hint="Enter any additional remarks"
-            android:inputType="textMultiLine"
-            android:minLines="2" />
+                <com.google.android.material.textfield.TextInputLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:hint="Enter any additional remarks"
+                    style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox">
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/etRemarks"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textMultiLine"
+                        android:gravity="top"
+                        android:minLines="3"
+                        android:minHeight="48dp"/>
+                </com.google.android.material.textfield.TextInputLayout>
 
-        <Button
+            </LinearLayout>
+        </com.google.android.material.card.MaterialCardView>
+
+        <!-- Save Button -->
+        <com.google.android.material.button.MaterialButton
             android:id="@+id/btnSave"
             android:layout_width="match_parent"
-            android:layout_height="54dp"
+            android:layout_height="wrap_content"
             android:text="Save Record"
             android:textSize="16sp"
             android:textStyle="bold"
+            android:minHeight="56dp"
             app:cornerRadius="8dp"
             android:layout_marginBottom="16dp"/>
 

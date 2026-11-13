@@ -2,26 +2,34 @@ package com.android.hfsis.maternal_care_record;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.ArrayAdapter;
 import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.LinearLayout;
 import android.widget.RadioGroup;
+import android.widget.ScrollView;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.maternal_care_record.PostpartumEntity;
 import com.google.android.material.button.MaterialButton;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -78,9 +86,56 @@ public class PostpartumFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_postpartum, container, false);
     }
 
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        setupKeyboardInsets(view);
 
         // Bind Base Visit Schedule Views
         tvPostpartumPatientHeader = view.findViewById(R.id.tvPostpartumPatientHeader);
@@ -258,9 +313,9 @@ public class PostpartumFragment extends Fragment {
 
         rgReferredGeneral.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rbReferredYes) {
-                etReferralDateGeneral.setVisibility(View.VISIBLE);
+                setFieldVisibility(etReferralDateGeneral, View.VISIBLE);
             } else {
-                etReferralDateGeneral.setVisibility(View.GONE);
+                setFieldVisibility(etReferralDateGeneral, View.GONE);
                 etReferralDateGeneral.setText("");
             }
         });
@@ -268,9 +323,9 @@ public class PostpartumFragment extends Fragment {
         // Dynamic toggle visibility logic for IFA completion date field
         rgCompletedIfa.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rbIfaYes) {
-                etIfaCompletionDate.setVisibility(View.VISIBLE);
+                setFieldVisibility(etIfaCompletionDate, View.VISIBLE);
             } else {
-                etIfaCompletionDate.setVisibility(View.GONE);
+                setFieldVisibility(etIfaCompletionDate, View.GONE);
                 etIfaCompletionDate.setText("");
             }
         });
@@ -278,9 +333,9 @@ public class PostpartumFragment extends Fragment {
         // Dynamic toggle visibility logic for Vitamin A completion date field
         rgCompletedVitA.setOnCheckedChangeListener((group, checkedId) -> {
             if (checkedId == R.id.rbVitAYes) {
-                etVitACompletionDate.setVisibility(View.VISIBLE);
+                setFieldVisibility(etVitACompletionDate, View.VISIBLE);
             } else {
-                etVitACompletionDate.setVisibility(View.GONE);
+                setFieldVisibility(etVitACompletionDate, View.GONE);
                 etVitACompletionDate.setText("");
             }
         });
@@ -295,30 +350,59 @@ public class PostpartumFragment extends Fragment {
     }
 
     private void setupDatePickerHooks() {
-        etVisit24h.setOnClickListener(v -> showDatePicker(etVisit24h));
-        etVisit1w.setOnClickListener(v -> showDatePicker(etVisit1w));
-        etVisit2_4w.setOnClickListener(v -> showDatePicker(etVisit2_4w));
-        etVisit4_6w.setOnClickListener(v -> showDatePicker(etVisit4_6w));
+        bindDateField(etVisit24h);
+        bindDateField(etVisit1w);
+        bindDateField(etVisit2_4w);
+        bindDateField(etVisit4_6w);
 
-        etClassificationDate.setOnClickListener(v -> showDatePicker(etClassificationDate));
-        etReferralDateGeneral.setOnClickListener(v -> showDatePicker(etReferralDateGeneral));
+        bindDateField(etClassificationDate);
+        bindDateField(etReferralDateGeneral);
 
-        // Binding dialog picker references for fields
-        etIronDate1st.setOnClickListener(v -> showDatePicker(etIronDate1st));
-        etIronDate2nd.setOnClickListener(v -> showDatePicker(etIronDate2nd));
-        etIronDate3rd.setOnClickListener(v -> showDatePicker(etIronDate3rd));
-        etIfaCompletionDate.setOnClickListener(v -> showDatePicker(etIfaCompletionDate));
-        etVitACompletionDate.setOnClickListener(v -> showDatePicker(etVitACompletionDate));
+        bindDateField(etIronDate1st);
+        bindDateField(etIronDate2nd);
+        bindDateField(etIronDate3rd);
+        bindDateField(etIfaCompletionDate);
+        bindDateField(etVitACompletionDate);
 
-        etBreastfeedingDate.setOnClickListener(v -> showDatePicker(etBreastfeedingDate));
+        bindDateField(etBreastfeedingDate);
+    }
+
+    private void bindDateField(EditText field) {
+        // Formats keyboard inputs while typing manually
+        field.addTextChangedListener(new DateFormattingWatcher(field));
+
+        // Opens calendar date picker only when clicking the end icon
+        TextInputLayout til = findParentTextInputLayout(field);
+        if (til != null) {
+            til.setEndIconOnClickListener(v -> showDatePicker(field));
+        }
+    }
+
+    private TextInputLayout findParentTextInputLayout(View child) {
+        ViewParent parent = child.getParent();
+        while (parent != null) {
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+    // The EditText sits inside a TextInputLayout, so show/hide the whole box
+    private void setFieldVisibility(EditText field, int visibility) {
+        TextInputLayout til = findParentTextInputLayout(field);
+        if (til != null) {
+            til.setVisibility(visibility);
+        } else {
+            field.setVisibility(visibility);
+        }
     }
 
     private void showDatePicker(EditText targetField) {
         Calendar calendar = Calendar.getInstance();
         DatePickerDialog datePickerDialog = new DatePickerDialog(requireContext(), (view, year, month, day) -> {
-            String shortYear = String.valueOf(year).substring(2);
-            String formattedDate = String.format(Locale.US, "%02d/%02d/%s", month + 1, day, shortYear);
+            String formattedDate = String.format(Locale.US, "%02d-%02d-%04d", month + 1, day, year);
             targetField.setText(formattedDate);
+            targetField.setError(null);
         }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         datePickerDialog.show();
     }
@@ -416,5 +500,50 @@ public class PostpartumFragment extends Fragment {
                 getParentFragmentManager().popBackStack();
             });
         });
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

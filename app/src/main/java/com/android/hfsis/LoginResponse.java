@@ -49,6 +49,9 @@ public class LoginResponse {
         @SerializedName("name")
         private String name;
 
+        @SerializedName("username")
+        private String username;
+
         @SerializedName("email")
         private String email;
 
@@ -93,6 +96,10 @@ public class LoginResponse {
 
         public String getName() {
             return name;
+        }
+
+        public String getUsername() {
+            return username;
         }
 
         public String getEmail() {

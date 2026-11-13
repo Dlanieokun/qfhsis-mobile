@@ -27,6 +27,8 @@ public class ChildImmunizationRecord {
     // CPAB
     private boolean td2Mother;
     private boolean td3To5Mother;
+    private String td2MotherDate;
+    private String td3To5MotherDate;
 
     // BCG
     private String bcgWithin24hAge;
@@ -137,6 +139,12 @@ public class ChildImmunizationRecord {
 
     public boolean isTd3To5Mother() { return td3To5Mother; }
     public void setTd3To5Mother(boolean td3To5Mother) { this.td3To5Mother = td3To5Mother; }
+
+    public String getTd2MotherDate() { return td2MotherDate; }
+    public void setTd2MotherDate(String td2MotherDate) { this.td2MotherDate = td2MotherDate; }
+
+    public String getTd3To5MotherDate() { return td3To5MotherDate; }
+    public void setTd3To5MotherDate(String td3To5MotherDate) { this.td3To5MotherDate = td3To5MotherDate; }
 
     public String getBcgWithin24hAge() { return bcgWithin24hAge; }
     public void setBcgWithin24hAge(String bcgWithin24hAge) { this.bcgWithin24hAge = bcgWithin24hAge; }

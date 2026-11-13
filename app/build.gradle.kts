@@ -5,7 +5,7 @@ plugins {
 
 android {
     namespace = "com.android.hfsis"
-    compileSdk = 36 // Fixed assignment expression syntax here
+    compileSdk = 36
     buildFeatures {
         viewBinding = true;
         buildConfig = true;
@@ -16,7 +16,7 @@ android {
         minSdk = 31
         targetSdk = 36
         versionCode = 1
-        versionName = "1.0"
+        versionName = "1.1"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
     }

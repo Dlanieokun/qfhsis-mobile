@@ -100,6 +100,17 @@ public class ProfilingFragment extends Fragment {
     private boolean isEditMode = false;
     private HouseholdProfile existingProfile;
 
+    // Add-new-member Context: carries an existing household's Location &
+    // Demographics details over so they can be pre-filled and locked instead
+    // of re-entered for every member of the same household.
+    private static final String ARG_PREFILL_HOUSEHOLD = "PREFILL_HOUSEHOLD";
+    private HouseholdProfile prefillHousehold;
+
+    // New-household Context: when adding the first member of a brand-new
+    // household, the relationship is always "Head" — this flag forces that
+    // selection and locks the spinner.
+    private static final String ARG_FORCE_HEAD_RELATIONSHIP = "FORCE_HEAD_RELATIONSHIP";
+
     public ProfilingFragment() {
         // Required empty public constructor
     }
@@ -161,9 +172,6 @@ public class ProfilingFragment extends Fragment {
         // Load Region/Province/Municipality/Barangay AutoComplete Dropdown Data
         setupAddressDropdowns();
 
-        // Make tapping an address field show its full list immediately (not just on typing)
-        setupExposedDropdownTapBehavior();
-
         // Bind Listeners and Functional Features
         setupDynamicFormListeners();
 
@@ -176,6 +184,19 @@ public class ProfilingFragment extends Fragment {
             isEditMode = true;
             btnSubmitProfiling.setText("Update Profile Document");
             loadProfileForEditing();
+        } else if (getArguments() != null && getArguments().containsKey(ARG_PREFILL_HOUSEHOLD)) {
+            // Adding a new member to a household we already have context for —
+            // pre-fill and lock the Location & Demographics fields.
+            prefillHousehold = (HouseholdProfile) getArguments().getSerializable(ARG_PREFILL_HOUSEHOLD);
+            applyHouseholdContextPrefill();
+        }
+
+        // Adding the first member of a brand-new household — force the
+        // relationship spinner to "Head" and lock it. Independent of the
+        // branches above since a new household has no PROFILE_ID or
+        // PREFILL_HOUSEHOLD context.
+        if (getArguments() != null && getArguments().getBoolean(ARG_FORCE_HEAD_RELATIONSHIP, false)) {
+            applyForcedHeadRelationship();
         }
     }
 
@@ -210,9 +231,8 @@ public class ProfilingFragment extends Fragment {
                     String[] regionNames = new String[regionList.size()];
                     for (int i = 0; i < regionList.size(); i++) regionNames[i] = regionList.get(i).regDesc;
 
-                    ArrayAdapter<String> regionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, regionNames);
+                    ArrayAdapter<String> regionAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, regionNames);
                     etRegion.setAdapter(regionAdapter);
-                    etRegion.setThreshold(0);
                 });
             }
         });
@@ -262,27 +282,6 @@ public class ProfilingFragment extends Fragment {
         });
     }
 
-    private void setupExposedDropdownTapBehavior() {
-        attachTapToShowDropdown(etRegion);
-        attachTapToShowDropdown(etProvince);
-        attachTapToShowDropdown(etMunicipality);
-        attachTapToShowDropdown(etBarangay);
-    }
-
-    private void attachTapToShowDropdown(AutoCompleteTextView field) {
-        field.setOnClickListener(v -> {
-            if (field.isEnabled() && field.getAdapter() != null) {
-                field.showDropDown();
-            }
-        });
-    }
-
-    private boolean isAddressDropdownField(View v) {
-        int id = v.getId();
-        return id == R.id.etRegion || id == R.id.etProvince
-                || id == R.id.etMunicipality || id == R.id.etBarangay;
-    }
-
     private void loadProvincesForRegion(String regCode) {
         if (getContext() == null) return;
         Executors.newSingleThreadExecutor().execute(() -> {
@@ -294,9 +293,8 @@ public class ProfilingFragment extends Fragment {
                     String[] provinceNames = new String[provinceList.size()];
                     for (int i = 0; i < provinceList.size(); i++) provinceNames[i] = provinceList.get(i).provDesc;
 
-                    ArrayAdapter<String> provinceAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, provinceNames);
+                    ArrayAdapter<String> provinceAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, provinceNames);
                     etProvince.setAdapter(provinceAdapter);
-                    etProvince.setThreshold(0);
                 });
             }
         });
@@ -313,9 +311,8 @@ public class ProfilingFragment extends Fragment {
                     String[] munNames = new String[municipalityList.size()];
                     for (int i = 0; i < municipalityList.size(); i++) munNames[i] = municipalityList.get(i).citymunDesc;
 
-                    ArrayAdapter<String> munAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, munNames);
+                    ArrayAdapter<String> munAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, munNames);
                     etMunicipality.setAdapter(munAdapter);
-                    etMunicipality.setThreshold(0);
                 });
             }
         });
@@ -332,9 +329,8 @@ public class ProfilingFragment extends Fragment {
                     String[] brgyNames = new String[barangayList.size()];
                     for (int i = 0; i < barangayList.size(); i++) brgyNames[i] = barangayList.get(i).brgyDesc;
 
-                    ArrayAdapter<String> brgyAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, brgyNames);
+                    ArrayAdapter<String> brgyAdapter = new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, brgyNames);
                     etBarangay.setAdapter(brgyAdapter);
-                    etBarangay.setThreshold(0);
                 });
             }
         });
@@ -380,6 +376,14 @@ public class ProfilingFragment extends Fragment {
         btnSubmitProfiling.setOnClickListener(v -> saveProfilingData());
     }
 
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
+    }
+
     private void showDatePickerDialog(EditText targetEditText) {
         if (getContext() == null) return;
 
@@ -395,7 +399,7 @@ public class ProfilingFragment extends Fragment {
                     selCalendar.set(Calendar.MONTH, selMonth);
                     selCalendar.set(Calendar.DAY_OF_MONTH, selDay);
 
-                    SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+                    SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
                     targetEditText.setText(sdf.format(selCalendar.getTime()));
                     targetEditText.setError(null);
                 }, year, month, day);
@@ -431,18 +435,6 @@ public class ProfilingFragment extends Fragment {
                                     etEducation.showDropDown();
                                 }
                             });
-                        }
-
-                        if (isAddressDropdownField(v) && v instanceof AutoCompleteTextView) {
-                            AutoCompleteTextView actv = (AutoCompleteTextView) v;
-                            if (actv.getText().toString().isEmpty()) {
-                                actv.post(() -> {
-                                    if (isAdded() && actv.getWindowToken() != null
-                                            && actv.isEnabled() && actv.getAdapter() != null) {
-                                        actv.showDropDown();
-                                    }
-                                });
-                            }
                         }
 
                         profilingScrollView.postDelayed(() -> {
@@ -487,7 +479,7 @@ public class ProfilingFragment extends Fragment {
         etMemberLastName.setText(existingProfile.memberLastName);
         etMemberMiddleName.setText(existingProfile.memberMiddleName);
         etMemberFirstName.setText(existingProfile.memberFirstName);
-        etDOB.setText(existingProfile.dob);
+        etDOB.setText(toDisplayDate(existingProfile.dob));
         etPhilhealthID.setText(existingProfile.philhealthId);
         etFPMethodUsed.setText(existingProfile.fpMethodUsed);
 
@@ -542,27 +534,66 @@ public class ProfilingFragment extends Fragment {
 
                     String[] provinceNames = new String[provinceList.size()];
                     for (int i = 0; i < provinceList.size(); i++) provinceNames[i] = provinceList.get(i).provDesc;
-                    etProvince.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, provinceNames));
-                    etProvince.setThreshold(0);
+                    etProvince.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, provinceNames));
                     etProvince.setEnabled(!provinceList.isEmpty());
                     etProvince.setText(existingProfile.province, false);
 
                     String[] munNames = new String[municipalityList.size()];
                     for (int i = 0; i < municipalityList.size(); i++) munNames[i] = municipalityList.get(i).citymunDesc;
-                    etMunicipality.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, munNames));
-                    etMunicipality.setThreshold(0);
+                    etMunicipality.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, munNames));
                     etMunicipality.setEnabled(!municipalityList.isEmpty());
                     etMunicipality.setText(existingProfile.municipality, false);
 
                     String[] brgyNames = new String[barangayList.size()];
                     for (int i = 0; i < barangayList.size(); i++) brgyNames[i] = barangayList.get(i).brgyDesc;
-                    etBarangay.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_dropdown_item_1line, brgyNames));
-                    etBarangay.setThreshold(0);
+                    etBarangay.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_list_item_1, brgyNames));
                     etBarangay.setEnabled(!barangayList.isEmpty());
                     etBarangay.setText(existingProfile.barangay, false);
                 });
             }
         });
+    }
+
+    /**
+     * Pre-fills the "Location & Demographics" fields from an existing
+     * household's data (e.g. when adding a new member to a household that
+     * was tapped on a previous screen), then locks those fields so they
+     * can't be accidentally changed — every member of the same household
+     * shares the same address, HH number, and respondent.
+     */
+    private void applyHouseholdContextPrefill() {
+        if (prefillHousehold == null) return;
+
+        etSitio.setText(prefillHousehold.sitio);
+        etRegion.setText(prefillHousehold.region, false);
+        etProvince.setText(prefillHousehold.province, false);
+        etMunicipality.setText(prefillHousehold.municipality, false);
+        etBarangay.setText(prefillHousehold.barangay, false);
+        etHHNumber.setText(prefillHousehold.hhNumber);
+        etRespondent.setText(prefillHousehold.respondent);
+
+        setLocationDemographicsReadOnly(true);
+    }
+
+    /** Enables/disables editing of every field in the "Location & Demographics" card. */
+    private void setLocationDemographicsReadOnly(boolean readOnly) {
+        boolean enabled = !readOnly;
+        etSitio.setEnabled(enabled);
+        etRegion.setEnabled(enabled);
+        etProvince.setEnabled(enabled);
+        etMunicipality.setEnabled(enabled);
+        etBarangay.setEnabled(enabled);
+        etHHNumber.setEnabled(enabled);
+        etRespondent.setEnabled(enabled);
+    }
+
+    /**
+     * Forces spinnerRelationship to "Head" and locks it — used when adding
+     * the first member of a brand-new household, which is always its Head.
+     */
+    private void applyForcedHeadRelationship() {
+        setSpinnerSelectionByValue(spinnerRelationship, "Head");
+        spinnerRelationship.setEnabled(false);
     }
 
     private String matchCodeIgnoreCase(List<Region> regions, String desc) {
@@ -577,9 +608,23 @@ public class ProfilingFragment extends Fragment {
         if (value == null || spinner.getAdapter() == null) return null;
 
         String cleanValue = value.trim().toLowerCase(Locale.getDefault());
-        for (int i = 0; i < spinner.getAdapter().getCount(); i++) {
+        int count = spinner.getAdapter().getCount();
+
+        // Pass 1: exact (case-insensitive) match. This must win over loose matching,
+        // otherwise "Female" resolves to "Male", "Grand Son" to "Son",
+        // "Brother in Law" to "Brother", etc. (substring hits on an earlier item).
+        for (int i = 0; i < count; i++) {
             String itemText = spinner.getAdapter().getItem(i).toString().trim().toLowerCase(Locale.getDefault());
-            if (itemText.equals(cleanValue) || itemText.contains(cleanValue) || cleanValue.contains(itemText)) {
+            if (itemText.equals(cleanValue)) {
+                spinner.setSelection(i);
+                return null;
+            }
+        }
+
+        // Pass 2: loose fallback for legacy values that differ slightly from the option text.
+        for (int i = 0; i < count; i++) {
+            String itemText = spinner.getAdapter().getItem(i).toString().trim().toLowerCase(Locale.getDefault());
+            if (itemText.contains(cleanValue) || cleanValue.contains(itemText)) {
                 spinner.setSelection(i);
                 break;
             }
@@ -619,6 +664,13 @@ public class ProfilingFragment extends Fragment {
         if (cbFPMethod.isChecked() && fpMethodUsed.isEmpty()) {
             etFPMethodUsed.setError("Please specify the family planning method used");
             etFPMethodUsed.requestFocus();
+            return;
+        }
+
+        if (isEditMode && existingProfile == null) {
+            if (getActivity() != null) {
+                Toast.makeText(getActivity(), "Profile is still loading, please try again", Toast.LENGTH_SHORT).show();
+            }
             return;
         }
 
@@ -669,6 +721,8 @@ public class ProfilingFragment extends Fragment {
             long operationalResult;
 
             if (isEditMode) {
+                profile.isSynced = false;
+                profile.updatedAt = System.currentTimeMillis();
                 db.householdProfileDao().updateProfile(profile);
                 operationalResult = 1;
             } else {
@@ -750,7 +804,7 @@ public class ProfilingFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -764,7 +818,7 @@ public class ProfilingFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

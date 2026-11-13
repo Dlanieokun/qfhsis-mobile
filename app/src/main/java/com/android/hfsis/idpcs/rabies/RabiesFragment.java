@@ -29,17 +29,20 @@ import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.HouseholdProfile;
 import com.android.hfsis.model.idpcs.rabies.RabiesRecord;
+import com.google.android.material.textfield.TextInputLayout;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.Executors;
 
 public class RabiesFragment extends Fragment {
 
-    private static final String DATE_PATTERN = "MM/dd/yy";
+    private static final String DATE_PATTERN = "MM-dd-yyyy";
     private static final String TIME_PATTERN = "hh:mm a";
 
     // Patient Information
@@ -152,6 +155,8 @@ public class RabiesFragment extends Fragment {
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
+
+        dateFormat.setLenient(false); // reject impossible dates like 13-45-2020
 
         bindViews(view);
         setupCivilStatusSpinner();
@@ -307,8 +312,10 @@ public class RabiesFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etBirthdate.setText(profile.dob);
-                        calculateAgeFromDob(profile.dob);
+                        // Profile DOB may be in a legacy format; normalize to MM-dd-yyyy for display.
+                        String displayDob = toDisplayDate(profile.dob, true);
+                        etBirthdate.setText(displayDob);
+                        calculateAgeFromDob(displayDob);
                     }
                 });
             }
@@ -317,9 +324,8 @@ public class RabiesFragment extends Fragment {
 
     private void calculateAgeFromDob(String dobStr) {
         try {
-            SimpleDateFormat sdf = new SimpleDateFormat("MM/dd/yyyy", Locale.US);
             Calendar dob = Calendar.getInstance();
-            dob.setTime(sdf.parse(dobStr));
+            dob.setTime(dateFormat.parse(dobStr));
             Calendar today = Calendar.getInstance();
             int age = today.get(Calendar.YEAR) - dob.get(Calendar.YEAR);
             if (today.get(Calendar.DAY_OF_YEAR) < dob.get(Calendar.DAY_OF_YEAR)) {
@@ -344,32 +350,114 @@ public class RabiesFragment extends Fragment {
         spinnerCivilStatus.setAdapter(adapter);
     }
 
-    private void setupDatePickers() {
-        View.OnClickListener dateListener = v -> {
-            final EditText targetEt = (EditText) v;
-            Calendar cal = Calendar.getInstance();
-            new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
-                cal.set(Calendar.YEAR, year);
-                cal.set(Calendar.MONTH, month);
-                cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
-                targetEt.setText(dateFormat.format(cal.getTime()));
-            }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
+    private EditText[] dateFields() {
+        return new EditText[]{
+                etBirthdate, etDateOfBite, etAnimalDiedDate, etAnimalVaccinationDate,
+                etPvrvDay0Date, etPvrvDay3Date, etPvrvDay7Date, etPvrvDay28Date,
+                etPcevDay0Date, etPcevDay3Date, etPcevDay7Date, etPcevDay28Date,
+                etTetanusToxoidDate, etAtsDate
         };
+    }
 
-        etBirthdate.setOnClickListener(dateListener);
-        etDateOfBite.setOnClickListener(dateListener);
-        etAnimalDiedDate.setOnClickListener(dateListener);
-        etAnimalVaccinationDate.setOnClickListener(dateListener);
-        etPvrvDay0Date.setOnClickListener(dateListener);
-        etPvrvDay3Date.setOnClickListener(dateListener);
-        etPvrvDay7Date.setOnClickListener(dateListener);
-        etPvrvDay28Date.setOnClickListener(dateListener);
-        etPcevDay0Date.setOnClickListener(dateListener);
-        etPcevDay3Date.setOnClickListener(dateListener);
-        etPcevDay7Date.setOnClickListener(dateListener);
-        etPcevDay28Date.setOnClickListener(dateListener);
-        etTetanusToxoidDate.setOnClickListener(dateListener);
-        etAtsDate.setOnClickListener(dateListener);
+    private void setupDatePickers() {
+        for (EditText field : dateFields()) {
+            // Auto-inserts dashes while typing (MM-DD-YYYY)
+            field.addTextChangedListener(new DateFormattingWatcher(field));
+
+            // Calendar opens only from the end icon; the field itself accepts typed input.
+            TextInputLayout til = findParentTextInputLayout(field);
+            if (til != null) {
+                til.setEndIconOnClickListener(v -> showDatePicker(field));
+            }
+        }
+
+        // Birthdate is typeable, so recompute age once a full date has been entered
+        etBirthdate.addTextChangedListener(new TextWatcher() {
+            @Override public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            @Override public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            @Override
+            public void afterTextChanged(Editable s) {
+                if (s.length() == 10) calculateAgeFromDob(s.toString());
+            }
+        });
+    }
+
+    private TextInputLayout findParentTextInputLayout(View view) {
+        View parent = view;
+        while (parent.getParent() instanceof View) {
+            parent = (View) parent.getParent();
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+        }
+        return null;
+    }
+
+    private void showDatePicker(EditText target) {
+        Calendar cal = Calendar.getInstance();
+        new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+            cal.set(Calendar.YEAR, year);
+            cal.set(Calendar.MONTH, month);
+            cal.set(Calendar.DAY_OF_MONTH, dayOfMonth);
+            target.setText(dateFormat.format(cal.getTime()));
+            target.setError(null);
+            if (target == etBirthdate) {
+                calculateAgeFromDob(target.getText().toString());
+            }
+        }, cal.get(Calendar.YEAR), cal.get(Calendar.MONTH), cal.get(Calendar.DAY_OF_MONTH)).show();
+    }
+
+    /**
+     * Converts legacy stored dates (yyyy-MM-dd, MM/dd/yyyy, MM/dd/yy) to MM-dd-yyyy for display.
+     * Two-digit years are ambiguous; when pastOnly is true (birthdates) a result in the future
+     * is shifted back a century.
+     */
+    private String toDisplayDate(String date, boolean pastOnly) {
+        if (date == null) return null;
+        String d = date.trim();
+        if (d.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return d.substring(5, 7) + "-" + d.substring(8, 10) + "-" + d.substring(0, 4);
+        }
+        if (d.matches("\\d{2}/\\d{2}/\\d{4}")) {
+            return d.replace('/', '-');
+        }
+        if (d.matches("\\d{2}/\\d{2}/\\d{2}")) {
+            try {
+                SimpleDateFormat legacy = new SimpleDateFormat("MM/dd/yy", Locale.US);
+                legacy.setLenient(false);
+                Date parsed = legacy.parse(d);
+                if (parsed != null) {
+                    if (pastOnly && parsed.after(new Date())) {
+                        Calendar c = Calendar.getInstance();
+                        c.setTime(parsed);
+                        c.add(Calendar.YEAR, -100);
+                        parsed = c.getTime();
+                    }
+                    return dateFormat.format(parsed);
+                }
+            } catch (ParseException ignored) {}
+        }
+        return date;
+    }
+
+    private boolean isValidDate(String date) {
+        if (date.length() != 10) return false;
+        try {
+            return dateFormat.parse(date) != null;
+        } catch (ParseException e) {
+            return false;
+        }
+    }
+
+    // Returns false (and flags the field) when a non-empty date is not a real MM-dd-yyyy date
+    private boolean validateDates() {
+        for (EditText field : dateFields()) {
+            String value = field.getText().toString().trim();
+            if (!value.isEmpty() && !isValidDate(value)) {
+                field.setError("Invalid date. Use MM-DD-YYYY");
+                field.requestFocus();
+                return false;
+            }
+        }
+        return true;
     }
 
     private void setupTimePicker() {
@@ -393,6 +481,7 @@ public class RabiesFragment extends Fragment {
                 etAge.setError("Age is required");
                 return;
             }
+            if (!validateDates()) return;
             RabiesRecord record = compileRecord();
             String PREFS_NAME = "AppPrefs";
             SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
@@ -549,14 +638,14 @@ public class RabiesFragment extends Fragment {
         setRadioGroupValue(rgSex, record.getSex());
         setSpinnerValue(spinnerCivilStatus, record.getCivilStatus());
         etAddress.setText(record.getAddress());
-        etBirthdate.setText(record.getBirthdate());
+        etBirthdate.setText(toDisplayDate(record.getBirthdate(), true));
         etBirthPlace.setText(record.getBirthPlace());
         etContactNo.setText(record.getContactNo());
         etPhilhealthNo.setText(record.getPhilhealthNo());
         etWeight.setText(record.getWeightKg());
         etBloodPressure.setText(record.getBloodPressure());
 
-        etDateOfBite.setText(record.getDateOfBite());
+        etDateOfBite.setText(toDisplayDate(record.getDateOfBite(), false));
         etTimeOfBite.setText(record.getTimeOfBite());
         etPlaceOfBite.setText(record.getPlaceOfBite());
 
@@ -575,9 +664,9 @@ public class RabiesFragment extends Fragment {
         setRadioGroupValue(rgOwnershipStatus, record.getOwnershipStatus());
         setRadioGroupValue(rgAnimalStatusAtBite, record.getAnimalStatusAtBite());
         setRadioGroupValue(rgAnimalStatusAtConsult, record.getAnimalStatusAtConsult());
-        etAnimalDiedDate.setText(record.getAnimalDiedDate());
+        etAnimalDiedDate.setText(toDisplayDate(record.getAnimalDiedDate(), false));
         setRadioGroupValue(rgAnimalVaccination, record.getAnimalVaccination());
-        etAnimalVaccinationDate.setText(record.getAnimalVaccinationDate());
+        etAnimalVaccinationDate.setText(toDisplayDate(record.getAnimalVaccinationDate(), false));
 
         cbConditionEpilepsy.setChecked(record.isConditionEpilepsy());
         cbConditionDm.setChecked(record.isConditionDm());
@@ -586,31 +675,31 @@ public class RabiesFragment extends Fragment {
         cbConditionAlcoholic.setChecked(record.isConditionAlcoholic());
         cbConditionEggAllergy.setChecked(record.isConditionEggAllergy());
 
-        etPvrvDay0Date.setText(record.getPvrvDay0Date());
+        etPvrvDay0Date.setText(toDisplayDate(record.getPvrvDay0Date(), false));
         etPvrvDay0Batch.setText(record.getPvrvDay0Batch());
-        etPvrvDay3Date.setText(record.getPvrvDay3Date());
+        etPvrvDay3Date.setText(toDisplayDate(record.getPvrvDay3Date(), false));
         etPvrvDay3Batch.setText(record.getPvrvDay3Batch());
-        etPvrvDay7Date.setText(record.getPvrvDay7Date());
+        etPvrvDay7Date.setText(toDisplayDate(record.getPvrvDay7Date(), false));
         etPvrvDay7Batch.setText(record.getPvrvDay7Batch());
-        etPvrvDay28Date.setText(record.getPvrvDay28Date());
+        etPvrvDay28Date.setText(toDisplayDate(record.getPvrvDay28Date(), false));
         etPvrvDay28Batch.setText(record.getPvrvDay28Batch());
         etPvrvOutcome.setText(record.getPvrvOutcome());
 
-        etPcevDay0Date.setText(record.getPcevDay0Date());
+        etPcevDay0Date.setText(toDisplayDate(record.getPcevDay0Date(), false));
         etPcevDay0Batch.setText(record.getPcevDay0Batch());
-        etPcevDay3Date.setText(record.getPcevDay3Date());
+        etPcevDay3Date.setText(toDisplayDate(record.getPcevDay3Date(), false));
         etPcevDay3Batch.setText(record.getPcevDay3Batch());
-        etPcevDay7Date.setText(record.getPcevDay7Date());
+        etPcevDay7Date.setText(toDisplayDate(record.getPcevDay7Date(), false));
         etPcevDay7Batch.setText(record.getPcevDay7Batch());
-        etPcevDay28Date.setText(record.getPcevDay28Date());
+        etPcevDay28Date.setText(toDisplayDate(record.getPcevDay28Date(), false));
         etPcevDay28Batch.setText(record.getPcevDay28Batch());
         etPcevOutcome.setText(record.getPcevOutcome());
 
         etErig.setText(record.getErig());
         etHrig.setText(record.getHrig());
-        etTetanusToxoidDate.setText(record.getTetanusToxoidDate());
+        etTetanusToxoidDate.setText(toDisplayDate(record.getTetanusToxoidDate(), false));
         etAtsDose.setText(record.getAtsDose());
-        etAtsDate.setText(record.getAtsDate());
+        etAtsDate.setText(toDisplayDate(record.getAtsDate(), false));
         etImpression.setText(record.getImpression());
 
         btnSave.setText("Update Record");
@@ -637,6 +726,52 @@ public class RabiesFragment extends Fragment {
                 spinner.setSelection(i);
                 break;
             }
+        }
+    }
+
+    // Watcher that automatically injects hyphens for MM-DD-YYYY strings while typing
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
         }
     }
 }

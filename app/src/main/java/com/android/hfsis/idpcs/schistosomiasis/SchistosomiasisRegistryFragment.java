@@ -41,7 +41,7 @@ import java.util.concurrent.Executors;
 
 public class SchistosomiasisRegistryFragment extends Fragment {
 
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String DATE_PATTERN = "MM-dd-yyyy";
 
     private long currentRecordId = 0;
     private String currentProfileId = null;
@@ -132,7 +132,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
             loadRecordForEditing(recordId);
         } else {
             // Automatically set the current date for a new record
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd", Locale.US);
+            SimpleDateFormat sdf = new SimpleDateFormat("MM-dd-yyyy", Locale.US);
             etDateOfRegistration.setText(sdf.format(new Date()));
         }
     }
@@ -271,20 +271,10 @@ public class SchistosomiasisRegistryFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
-                        etDateOfBirth.setText(profile.dob);
-                        try {
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1;
-                                int day = Integer.parseInt(dobParts[2]);
-
-                                Calendar dob = Calendar.getInstance();
-                                dob.set(year, month, day);
-                                updateAgeFromDateOfBirth(dob);
-                            }
-                        } catch (Exception e) {
-                            e.printStackTrace();
+                        etDateOfBirth.setText(toDisplayDate(profile.dob));
+                        Calendar dob = parseDate(toDisplayDate(profile.dob));
+                        if (dob != null) {
+                            updateAgeFromDateOfBirth(dob);
                         }
                     }
                 });
@@ -307,20 +297,20 @@ public class SchistosomiasisRegistryFragment extends Fragment {
     }
 
     private void setupDatePickers() {
-        // Set icon triggers to show date picker dialog
-        tilDateOfRegistration.setStartIconOnClickListener(v -> showDatePicker(etDateOfRegistration));
-        tilDateOfBirth.setStartIconOnClickListener(v -> showDatePicker(etDateOfBirth));
-        tilDateScreened.setStartIconOnClickListener(v -> showDatePicker(etDateScreened));
-        tilClinicalFirstTreatmentDate.setStartIconOnClickListener(v -> showDatePicker(etClinicalFirstTreatmentDate));
-        tilClinicalRetreatmentDate.setStartIconOnClickListener(v -> showDatePicker(etClinicalRetreatmentDate));
-        tilClinicalCuredDate.setStartIconOnClickListener(v -> showDatePicker(etClinicalCuredDate));
-        tilDateOfDiagnosis.setStartIconOnClickListener(v -> showDatePicker(etDateOfDiagnosis));
-        tilDateConfirmed.setStartIconOnClickListener(v -> showDatePicker(etDateConfirmed));
-        tilConfirmedFirstTreatmentDate.setStartIconOnClickListener(v -> showDatePicker(etConfirmedFirstTreatmentDate));
-        tilConfirmedRetreatmentDate.setStartIconOnClickListener(v -> showDatePicker(etConfirmedRetreatmentDate));
-        tilConfirmedCuredDate.setStartIconOnClickListener(v -> showDatePicker(etConfirmedCuredDate));
-        tilDateReferredToHospital.setStartIconOnClickListener(v -> showDatePicker(etDateReferredToHospital));
-        tilMdaDateGiven.setStartIconOnClickListener(v -> showDatePicker(etMdaDateGiven));
+        // Calendar end icon opens the date picker dialog
+        tilDateOfRegistration.setEndIconOnClickListener(v -> showDatePicker(etDateOfRegistration));
+        tilDateOfBirth.setEndIconOnClickListener(v -> showDatePicker(etDateOfBirth));
+        tilDateScreened.setEndIconOnClickListener(v -> showDatePicker(etDateScreened));
+        tilClinicalFirstTreatmentDate.setEndIconOnClickListener(v -> showDatePicker(etClinicalFirstTreatmentDate));
+        tilClinicalRetreatmentDate.setEndIconOnClickListener(v -> showDatePicker(etClinicalRetreatmentDate));
+        tilClinicalCuredDate.setEndIconOnClickListener(v -> showDatePicker(etClinicalCuredDate));
+        tilDateOfDiagnosis.setEndIconOnClickListener(v -> showDatePicker(etDateOfDiagnosis));
+        tilDateConfirmed.setEndIconOnClickListener(v -> showDatePicker(etDateConfirmed));
+        tilConfirmedFirstTreatmentDate.setEndIconOnClickListener(v -> showDatePicker(etConfirmedFirstTreatmentDate));
+        tilConfirmedRetreatmentDate.setEndIconOnClickListener(v -> showDatePicker(etConfirmedRetreatmentDate));
+        tilConfirmedCuredDate.setEndIconOnClickListener(v -> showDatePicker(etConfirmedCuredDate));
+        tilDateReferredToHospital.setEndIconOnClickListener(v -> showDatePicker(etDateReferredToHospital));
+        tilMdaDateGiven.setEndIconOnClickListener(v -> showDatePicker(etMdaDateGiven));
 
         // Attach custom date watchers for auto-formatting typed entries
         etDateOfRegistration.addTextChangedListener(new DateFormattingWatcher(etDateOfRegistration));
@@ -345,15 +335,10 @@ public class SchistosomiasisRegistryFragment extends Fragment {
             public void afterTextChanged(Editable s) {
                 String input = s.toString();
                 if (isValidDateFormat(input)) {
-                    try {
-                        String[] parts = input.split("-");
-                        int y = Integer.parseInt(parts[0]);
-                        int m = Integer.parseInt(parts[1]) - 1;
-                        int d = Integer.parseInt(parts[2]);
-                        Calendar dob = Calendar.getInstance();
-                        dob.set(y, m, d);
+                    Calendar dob = parseDate(input);
+                    if (dob != null) {
                         updateAgeFromDateOfBirth(dob);
-                    } catch (Exception ignored) {}
+                    }
                 }
             }
         });
@@ -417,7 +402,30 @@ public class SchistosomiasisRegistryFragment extends Fragment {
     }
 
     private boolean isValidDateFormat(String date) {
-        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+        return date.matches("(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\\d{4}");
+    }
+
+    // Parses MM-dd-yyyy into a Calendar; returns null if the value is not a real date
+    private Calendar parseDate(String date) {
+        try {
+            SimpleDateFormat sdf = new SimpleDateFormat(DATE_PATTERN, Locale.US);
+            sdf.setLenient(false);
+            Date parsed = sdf.parse(date);
+            if (parsed == null) return null;
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(parsed);
+            return cal;
+        } catch (Exception e) {
+            return null;
+        }
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
     }
 
     private boolean validateForm() {
@@ -429,7 +437,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
             Toast.makeText(requireContext(), "Please select the date of registration", Toast.LENGTH_SHORT).show();
             return false;
         } else if (!isValidDateFormat(regDate)) {
-            etDateOfRegistration.setError("Required format is yyyy-MM-dd");
+            etDateOfRegistration.setError("Required format is MM-DD-YYYY");
             etDateOfRegistration.requestFocus();
             return false;
         }
@@ -456,7 +464,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
             Toast.makeText(requireContext(), "Please select the date of birth", Toast.LENGTH_SHORT).show();
             return false;
         } else if (!isValidDateFormat(dobDate)) {
-            etDateOfBirth.setError("Required format is yyyy-MM-dd");
+            etDateOfBirth.setError("Required format is MM-DD-YYYY");
             etDateOfBirth.requestFocus();
             return false;
         }
@@ -491,7 +499,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
     private boolean validateOptionalDate(EditText target) {
         String val = target.getText().toString().trim();
         if (!val.isEmpty() && !isValidDateFormat(val)) {
-            target.setError("Required format is yyyy-MM-dd");
+            target.setError("Required format is MM-DD-YYYY");
             target.requestFocus();
             return false;
         }
@@ -607,7 +615,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
         this.currentRecordId = record.getId();
         this.currentProfileId = record.getProfileId(); // Set the ID here
 
-        etDateOfRegistration.setText(record.getDateOfRegistration());
+        etDateOfRegistration.setText(toDisplayDate(record.getDateOfRegistration()));
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
         etName.setText(record.getName(), false);
         etAddress.setText(record.getAddress());
@@ -618,7 +626,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
             rgResidency.check(R.id.rbNonResident);
         }
 
-        etDateOfBirth.setText(record.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(record.getDateOfBirth()));
         etAge.setText(String.valueOf(record.getAge()));
 
         String ageGrp = record.getAgeGroup();
@@ -640,7 +648,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
 
         setYesNoRadioGroup(rgHistoryOfExposure, R.id.rbExposureYes, R.id.rbExposureNo, record.getHistoryOfExposure());
         setYesNoRadioGroup(rgScreened, R.id.rbScreenedYes, R.id.rbScreenedNo, record.getScreened());
-        etDateScreened.setText(record.getDateScreened());
+        etDateScreened.setText(toDisplayDate(record.getDateScreened()));
 
         setYesNoRadioGroup(rgSignsSymptoms, R.id.rbSignsSymptomsYes, R.id.rbSignsSymptomsNo, record.getWithSignsSymptoms());
 
@@ -654,27 +662,27 @@ public class SchistosomiasisRegistryFragment extends Fragment {
         etSymptomOthersSpecify.setText(record.getSignsSymptomsOtherSpecify());
 
         setYesNoRadioGroup(rgClinicalFirstTreatment, R.id.rbClinicalFirstTreatmentYes, R.id.rbClinicalFirstTreatmentNo, record.getClinicalFirstTreatmentGiven());
-        etClinicalFirstTreatmentDate.setText(record.getClinicalFirstTreatmentDate());
+        etClinicalFirstTreatmentDate.setText(toDisplayDate(record.getClinicalFirstTreatmentDate()));
         setYesNoRadioGroup(rgClinicalRetreatment, R.id.rbClinicalRetreatmentYes, R.id.rbClinicalRetreatmentNo, record.getClinicalRetreatment());
-        etClinicalRetreatmentDate.setText(record.getClinicalRetreatmentDate());
+        etClinicalRetreatmentDate.setText(toDisplayDate(record.getClinicalRetreatmentDate()));
         setYesNoRadioGroup(rgClinicalCured, R.id.rbClinicalCuredYes, R.id.rbClinicalCuredNo, record.getClinicalCured());
-        etClinicalCuredDate.setText(record.getClinicalCuredDate());
+        etClinicalCuredDate.setText(toDisplayDate(record.getClinicalCuredDate()));
 
         etDiagnosticTest.setText(record.getDiagnosticTest());
-        etDateOfDiagnosis.setText(record.getDateOfDiagnosis());
+        etDateOfDiagnosis.setText(toDisplayDate(record.getDateOfDiagnosis()));
         setYesNoRadioGroup(rgDiagnosticResult, R.id.rbDiagnosticPositive, R.id.rbDiagnosticNegative, record.getDiagnosticResult());
-        etDateConfirmed.setText(record.getDateConfirmed());
+        etDateConfirmed.setText(toDisplayDate(record.getDateConfirmed()));
         setYesNoRadioGroup(rgComplicated, R.id.rbComplicatedYes, R.id.rbComplicatedNo, record.getComplicated());
         setYesNoRadioGroup(rgConfirmedFirstTreatment, R.id.rbConfirmedFirstTreatmentYes, R.id.rbConfirmedFirstTreatmentNo, record.getConfirmedFirstTreatmentGiven());
-        etConfirmedFirstTreatmentDate.setText(record.getConfirmedFirstTreatmentDate());
+        etConfirmedFirstTreatmentDate.setText(toDisplayDate(record.getConfirmedFirstTreatmentDate()));
         setYesNoRadioGroup(rgConfirmedRetreatment, R.id.rbConfirmedRetreatmentYes, R.id.rbConfirmedRetreatmentNo, record.getConfirmedRetreatment());
-        etConfirmedRetreatmentDate.setText(record.getConfirmedRetreatmentDate());
+        etConfirmedRetreatmentDate.setText(toDisplayDate(record.getConfirmedRetreatmentDate()));
         setYesNoRadioGroup(rgConfirmedCured, R.id.rbConfirmedCuredYes, R.id.rbConfirmedCuredNo, record.getConfirmedCured());
-        etConfirmedCuredDate.setText(record.getConfirmedCuredDate());
+        etConfirmedCuredDate.setText(toDisplayDate(record.getConfirmedCuredDate()));
 
-        etDateReferredToHospital.setText(record.getDateReferredToHospital());
+        etDateReferredToHospital.setText(toDisplayDate(record.getDateReferredToHospital()));
         setYesNoRadioGroup(rgMdaGiven, R.id.rbMdaGivenYes, R.id.rbMdaGivenNo, record.getMdaGiven());
-        etMdaDateGiven.setText(record.getMdaDateGiven());
+        etMdaDateGiven.setText(toDisplayDate(record.getMdaDateGiven()));
 
         etRemarks.setText(record.getRemarks());
     }
@@ -774,7 +782,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
         etRemarks.setText("");
     }
 
-    // Custom formatting text watcher to insert dashes at indexes 4 and 7 for a clean yyyy-MM-dd typing flow
+    // Custom formatting text watcher to insert dashes after the month and day for a clean MM-DD-YYYY typing flow
     private static class DateFormattingWatcher implements TextWatcher {
         private final EditText editText;
         private boolean isDeleting = false;
@@ -794,7 +802,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
         @Override
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -808,9 +816,7 @@ public class SchistosomiasisRegistryFragment extends Fragment {
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                if (i == 3 && len > 4) {
-                    formatted.append("-");
-                } else if (i == 5 && len > 6) {
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }

@@ -2,21 +2,30 @@ package com.android.hfsis.maternal_care_record;
 
 import android.app.DatePickerDialog;
 import android.os.Bundle;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.ViewParent;
 import android.widget.Button;
+import android.widget.EditText;
+import android.widget.ScrollView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.graphics.Insets;
+import androidx.core.view.ViewCompat;
+import androidx.core.view.WindowInsetsCompat;
 import androidx.fragment.app.Fragment;
 
 import com.android.hfsis.R;
 import com.android.hfsis.database.DatabaseHelper;
 import com.android.hfsis.model.maternal_care_record.PrenatalImmunizationEntity;
 import com.google.android.material.textfield.TextInputEditText;
+import com.google.android.material.textfield.TextInputLayout;
 
 import java.util.Calendar;
 import java.util.Locale;
@@ -28,12 +37,8 @@ public class PrenatalImmunizationFragment extends Fragment {
     private int profileId = -1;
     private String patientName = "";
 
-    // Database tracking state managers
     private DatabaseHelper db;
-    private boolean isEditMode = false;
-    private int existingRecordId = -1;
 
-    // View Components Layout elements mapping properties
     private TextView tvImmPatientHeader;
     private TextInputEditText etTd1Date, etTd2Date, etTd3Date, etTd4Date, etTd5Date;
     private Button btnSaveImmunizationForm;
@@ -45,7 +50,6 @@ public class PrenatalImmunizationFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        // Safely extract transaction intent parameters sent from main list module
         if (getArguments() != null) {
             maternalRecordId = getArguments().getInt("maternal_record_id", -1);
             profileId = getArguments().getInt("profile_id", -1);
@@ -59,20 +63,64 @@ public class PrenatalImmunizationFragment extends Fragment {
         return inflater.inflate(R.layout.fragment_prenatal_immunization, container, false);
     }
 
+    /**
+     * Keeps the focused input visible above the soft keyboard.
+     * Works on edge-to-edge (Android 15+) where adjustResize alone is not enough.
+     */
+    private void setupKeyboardInsets(@NonNull View root) {
+        final int baseLeft = root.getPaddingLeft();
+        final int baseTop = root.getPaddingTop();
+        final int baseRight = root.getPaddingRight();
+        final int baseBottom = root.getPaddingBottom();
+
+        ViewCompat.setOnApplyWindowInsetsListener(root, (v, insets) -> {
+            Insets ime = insets.getInsets(WindowInsetsCompat.Type.ime());
+            Insets bars = insets.getInsets(WindowInsetsCompat.Type.systemBars());
+            int bottom = Math.max(ime.bottom, bars.bottom);
+            v.setPadding(baseLeft, baseTop, baseRight, baseBottom + bottom);
+
+            if (ime.bottom > 0) {
+                View focused = v.findFocus();
+                if (focused != null) {
+                    v.post(() -> scrollToView(v, focused));
+                }
+            }
+            return insets;
+        });
+
+        // Scroll to a field whenever it gains focus while the keyboard is open
+        root.getViewTreeObserver().addOnGlobalFocusChangeListener((oldFocus, newFocus) -> {
+            if (newFocus instanceof EditText) {
+                root.postDelayed(() -> scrollToView(root, newFocus), 200);
+            }
+        });
+
+        ViewCompat.requestApplyInsets(root);
+    }
+
+    private void scrollToView(View root, View target) {
+        if (!(root instanceof ScrollView) || !isAdded()) return;
+        ScrollView scroll = (ScrollView) root;
+        android.graphics.Rect rect = new android.graphics.Rect();
+        target.getDrawingRect(rect);
+        scroll.offsetDescendantRectToMyCoords(target, rect);
+        rect.bottom += (int) (80 * getResources().getDisplayMetrics().density);
+        scroll.requestChildRectangleOnScreen(scroll.getChildAt(0), rect, false);
+    }
+
     @Override
     public void onViewCreated(@NonNull View view, @Nullable Bundle savedInstanceState) {
         super.onViewCreated(view, savedInstanceState);
 
-        // Initialize central persistence access controller helper Instance
+        setupKeyboardInsets(view);
+
         db = DatabaseHelper.getDatabase(requireContext());
 
-        // Bind contextual layout parameters properties
         tvImmPatientHeader = view.findViewById(R.id.tvImmPatientHeader);
         if (patientName != null && !patientName.isEmpty()) {
             tvImmPatientHeader.setText("Patient: " + patientName + " (Maternal ID: " + maternalRecordId + ")");
         }
 
-        // Bind form data inputs matching resource layout definitions
         etTd1Date = view.findViewById(R.id.etTd1Date);
         etTd2Date = view.findViewById(R.id.etTd2Date);
         etTd3Date = view.findViewById(R.id.etTd3Date);
@@ -80,13 +128,9 @@ public class PrenatalImmunizationFragment extends Fragment {
         etTd5Date = view.findViewById(R.id.etTd5Date);
         btnSaveImmunizationForm = view.findViewById(R.id.btnSaveImmunizationForm);
 
-        // Wire operational behavior constraints and selection popup listeners
         setupAllDatePickerDialogs();
-
-        // Attempt background read transaction to retrieve historical captures for this maternal patient
         loadExistingImmunizationData();
 
-        // Form submission click pipeline execution handler
         btnSaveImmunizationForm.setOnClickListener(v -> executeSaveOrUpdatePipeline());
     }
 
@@ -100,75 +144,157 @@ public class PrenatalImmunizationFragment extends Fragment {
 
     private void bindDatePickerPopup(TextInputEditText inputField) {
         if (inputField == null) return;
-        inputField.setOnClickListener(v -> {
-            Calendar calendar = Calendar.getInstance();
-            DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
-                String formattedSelectionDate = String.format(Locale.US, "%02d/%02d/%04d", month + 1, dayOfMonth, year);
-                inputField.setText(formattedSelectionDate);
-            }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
-            dialog.show();
-        });
+
+        // Formats keyboard inputs while typing manually
+        inputField.addTextChangedListener(new DateFormattingWatcher(inputField));
+
+        // Opens calendar date picker only when clicking the end icon
+        TextInputLayout til = findParentTextInputLayout(inputField);
+        if (til != null) {
+            til.setEndIconOnClickListener(v -> showDatePickerDialog(inputField));
+        }
+    }
+
+    private TextInputLayout findParentTextInputLayout(View child) {
+        ViewParent parent = child.getParent();
+        while (parent != null) {
+            if (parent instanceof TextInputLayout) return (TextInputLayout) parent;
+            parent = parent.getParent();
+        }
+        return null;
+    }
+
+    private void showDatePickerDialog(TextInputEditText inputField) {
+        Calendar calendar = Calendar.getInstance();
+        DatePickerDialog dialog = new DatePickerDialog(requireContext(), (view, year, month, dayOfMonth) -> {
+            String formattedSelectionDate = String.format(Locale.US, "%02d-%02d-%04d", month + 1, dayOfMonth, year);
+            inputField.setText(formattedSelectionDate);
+            inputField.setError(null);
+        }, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        dialog.show();
     }
 
     private void loadExistingImmunizationData() {
+        if (maternalRecordId == -1) return;
+
         Executors.newSingleThreadExecutor().execute(() -> {
-            PrenatalImmunizationEntity existingLogRecord = db.prenatalImmunizationDao().getRecordByMaternalId(maternalRecordId);
-            if (existingLogRecord != null && getActivity() != null) {
+            PrenatalImmunizationEntity existing = db.prenatalImmunizationDao().getRecordByMaternalId(maternalRecordId);
+            if (existing != null && getActivity() != null) {
                 getActivity().runOnUiThread(() -> {
-                    // Turn switch on and adjust operational labels on main UIThread runtime execution
-                    isEditMode = true;
-                    existingRecordId = existingLogRecord.id;
+                    if (!isAdded()) return;
+
                     btnSaveImmunizationForm.setText("Update Immunization Log");
 
-                    // Map fields text cleanly from tracking state models
-                    etTd1Date.setText(existingLogRecord.td1Date);
-                    etTd2Date.setText(existingLogRecord.td2Date);
-                    etTd3Date.setText(existingLogRecord.td3Date);
-                    etTd4Date.setText(existingLogRecord.td4Date);
-                    etTd5Date.setText(existingLogRecord.td5Date);
+                    etTd1Date.setText(existing.td1Date);
+                    etTd2Date.setText(existing.td2Date);
+                    etTd3Date.setText(existing.td3Date);
+                    etTd4Date.setText(existing.td4Date);
+                    etTd5Date.setText(existing.td5Date);
                 });
             }
         });
     }
 
     private void executeSaveOrUpdatePipeline() {
-        // Gather captured inputs from localized properties fields
-        String td1Val = etTd1Date.getText().toString().trim();
-        String td2Val = etTd2Date.getText().toString().trim();
-        String td3Val = etTd3Date.getText().toString().trim();
-        String td4Val = etTd4Date.getText().toString().trim();
-        String td5Val = etTd5Date.getText().toString().trim();
+        if (maternalRecordId == -1) {
+            Toast.makeText(getContext(), "Error: Missing Maternal ID", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
-        // Execute persistence operation task sequence out-of-band to safeguard tracking frame responsiveness
+        // Read UI values on the main thread
+        final String td1Val = etTd1Date.getText().toString().trim();
+        final String td2Val = etTd2Date.getText().toString().trim();
+        final String td3Val = etTd3Date.getText().toString().trim();
+        final String td4Val = etTd4Date.getText().toString().trim();
+        final String td5Val = etTd5Date.getText().toString().trim();
+
         Executors.newSingleThreadExecutor().execute(() -> {
-            PrenatalImmunizationEntity targetRecordRow = new PrenatalImmunizationEntity();
-            targetRecordRow.maternalRecordId = maternalRecordId;
-            targetRecordRow.td1Date = td1Val;
-            targetRecordRow.td2Date = td2Val;
-            targetRecordRow.td3Date = td3Val;
-            targetRecordRow.td4Date = td4Val;
-            targetRecordRow.td5Date = td5Val;
+            try {
+                // Decide insert vs update from the DB itself
+                PrenatalImmunizationEntity existing =
+                        db.prenatalImmunizationDao().getRecordByMaternalId(maternalRecordId);
+                final boolean isUpdate = existing != null;
 
-            if (isEditMode) {
-                targetRecordRow.id = existingRecordId;
-                db.prenatalImmunizationDao().updateImmunizationRecord(targetRecordRow);
-            } else {
-                targetRecordRow.newInsert = true;
-                db.prenatalImmunizationDao().insertImmunizationRecord(targetRecordRow);
-            }
+                PrenatalImmunizationEntity record = new PrenatalImmunizationEntity();
+                record.maternalRecordId = maternalRecordId;
+                record.td1Date = td1Val;
+                record.td2Date = td2Val;
+                record.td3Date = td3Val;
+                record.td4Date = td4Val;
+                record.td5Date = td5Val;
+                record.isSynced = false;
+                record.updatedAt = System.currentTimeMillis();
 
-            // Return user to management transaction screen logs and prompt dynamic indicators confirmation message
-            if (getActivity() != null) {
-                getActivity().runOnUiThread(() -> {
-                    String feedbackToastMessage = isEditMode ?
-                            "Immunization record updated successfully!" :
-                            "Immunization record saved successfully!";
-                    Toast.makeText(getContext(), feedbackToastMessage, Toast.LENGTH_SHORT).show();
+                if (isUpdate) {
+                    record.id = existing.id;
+                    record.newInsert = existing.newInsert; // keep "never uploaded" state
+                    db.prenatalImmunizationDao().updateImmunizationRecord(record);
+                } else {
+                    record.newInsert = true;
+                    db.prenatalImmunizationDao().insertImmunizationRecord(record);
+                }
 
-                    // Pop transaction tracking execution frame back up to parent dashboard
-                    getParentFragmentManager().popBackStack();
-                });
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() -> {
+                        String msg = isUpdate
+                                ? "Immunization record updated successfully!"
+                                : "Immunization record saved successfully!";
+                        Toast.makeText(getContext(), msg, Toast.LENGTH_SHORT).show();
+                        getParentFragmentManager().popBackStack();
+                    });
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+                if (getActivity() != null) {
+                    getActivity().runOnUiThread(() ->
+                            Toast.makeText(getContext(), "Save failed: " + e.getMessage(), Toast.LENGTH_LONG).show());
+                }
             }
         });
+    }
+
+    private static class DateFormattingWatcher implements TextWatcher {
+        private final EditText editText;
+        private boolean isDeleting = false;
+
+        public DateFormattingWatcher(EditText editText) {
+            this.editText = editText;
+        }
+
+        @Override
+        public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            isDeleting = count > after;
+        }
+
+        @Override
+        public void onTextChanged(CharSequence s, int start, int before, int count) {}
+
+        @Override
+        public void afterTextChanged(Editable s) {
+            if (isDeleting) {
+                if (s.length() == 3 || s.length() == 6) {
+                    s.delete(s.length() - 1, s.length());
+                }
+                return;
+            }
+
+            String digits = s.toString().replaceAll("[^\\d]", "");
+            StringBuilder formatted = new StringBuilder();
+
+            int len = digits.length();
+            if (len > 8) len = 8;
+
+            for (int i = 0; i < len; i++) {
+                formatted.append(digits.charAt(i));
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
+                    formatted.append("-");
+                }
+            }
+
+            editText.removeTextChangedListener(this);
+            editText.setText(formatted.toString());
+            editText.setSelection(formatted.length());
+            editText.addTextChangedListener(this);
+        }
     }
 }

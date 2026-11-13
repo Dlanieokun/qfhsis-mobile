@@ -235,6 +235,7 @@
                             android:letterSpacing="0.07" />
 
                         <TextView
+                            android:id="@+id/tvForgotPassword"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:text="Forgot?"
@@ -244,22 +245,39 @@
 
                     </LinearLayout>
 
-                    <!-- Password field -->
-                    <EditText
-                        android:id="@+id/etPassword"
+                    <!-- Password field + show/hide button -->
+                    <FrameLayout
                         android:layout_width="match_parent"
-                        android:layout_height="50dp"
-                        android:layout_marginTop="6dp"
-                        android:background="@drawable/bg_input_aurora"
-                        android:drawableStart="@drawable/ic_lock_purple"
-                        android:drawablePadding="10dp"
-                        android:hint="Enter your password"
-                        android:inputType="textPassword"
-                        android:paddingStart="14dp"
-                        android:paddingEnd="14dp"
-                        android:textColor="#1F1447"
-                        android:textColorHint="#C4B5FD"
-                        android:textSize="14sp" />
+                        android:layout_height="wrap_content"
+                        android:layout_marginTop="6dp">
+
+                        <EditText
+                            android:id="@+id/etPassword"
+                            android:layout_width="match_parent"
+                            android:layout_height="50dp"
+                            android:background="@drawable/bg_input_aurora"
+                            android:drawableStart="@drawable/ic_lock_purple"
+                            android:drawablePadding="10dp"
+                            android:hint="Enter your password"
+                            android:inputType="textPassword"
+                            android:paddingStart="14dp"
+                            android:paddingEnd="48dp"
+                            android:textColor="#1F1447"
+                            android:textColorHint="#C4B5FD"
+                            android:textSize="14sp" />
+
+                        <ImageButton
+                            android:id="@+id/btnTogglePassword"
+                            android:layout_width="44dp"
+                            android:layout_height="50dp"
+                            android:layout_gravity="end|center_vertical"
+                            android:background="?attr/selectableItemBackgroundBorderless"
+                            android:contentDescription="Show password"
+                            android:padding="12dp"
+                            android:scaleType="centerInside"
+                            android:src="@drawable/ic_eye_off_purple" />
+
+                    </FrameLayout>
 
                     <!-- Login button -->
                     <Button
@@ -309,13 +327,12 @@
                  FOOTER — Support · Privacy Policy
             ══════════════════════════════════════ -->
             <LinearLayout
+                android:id="@+id/llFooter"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="20dp"
-                android:layout_marginBottom="28dp"
                 android:gravity="center_vertical"
                 android:orientation="horizontal"
-                app:layout_constraintBottom_toBottomOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@id/cardLogin">
@@ -342,6 +359,23 @@
                     android:textSize="11sp" />
 
             </LinearLayout>
+
+            <!-- ══════════════════════════════════════
+                 APP VERSION
+            ══════════════════════════════════════ -->
+            <TextView
+                android:id="@+id/tvVersion"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="28dp"
+                android:text="Version 1.0"
+                android:textColor="#9CA3AF"
+                android:textSize="11sp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toBottomOf="@id/llFooter" />
 
         </androidx.constraintlayout.widget.ConstraintLayout>
     </androidx.core.widget.NestedScrollView>

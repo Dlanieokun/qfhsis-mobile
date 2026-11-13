@@ -39,7 +39,7 @@ import java.util.concurrent.Executors;
 public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
 
     private static final String ARG_RECORD_ID = "record_id";
-    private static final String DATE_PATTERN = "yyyy-MM-dd";
+    private static final String DATE_PATTERN = "MM-dd-yyyy";
 
     private EditText etDateOfRegistration, etFamilySerialNumber, etAddress, etDateOfBirth, etAge, etDateOfScreening, etDateOfResult, etTreatmentDateGiven, etJanuaryMdaDate, etJulyMdaDate, etRemarks;
     private TextInputLayout tilDateOfRegistration, tilDateOfBirth, tilDateOfScreening, tilDateOfResult, tilTreatmentDateGiven, tilJanuaryMdaDate, tilJulyMdaDate;
@@ -211,24 +211,16 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
                     }
 
                     if (!TextUtils.isEmpty(profile.dob)) {
+                        String dobDisplay = toDisplayDate(profile.dob);
+                        etDateOfBirth.setText(dobDisplay);
                         try {
-                            // Parse YYYY-MM-DD
-                            String[] dobParts = profile.dob.split("-");
-                            if (dobParts.length == 3) {
-                                int year = Integer.parseInt(dobParts[0]);
-                                int month = Integer.parseInt(dobParts[1]) - 1; // Calendar month is 0-indexed
-                                int day = Integer.parseInt(dobParts[2]);
-
-                                Calendar dobCal = Calendar.getInstance();
-                                dobCal.set(year, month, day);
-                                etDateOfBirth.setText(dateFormat.format(dobCal.getTime()));
+                            Calendar dobCal = Calendar.getInstance();
+                            java.util.Date dobDate = dateFormat.parse(dobDisplay);
+                            if (dobDate != null) {
+                                dobCal.setTime(dobDate);
                                 updateAgeFromDateOfBirth(dobCal);
-                            } else {
-                                etDateOfBirth.setText(profile.dob);
                             }
-                        } catch (Exception e) {
-                            etDateOfBirth.setText(profile.dob);
-                        }
+                        } catch (Exception ignored) {}
                     }
                 });
             }
@@ -273,13 +265,13 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
     }
 
     private void setupDatePickers() {
-        tilDateOfRegistration.setStartIconOnClickListener(v -> showDatePicker(etDateOfRegistration));
-        tilDateOfBirth.setStartIconOnClickListener(v -> showDatePicker(etDateOfBirth));
-        tilDateOfScreening.setStartIconOnClickListener(v -> showDatePicker(etDateOfScreening));
-        tilDateOfResult.setStartIconOnClickListener(v -> showDatePicker(etDateOfResult));
-        tilTreatmentDateGiven.setStartIconOnClickListener(v -> showDatePicker(etTreatmentDateGiven));
-        tilJanuaryMdaDate.setStartIconOnClickListener(v -> showDatePicker(etJanuaryMdaDate));
-        tilJulyMdaDate.setStartIconOnClickListener(v -> showDatePicker(etJulyMdaDate));
+        tilDateOfRegistration.setEndIconOnClickListener(v -> showDatePicker(etDateOfRegistration));
+        tilDateOfBirth.setEndIconOnClickListener(v -> showDatePicker(etDateOfBirth));
+        tilDateOfScreening.setEndIconOnClickListener(v -> showDatePicker(etDateOfScreening));
+        tilDateOfResult.setEndIconOnClickListener(v -> showDatePicker(etDateOfResult));
+        tilTreatmentDateGiven.setEndIconOnClickListener(v -> showDatePicker(etTreatmentDateGiven));
+        tilJanuaryMdaDate.setEndIconOnClickListener(v -> showDatePicker(etJanuaryMdaDate));
+        tilJulyMdaDate.setEndIconOnClickListener(v -> showDatePicker(etJulyMdaDate));
 
         etDateOfRegistration.addTextChangedListener(new DateFormattingWatcher(etDateOfRegistration));
         etDateOfBirth.addTextChangedListener(new DateFormattingWatcher(etDateOfBirth));
@@ -398,14 +390,22 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
     }
 
     private boolean isValidDateFormat(String date) {
-        // Enforce YYYY-MM-DD
-        return date.matches("\\d{4}-(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])");
+        // Enforce MM-DD-YYYY
+        return date.matches("(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])-\\d{4}");
+    }
+
+    // Converts legacy yyyy-MM-dd values (saved before the format change) to MM-dd-yyyy for display
+    private String toDisplayDate(String date) {
+        if (date != null && date.matches("\\d{4}-\\d{2}-\\d{2}")) {
+            return date.substring(5, 7) + "-" + date.substring(8, 10) + "-" + date.substring(0, 4);
+        }
+        return date;
     }
 
     private boolean validateForm() {
         String regDate = etDateOfRegistration.getText().toString().trim();
         if (TextUtils.isEmpty(regDate)) return toastError("Please select the date of registration");
-        if (!isValidDateFormat(regDate)) { etDateOfRegistration.setError("Required format is YYYY-MM-DD"); etDateOfRegistration.requestFocus(); return false; }
+        if (!isValidDateFormat(regDate)) { etDateOfRegistration.setError("Required format is MM-DD-YYYY"); etDateOfRegistration.requestFocus(); return false; }
 
         if (TextUtils.isEmpty(etFamilySerialNumber.getText())) { etFamilySerialNumber.setError("Required"); return false; }
         if (TextUtils.isEmpty(etName.getText())) { etName.setError("Required"); return false; }
@@ -414,26 +414,26 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
 
         String dobDate = etDateOfBirth.getText().toString().trim();
         if (TextUtils.isEmpty(dobDate)) return toastError("Please select date of birth");
-        if (!isValidDateFormat(dobDate)) { etDateOfBirth.setError("Required format is YYYY-MM-DD"); etDateOfBirth.requestFocus(); return false; }
+        if (!isValidDateFormat(dobDate)) { etDateOfBirth.setError("Required format is MM-DD-YYYY"); etDateOfBirth.requestFocus(); return false; }
 
         if (TextUtils.isEmpty(etAge.getText())) { etAge.setError("Required"); return false; }
         if (rgSex.getCheckedRadioButtonId() == -1) return toastError("Please select sex");
         if (rgScreened.getCheckedRadioButtonId() == -1) return toastError("Please indicate screening confirmation status");
 
         String screeningDate = etDateOfScreening.getText().toString().trim();
-        if (!screeningDate.isEmpty() && !isValidDateFormat(screeningDate)) { etDateOfScreening.setError("Invalid format (YYYY-MM-DD)"); etDateOfScreening.requestFocus(); return false; }
+        if (!screeningDate.isEmpty() && !isValidDateFormat(screeningDate)) { etDateOfScreening.setError("Invalid format (MM-DD-YYYY)"); etDateOfScreening.requestFocus(); return false; }
 
         String resultDate = etDateOfResult.getText().toString().trim();
-        if (!resultDate.isEmpty() && !isValidDateFormat(resultDate)) { etDateOfResult.setError("Invalid format (YYYY-MM-DD)"); etDateOfResult.requestFocus(); return false; }
+        if (!resultDate.isEmpty() && !isValidDateFormat(resultDate)) { etDateOfResult.setError("Invalid format (MM-DD-YYYY)"); etDateOfResult.requestFocus(); return false; }
 
         String treatmentDate = etTreatmentDateGiven.getText().toString().trim();
-        if (!treatmentDate.isEmpty() && !isValidDateFormat(treatmentDate)) { etTreatmentDateGiven.setError("Invalid format (YYYY-MM-DD)"); etTreatmentDateGiven.requestFocus(); return false; }
+        if (!treatmentDate.isEmpty() && !isValidDateFormat(treatmentDate)) { etTreatmentDateGiven.setError("Invalid format (MM-DD-YYYY)"); etTreatmentDateGiven.requestFocus(); return false; }
 
         String janMdaDate = etJanuaryMdaDate.getText().toString().trim();
-        if (!janMdaDate.isEmpty() && !isValidDateFormat(janMdaDate)) { etJanuaryMdaDate.setError("Invalid format (YYYY-MM-DD)"); etJanuaryMdaDate.requestFocus(); return false; }
+        if (!janMdaDate.isEmpty() && !isValidDateFormat(janMdaDate)) { etJanuaryMdaDate.setError("Invalid format (MM-DD-YYYY)"); etJanuaryMdaDate.requestFocus(); return false; }
 
         String julMdaDate = etJulyMdaDate.getText().toString().trim();
-        if (!julMdaDate.isEmpty() && !isValidDateFormat(julMdaDate)) { etJulyMdaDate.setError("Invalid format (YYYY-MM-DD)"); etJulyMdaDate.requestFocus(); return false; }
+        if (!julMdaDate.isEmpty() && !isValidDateFormat(julMdaDate)) { etJulyMdaDate.setError("Invalid format (MM-DD-YYYY)"); etJulyMdaDate.requestFocus(); return false; }
 
         return true;
     }
@@ -517,12 +517,12 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
         // Load Profile ID from record
         selectedProfileId = record.getProfileId();
 
-        etDateOfRegistration.setText(record.getDateOfRegistration());
+        etDateOfRegistration.setText(toDisplayDate(record.getDateOfRegistration()));
         etFamilySerialNumber.setText(record.getFamilySerialNumber());
         etName.setText(record.getName(), false);
         etAddress.setText(record.getAddress());
         rgResidency.check("1".equals(record.getResidency()) ? R.id.rbResident : R.id.rbNonResident);
-        etDateOfBirth.setText(record.getDateOfBirth());
+        etDateOfBirth.setText(toDisplayDate(record.getDateOfBirth()));
         etAge.setText(String.valueOf(record.getAge()));
 
         String[] ageClassCodes = {"A", "B", "C", "D", "E"};
@@ -535,18 +535,18 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
 
         rgSex.check("M".equals(record.getSex()) ? R.id.rbMale : R.id.rbFemale);
         rgScreened.check("1".equals(record.getScreened()) ? R.id.rbScreenedYes : R.id.rbScreenedNo);
-        etDateOfScreening.setText(record.getDateOfScreening());
+        etDateOfScreening.setText(toDisplayDate(record.getDateOfScreening()));
         setSelectionFromCode(spinnerScreeningResult, record.getScreeningResult(), new String[]{null, "0", "1", "2"});
-        etDateOfResult.setText(record.getDateOfResult());
+        etDateOfResult.setText(toDisplayDate(record.getDateOfResult()));
         setSelectionFromCode(spinnerTreatmentGiven, record.getTreatmentGiven(), new String[]{null, "0", "1", "2"});
-        etTreatmentDateGiven.setText(record.getTreatmentDateGiven());
+        etTreatmentDateGiven.setText(toDisplayDate(record.getTreatmentDateGiven()));
 
-        etJanuaryMdaDate.setText(record.getJanuaryMdaDate());
+        etJanuaryMdaDate.setText(toDisplayDate(record.getJanuaryMdaDate()));
         if (record.getJanuaryMdaModality() != null) {
             rgJanuaryMdaModality.check("1".equals(record.getJanuaryMdaModality()) ? R.id.rbJanuarySchoolBased : R.id.rbJanuaryCommunityBased);
         }
 
-        etJulyMdaDate.setText(record.getJulyMdaDate());
+        etJulyMdaDate.setText(toDisplayDate(record.getJulyMdaDate()));
         if (record.getJulyMdaModality() != null) {
             rgJulyMdaModality.check("1".equals(record.getJulyMdaModality()) ? R.id.rbJulySchoolBased : R.id.rbJulyCommunityBased);
         }
@@ -612,7 +612,7 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
         public void afterTextChanged(Editable s) {
             if (isDeleting) {
                 // Remove intuitive hyphens when backspacing
-                if (s.length() == 5 || s.length() == 8) {
+                if (s.length() == 3 || s.length() == 6) {
                     s.delete(s.length() - 1, s.length());
                 }
                 return;
@@ -622,12 +622,12 @@ public class SoilTransmittedHelminthiasisRegistryFragment extends Fragment {
             StringBuilder formatted = new StringBuilder();
 
             int len = digits.length();
-            if (len > 8) len = 8; // YYYYMMDD is 8 digits
+            if (len > 8) len = 8; // MMDDYYYY is 8 digits
 
             for (int i = 0; i < len; i++) {
                 formatted.append(digits.charAt(i));
-                // Add hyphens after the 4th (YYYY) and 6th (YYYY-MM) digits
-                if ((i == 3 && len > 4) || (i == 5 && len > 6)) {
+                // Add hyphens after the 2nd (MM) and 4th (MM-DD) digits
+                if ((i == 1 && len > 2) || (i == 3 && len > 4)) {
                     formatted.append("-");
                 }
             }
