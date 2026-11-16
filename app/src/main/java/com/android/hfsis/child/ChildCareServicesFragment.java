@@ -1,5 +1,7 @@
 package com.android.hfsis.child;
 
+import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -102,6 +104,24 @@ public class ChildCareServicesFragment extends Fragment {
             transaction.addToBackStack(null);
             transaction.commit();
         });
+
+        // Role-based visibility (Municipal Nutrition Action Officer -> Child Nutrition only)
+        applyRoleVisibility(btnChildImmunization, btnChildImmunizationSchool, btnManagementOfSick);
+    }
+
+    /**
+     * Municipal Nutrition Action Officers only get Child Nutrition here;
+     * the other child care buttons are hidden.
+     */
+    private void applyRoleVisibility(View... buttonsToHideForMnao) {
+        if (getActivity() == null) return;
+
+        SharedPreferences prefs = getActivity().getSharedPreferences("AppPrefs", Context.MODE_PRIVATE);
+        String userRole = prefs.getString("user_role", "");
+
+        if ("Municipal Nutrition Action Officer".equals(userRole)) {
+            for (View b : buttonsToHideForMnao) b.setVisibility(View.GONE);
+        }
     }
 
     private void handleButtonClick(String serviceName) {

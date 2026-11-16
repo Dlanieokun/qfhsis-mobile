@@ -19,7 +19,7 @@ public interface ClassificationDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     long saveClassification(ClassificationEntity metrics);
 
-    @Query("SELECT * FROM classification_metrics WHERE profile_id = :profileId LIMIT 1")
+    @Query("SELECT * FROM classification_metrics WHERE profile_id = :profileId ORDER BY updated_at DESC, id DESC LIMIT 1")
     ClassificationEntity getClassificationByProfileId(long profileId);
 
     @Query("SELECT * FROM classification_metrics WHERE isSynced = 0")

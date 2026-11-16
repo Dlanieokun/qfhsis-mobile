@@ -4,231 +4,421 @@
     android:id="@+id/classificationScrollView"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:fillViewport="true"
-    android:background="#F8F9FA">
+    android:background="#F8F9FA"
+    android:clipToPadding="false"
+    android:fillViewport="true">
 
-    <LinearLayout
-        android:id="@+id/classificationContainer"
+    <!-- Centers the form and caps its width on tablets / landscape -->
+    <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:orientation="vertical"
-        android:padding="16dp">
+        android:layout_height="wrap_content">
 
-        <TextView
-            android:layout_width="match_parent"
+        <LinearLayout
+            android:id="@+id/classificationContainer"
+            android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:text="Classification by Age/Health Risk Group"
-            android:textColor="#1F2937"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:gravity="center_horizontal"
-            android:layout_marginBottom="4dp"/>
+            android:orientation="vertical"
+            android:padding="16dp"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.5"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintWidth_max="720dp">
 
-        <TextView
-            android:id="@+id/tvClassificationMemberName"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Member: Loading..."
-            android:textColor="#2563EB"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:gravity="center_horizontal"
-            android:layout_marginBottom="16dp"/>
-
-        <androidx.cardview.widget.CardView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="20dp"
-            app:cardCornerRadius="8dp"
-            app:cardElevation="2dp">
-
-            <LinearLayout
+            <!-- Header -->
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:padding="12dp"
-                android:background="#FFFFFF">
+                android:gravity="center_horizontal"
+                android:text="Classification by Age/Health Risk Group"
+                android:textColor="#1F2937"
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="Classification Acronym Key Matrix"
-                    android:textColor="#4B5563"
-                    android:textSize="12sp"
-                    android:textStyle="bold"
-                    android:layout_marginBottom="6dp"/>
-
-                <GridLayout
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:columnCount="2"
-                    android:alignmentMode="alignBounds">
-
-                    <TextView android:text="N - Newborn" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="P - Pregnant" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="AB - Adult &gt; 25 y.o." android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="AP - Adolescent Pregnant" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="SC - Senior Citizen" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="PP - Postpartum" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="WRA - Women with Rep Age" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="I - Infant" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="S - School Age (0-5 y.o.)" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="U - Under 5 y.o." android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="A - Adolescent (10-19 y.o.)" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                    <TextView android:text="PWD - Person with Disability" android:textSize="11sp" android:textColor="#6B7280" android:layout_columnWeight="1"/>
-                </GridLayout>
-            </LinearLayout>
-        </androidx.cardview.widget.CardView>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false"
-            android:layout_marginBottom="12dp">
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <TextView
+                android:id="@+id/tvClassificationMemberName"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingEnd="6dp">
+                android:layout_gravity="center_horizontal"
+                android:layout_marginTop="8dp"
+                android:layout_marginBottom="16dp"
+                android:background="@drawable/bg_classification_badge"
+                android:paddingStart="12dp"
+                android:paddingTop="4dp"
+                android:paddingEnd="12dp"
+                android:paddingBottom="4dp"
+                android:text="Member: Loading..."
+                android:textColor="#1D4ED8"
+                android:textSize="14sp"
+                android:textStyle="bold" />
 
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="1st Quarter"
-                    android:textStyle="bold"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp"/>
-
-                <EditText
-                    android:id="@+id/etQ1Age"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Age"
-                    android:inputType="number"
-                    android:textSize="14sp"
-                    android:background="@android:drawable/editbox_background"/>
-
-                <Spinner
-                    android:id="@+id/spinnerQ1Class"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
+            <!-- Collapsible acronym key -->
+            <com.google.android.material.card.MaterialCardView
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingStart="6dp">
+                android:layout_marginBottom="12dp"
+                app:cardBackgroundColor="#FFFFFF"
+                app:cardCornerRadius="12dp"
+                app:cardElevation="0dp"
+                app:strokeColor="#E5E7EB"
+                app:strokeWidth="1dp">
 
-                <TextView
+                <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
-                    android:text="2nd Quarter"
-                    android:textStyle="bold"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp"/>
+                    android:orientation="vertical">
 
-                <EditText
-                    android:id="@+id/etQ2Age"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Age"
-                    android:inputType="number"
-                    android:textSize="14sp"
-                    android:background="@android:drawable/editbox_background"/>
+                    <LinearLayout
+                        android:id="@+id/layoutLegendHeader"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:background="?attr/selectableItemBackground"
+                        android:gravity="center_vertical"
+                        android:minHeight="48dp"
+                        android:orientation="horizontal"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="14dp">
 
-                <Spinner
-                    android:id="@+id/spinnerQ2Class"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
+                        <TextView
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:layout_weight="1"
+                            android:text="Classification Acronym Key"
+                            android:textColor="#374151"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+
+                        <TextView
+                            android:id="@+id/tvLegendToggle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="Hide"
+                            android:textColor="#2563EB"
+                            android:textSize="13sp"
+                            android:textStyle="bold" />
+                    </LinearLayout>
+
+                    <GridLayout
+                        android:id="@+id/gridLegend"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:alignmentMode="alignBounds"
+                        android:columnCount="@integer/classification_legend_columns"
+                        android:paddingStart="14dp"
+                        android:paddingEnd="6dp"
+                        android:paddingBottom="10dp">
+
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="N" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Newborn" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="I" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Infant" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="U" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Under 5 y.o." />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="S" />
+                            <TextView style="@style/ClassificationLegendText" android:text="School Age (0-5 y.o.)" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="A" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Adolescent (10-19 y.o.)" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="WRA" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Women of Reproductive Age" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="P" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Pregnant" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="AP" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Adolescent Pregnant" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="PP" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Postpartum" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="AB" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Adult &gt; 25 y.o." />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="SC" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Senior Citizen" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="PWD" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Person with Disability" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="Trans-In" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Transfer-In" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="Trans-Out" />
+                            <TextView style="@style/ClassificationLegendText" android:text="Transfer-Out" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="Resident" />
+                        </LinearLayout>
+                        <LinearLayout style="@style/ClassificationLegendItem">
+                            <TextView style="@style/ClassificationLegendBadge" android:text="Dead" />
+                        </LinearLayout>
+                    </GridLayout>
+                </LinearLayout>
+            </com.google.android.material.card.MaterialCardView>
+
+            <!-- Quarter cards: 1 / 2 / 4 columns depending on width -->
+            <GridLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="-6dp"
+                android:layout_marginEnd="-6dp"
+                android:columnCount="@integer/classification_quarter_columns">
+
+                <com.google.android.material.card.MaterialCardView style="@style/ClassificationQuarterCard">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/ClassificationLegendBadge"
+                                android:text="Q1" />
+
+                            <TextView
+                                style="@style/ClassificationQuarterTitle"
+                                android:text="1st Quarter" />
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Age">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etQ1Age"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxLength="3"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:hint="Class">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/actQ1Class"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView style="@style/ClassificationQuarterCard">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/ClassificationLegendBadge"
+                                android:text="Q2" />
+
+                            <TextView
+                                style="@style/ClassificationQuarterTitle"
+                                android:text="2nd Quarter" />
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Age">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etQ2Age"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxLength="3"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:hint="Class">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/actQ2Class"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView style="@style/ClassificationQuarterCard">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/ClassificationLegendBadge"
+                                android:text="Q3" />
+
+                            <TextView
+                                style="@style/ClassificationQuarterTitle"
+                                android:text="3rd Quarter" />
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Age">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etQ3Age"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxLength="3"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:hint="Class">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/actQ3Class"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+                <com.google.android.material.card.MaterialCardView style="@style/ClassificationQuarterCard">
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="14dp">
+
+                        <LinearLayout
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginBottom="12dp"
+                            android:gravity="center_vertical"
+                            android:orientation="horizontal">
+
+                            <TextView
+                                style="@style/ClassificationLegendBadge"
+                                android:text="Q4" />
+
+                            <TextView
+                                style="@style/ClassificationQuarterTitle"
+                                android:text="4th Quarter" />
+                        </LinearLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:hint="Age">
+
+                            <com.google.android.material.textfield.TextInputEditText
+                                android:id="@+id/etQ4Age"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:imeOptions="actionNext"
+                                android:inputType="number"
+                                android:maxLength="3"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+
+                        <com.google.android.material.textfield.TextInputLayout
+                            style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox.ExposedDropdownMenu"
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:layout_marginTop="10dp"
+                            android:hint="Class">
+
+                            <com.google.android.material.textfield.MaterialAutoCompleteTextView
+                                android:id="@+id/actQ4Class"
+                                android:layout_width="match_parent"
+                                android:layout_height="wrap_content"
+                                android:inputType="none"
+                                android:textSize="14sp" />
+                        </com.google.android.material.textfield.TextInputLayout>
+                    </LinearLayout>
+                </com.google.android.material.card.MaterialCardView>
+            </GridLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnSaveClassification"
+                android:layout_width="match_parent"
+                android:layout_height="56dp"
+                android:layout_marginTop="16dp"
+                android:text="Save Health Risk Metrics"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                app:backgroundTint="#2563EB"
+                app:cornerRadius="12dp" />
+
         </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:orientation="horizontal"
-            android:baselineAligned="false"
-            android:layout_marginBottom="24dp">
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingEnd="6dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="3rd Quarter"
-                    android:textStyle="bold"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp"/>
-
-                <EditText
-                    android:id="@+id/etQ3Age"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Age"
-                    android:inputType="number"
-                    android:textSize="14sp"
-                    android:background="@android:drawable/editbox_background"/>
-
-                <Spinner
-                    android:id="@+id/spinnerQ3Class"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
-
-            <LinearLayout
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:orientation="vertical"
-                android:paddingStart="6dp">
-
-                <TextView
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:text="4th Quarter"
-                    android:textStyle="bold"
-                    android:textColor="#374151"
-                    android:layout_marginBottom="4dp"/>
-
-                <EditText
-                    android:id="@+id/etQ4Age"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="Age"
-                    android:inputType="number"
-                    android:textSize="14sp"
-                    android:background="@android:drawable/editbox_background"/>
-
-                <Spinner
-                    android:id="@+id/spinnerQ4Class"
-                    android:layout_width="match_parent"
-                    android:layout_height="48dp"
-                    android:layout_marginTop="4dp"/>
-            </LinearLayout>
-        </LinearLayout>
-
-        <Button
-            android:id="@+id/btnSaveClassification"
-            android:layout_width="match_parent"
-            android:layout_height="56dp"
-            android:text="Save Health Risk Metrics"
-            android:textColor="#FFFFFF"
-            android:backgroundTint="#2563EB"
-            android:textStyle="bold"
-            app:cornerRadius="8dp"/>
-
-    </LinearLayout>
+    </androidx.constraintlayout.widget.ConstraintLayout>
 </ScrollView>

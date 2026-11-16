@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer name="classification_quarter_columns">1</integer>
+    <integer name="classification_legend_columns">1</integer>
+</resources>
+

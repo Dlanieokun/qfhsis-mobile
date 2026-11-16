@@ -242,9 +242,17 @@ public class OtherServicesFragment extends Fragment {
     }
 
     /**
-     * Reads the logged-in user's role from SharedPreferences.
-     * When the role is "BHW", only btnProfiling is shown;
-     * all other action buttons are hidden.
+     * Reads the logged-in user's role from SharedPreferences and shows only the
+     * service cards that role is allowed to use. Every other service card is hidden.
+     *
+     *  BHW                                 -> Profiling (sync button hidden; Pull/Upload stay)
+     *  Sanitation Inspector                -> Profiling, WASH
+     *  Doctor                              -> Oral Health Care and Services
+     *  Municipal Nutrition Action Officer  -> Child Care and Services
+     *                                         (ChildCareServicesFragment then limits it to Child Nutrition)
+     *  Med Tech                            -> Profiling, Infectious Disease Prevention and Control
+     *
+     * Any other role keeps the full list.
      */
     private void applyRoleVisibility() {
         if (getActivity() == null) return;
@@ -252,23 +260,48 @@ public class OtherServicesFragment extends Fragment {
         SharedPreferences prefs = getActivity().getSharedPreferences(PREFS_NAME, Context.MODE_PRIVATE);
         String userRole = prefs.getString("user_role", "");
 
-        if ("BHW".equals(userRole)) {
-            // Hide every button except btnProfiling, btnPull, and btnUpload
-            btnSync.setVisibility(View.GONE);
-            btnFamilyPlanning.setVisibility(View.GONE);
-            btnMaternalCare.setVisibility(View.GONE);
-            btnChildCare.setVisibility(View.GONE);
-            btnOralHealth.setVisibility(View.GONE);
-            btnNonCommunicable.setVisibility(View.GONE);
-            btnGeriatricHealth.setVisibility(View.GONE);
-            btnInfectiousDisease.setVisibility(View.GONE);
-            btnWash.setVisibility(View.GONE);
-            btnDemographics.setVisibility(View.GONE);
-            btnVitalStatistics.setVisibility(View.GONE);
-            btnMorbidity.setVisibility(View.GONE);
+        View[] allServices = {
+                btnProfiling, btnFamilyPlanning, btnMaternalCare, btnChildCare,
+                btnOralHealth, btnNonCommunicable, btnGeriatricHealth,
+                btnInfectiousDisease, btnWash, btnDemographics,
+                btnVitalStatistics, btnMorbidity
+        };
 
-            // Ensure btnProfiling remains visible
-            btnProfiling.setVisibility(View.VISIBLE);
+        switch (userRole) {
+            case "BHW":
+                btnSync.setVisibility(View.GONE);
+                showOnly(allServices, btnProfiling);
+                break;
+
+            case "Sanitation Inspector":
+                showOnly(allServices, btnProfiling, btnWash);
+                break;
+
+            case "Doctor":
+                showOnly(allServices, btnOralHealth);
+                break;
+
+            case "Municipal Nutrition Action Officer":
+                showOnly(allServices, btnChildCare);
+                break;
+
+            case "Med Tech":
+                showOnly(allServices, btnProfiling, btnInfectiousDisease);
+                break;
+
+            default:
+                // Other roles: leave everything visible
+                break;
+        }
+    }
+
+    /** Hides every view in {@code all} except the ones passed in {@code allowed}. */
+    private void showOnly(View[] all, View... allowed) {
+        for (View v : all) {
+            if (v != null) v.setVisibility(View.GONE);
+        }
+        for (View v : allowed) {
+            if (v != null) v.setVisibility(View.VISIBLE);
         }
     }
 

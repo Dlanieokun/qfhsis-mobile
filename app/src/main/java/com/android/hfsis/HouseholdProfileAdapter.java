@@ -1,5 +1,6 @@
 package com.android.hfsis;
 
+import android.graphics.Color;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -53,6 +54,15 @@ public class HouseholdProfileAdapter extends RecyclerView.Adapter<HouseholdProfi
 
     private static String safe(String value) {
         return value != null ? value : "";
+    }
+
+    private static int statusColor(String status) {
+        switch (status) {
+            case "Trans-In":  return Color.parseColor("#2563EB"); // blue
+            case "Trans-Out": return Color.parseColor("#D97706"); // amber
+            case "Dead":      return Color.parseColor("#DC2626"); // red
+            default:          return Color.parseColor("#059669"); // green (Resident)
+        }
     }
 
     public void filter(String text) {
@@ -119,17 +129,15 @@ public class HouseholdProfileAdapter extends RecyclerView.Adapter<HouseholdProfi
                 + " | DOB: " + (profile.dob != null ? profile.dob : "N/A");
         holder.tvDetails.setText(metaDetails);
 
-        StringBuilder risks = new StringBuilder();
-        if (profile.hpn) risks.append("HPN ");
-        if (profile.dm) risks.append("DM ");
-        if (profile.tb) risks.append("TB ");
+        holder.tvRelationship.setText("Relationship: "
+                + (profile.relationship != null && !profile.relationship.trim().isEmpty()
+                ? profile.relationship : "N/A"));
 
-        if (risks.length() > 0) {
-            holder.tvRiskBadges.setText(risks.toString().trim());
-            holder.tvRiskBadges.setVisibility(View.VISIBLE);
-        } else {
-            holder.tvRiskBadges.setVisibility(View.GONE);
-        }
+        // Records saved before the Status field existed are treated as Resident
+        String status = (profile.status != null && !profile.status.trim().isEmpty())
+                ? profile.status.trim() : "Resident";
+        holder.tvStatus.setText("Status: " + status);
+        holder.tvStatus.setTextColor(statusColor(status));
 
         // 1. SET UP THE VIEW CLASSIFICATION BUTTON FUNCTION
         holder.btnViewClassification.setOnClickListener(v -> {
@@ -152,7 +160,7 @@ public class HouseholdProfileAdapter extends RecyclerView.Adapter<HouseholdProfi
     }
 
     static class ProfileViewHolder extends RecyclerView.ViewHolder {
-        TextView tvHHNumber, tvLocation, tvMemberName, tvRespondent, tvDetails, tvRiskBadges;
+        TextView tvHHNumber, tvLocation, tvMemberName, tvRespondent, tvDetails, tvRelationship, tvStatus;
         MaterialButton btnViewClassification, btnEditProfile;
 
         public ProfileViewHolder(@NonNull View itemView) {
@@ -162,7 +170,8 @@ public class HouseholdProfileAdapter extends RecyclerView.Adapter<HouseholdProfi
             tvMemberName = itemView.findViewById(R.id.tvMemberName);
             tvRespondent = itemView.findViewById(R.id.tvRespondent);
             tvDetails = itemView.findViewById(R.id.tvDetails);
-            tvRiskBadges = itemView.findViewById(R.id.tvRiskBadges);
+            tvRelationship = itemView.findViewById(R.id.tvRelationship);
+            tvStatus = itemView.findViewById(R.id.tvStatus);
             btnViewClassification = itemView.findViewById(R.id.btnViewClassification);
             btnEditProfile = itemView.findViewById(R.id.btnEditProfile); // Ensure this field exists in layout
         }

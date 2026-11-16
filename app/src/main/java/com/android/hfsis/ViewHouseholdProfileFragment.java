@@ -150,7 +150,7 @@ public class ViewHouseholdProfileFragment extends Fragment {
                 // Show only the members of the household that was tapped,
                 // sorted by family number.
                 profileList = db.householdProfileDao()
-                        .getHouseholdMemberSortedByFamily(selectedProfile.hhNumber);
+                        .getHouseholdMemberSortedByFamily(selectedProfile.hhNumber, selectedProfile.sitio, selectedProfile.barangay, selectedProfile.municipality, selectedProfile.province, selectedProfile.region);
             } else {
                 // No specific household was passed in — show everyone,
                 // grouped by household and sorted by family number.

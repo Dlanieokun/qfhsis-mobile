@@ -88,13 +88,22 @@
                     android:textSize="13sp" />
 
                 <TextView
-                    android:id="@+id/tvRiskBadges"
+                    android:id="@+id/tvRelationship"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_marginTop="2dp"
-                    android:text="No Risks"
-                    android:textColor="#DC2626"
-                    android:textSize="12sp"
+                    android:text="Position: -"
+                    android:textColor="#4B5563"
+                    android:textSize="13sp" />
+
+                <TextView
+                    android:id="@+id/tvStatus"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="2dp"
+                    android:text="Status: Resident"
+                    android:textColor="#059669"
+                    android:textSize="13sp"
                     android:textStyle="bold" />
             </LinearLayout>
 

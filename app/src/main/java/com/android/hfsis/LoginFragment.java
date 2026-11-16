@@ -569,7 +569,7 @@ public class LoginFragment extends Fragment {
                     } else {
                         Toast.makeText(getActivity(), loginResponse.getMessage(), Toast.LENGTH_LONG).show();
                     }
-                    
+
                 } else {
                     String errorMsg = "Invalid authentication metrics.";
                     if (response.code() == 401) {

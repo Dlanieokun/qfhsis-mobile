@@ -49,7 +49,7 @@ public class ProfilingFragment extends Fragment {
     // Member Specific Field Declarations
     private EditText etFamilyNumber, etMemberLastName, etMemberMiddleName, etMemberFirstName, etDOB, etPhilhealthID, etFPMethodUsed, etReligion;
     private TextInputLayout tilDOB;
-    private Spinner spinnerRelationship, spinnerSex, spinnerPhilType, spinnerPhilCategory;
+    private Spinner spinnerRelationship, spinnerSex, spinnerStatus, spinnerPhilType, spinnerPhilCategory;
     private CheckBox cbHPN, cbDM, cbTB, cbFPMethod;
     private Button btnSubmitProfiling;
 
@@ -81,6 +81,7 @@ public class ProfilingFragment extends Fragment {
             "Niece", "Nephew", "Step Sister/Brother", "Daughter /Son in Law", "Other"
     };
     private final String[] sexOptions = new String[]{"Male", "Female"};
+    private final String[] statusOptions = new String[]{"Resident", "Trans-In", "Trans-Out", "Dead"};
     private final String[] philTypeOptions = new String[]{"Member", "Dependent", "≥ 21"};
     private final String[] philCategoryOptions = new String[]{"FE-Private", "FE-Government", "IE", "NHTS", "SC", "IP", "Unknown"};
 
@@ -147,6 +148,7 @@ public class ProfilingFragment extends Fragment {
         etMemberFirstName = view.findViewById(R.id.etMemberFirstName);
         spinnerRelationship = view.findViewById(R.id.spinnerRelationship);
         spinnerSex = view.findViewById(R.id.spinnerSex);
+        spinnerStatus = view.findViewById(R.id.spinnerStatus);
 
         tilDOB = view.findViewById(R.id.tilDOB);
         etDOB = view.findViewById(R.id.etDOB);
@@ -207,6 +209,7 @@ public class ProfilingFragment extends Fragment {
             spinnerToiletType.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, toiletOptions));
             spinnerRelationship.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, relationOptions));
             spinnerSex.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, sexOptions));
+            spinnerStatus.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, statusOptions));
             spinnerPhilType.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, philTypeOptions));
             spinnerPhilCategory.setAdapter(new ArrayAdapter<>(getContext(), android.R.layout.simple_spinner_dropdown_item, philCategoryOptions));
 
@@ -493,6 +496,7 @@ public class ProfilingFragment extends Fragment {
         setSpinnerSelectionByValue(spinnerToiletType, existingProfile.toiletType);
         setSpinnerSelectionByValue(spinnerRelationship, existingProfile.relationship);
         setSpinnerSelectionByValue(spinnerSex, existingProfile.sex);
+        setSpinnerSelectionByValue(spinnerStatus, existingProfile.status);
         setSpinnerSelectionByValue(spinnerPhilType, existingProfile.philType);
         setSpinnerSelectionByValue(spinnerPhilCategory, existingProfile.philCategory);
 
@@ -695,6 +699,7 @@ public class ProfilingFragment extends Fragment {
 
         if (spinnerRelationship.getSelectedItem() != null) profile.relationship = spinnerRelationship.getSelectedItem().toString();
         if (spinnerSex.getSelectedItem() != null) profile.sex = spinnerSex.getSelectedItem().toString();
+        if (spinnerStatus.getSelectedItem() != null) profile.status = spinnerStatus.getSelectedItem().toString();
         profile.dob = dob;
 
         profile.philhealthId = etPhilhealthID.getText().toString().trim();
@@ -779,6 +784,7 @@ public class ProfilingFragment extends Fragment {
         spinnerToiletType.setSelection(0);
         spinnerRelationship.setSelection(0);
         spinnerSex.setSelection(0);
+        spinnerStatus.setSelection(0);
         spinnerPhilType.setSelection(0);
         spinnerPhilCategory.setSelection(0);
 

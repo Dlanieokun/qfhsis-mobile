@@ -28,18 +28,19 @@ public interface HouseholdProfileDao {
             "CAST(familyNumber AS INTEGER) ASC, id ASC")
     List<HouseholdProfile> getAllProfilesSorted();
 
-    @Query("SELECT * FROM household_profiles WHERE relationship = \"Head\" ORDER BY id DESC")
+    @Query("SELECT * FROM household_profiles WHERE relationship = 'Head' ORDER BY CAST(hhNumber AS INTEGER) ASC")
     List<HouseholdProfile> getAllHousehold();
+
 
     @Query("SELECT * FROM household_profiles WHERE hhNumber = " + ":hhNumber" + " ORDER BY id DESC")
     List<HouseholdProfile> getHouseholdMember(String hhNumber);
 
     // NEW: members of one household, sorted numerically by family number.
     // Null / empty family numbers are pushed to the end.
-    @Query("SELECT * FROM household_profiles WHERE hhNumber = :hhNumber " +
+    @Query("SELECT * FROM household_profiles WHERE hhNumber = :hhNumber AND sitio = :sitio AND barangay = :barangay AND municipality = :municipality AND province = :province AND region = :region " +
             "ORDER BY (familyNumber IS NULL OR familyNumber = '') ASC, " +
             "CAST(familyNumber AS INTEGER) ASC, id ASC")
-    List<HouseholdProfile> getHouseholdMemberSortedByFamily(String hhNumber);
+    List<HouseholdProfile> getHouseholdMemberSortedByFamily(String hhNumber, String sitio, String barangay, String municipality, String province, String region);
 
     @Query("SELECT * FROM household_profiles")
     List<HouseholdProfile> getAll();

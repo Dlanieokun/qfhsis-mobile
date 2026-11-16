@@ -30,6 +30,7 @@ public class HouseholdProfile implements Serializable {
     public String memberFirstName;
     public String relationship;
     public String sex;
+    public String status; // Resident, Trans-In, Trans-Out, Dead (null on older records = Resident)
     public String dob;
     public String philhealthId;
     public String philType;
